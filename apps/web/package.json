@@ -13,6 +13,7 @@
     "@hooneylog/shared-types": "workspace:*",
     "@notionhq/client": "^2.3.0",
     "@tryfabric/martian": "^1.2.4",
+    "@vercel/analytics": "^2.0.1",
     "katex": "^0.16.44",
     "lucide-react": "^1.7.0",
     "mermaid": "^11.13.0",
