@@ -1,7 +1,10 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
+import rehypeKatex from 'rehype-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
   content: string;
@@ -11,8 +14,8 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <div className="prose prose-notion max-w-none w-full">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
@@ -35,6 +38,43 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             );
           },
           // Customizing specific tags to look like Notion
+          div({ node, className, children, ...props }: any) {
+            if (className === 'notion-callout') {
+              return (
+                <div className="flex gap-4 p-4 my-4 bg-notion-gray-bg/50 border border-notion-border rounded-[4px] items-start" {...props}>
+                  {children}
+                </div>
+              );
+            }
+            if (className === 'notion-callout-icon') {
+              return <div className="text-[20px] leading-none select-none" {...props}>{children}</div>;
+            }
+            if (className === 'notion-callout-content') {
+              return <div className="text-[16px] leading-[1.5] text-notion-text flex-1" {...props}>{children}</div>;
+            }
+            return <div className={className} {...props}>{children}</div>;
+          },
+          li({ node, children, checked, ...props }: any) {
+            // Handle To-do list (Checkbox)
+            if (typeof checked === 'boolean') {
+              return (
+                <li className="flex items-start gap-2 list-none -ml-6 mb-1 group" {...props}>
+                  <div className="flex items-center justify-center w-[18px] h-[18px] mt-1 flex-shrink-0">
+                    <input 
+                      type="checkbox" 
+                      checked={checked} 
+                      readOnly
+                      className="w-4 h-4 rounded-[2px] border-2 border-notion-text accent-notion-text cursor-pointer"
+                    />
+                  </div>
+                  <span className={`text-[16px] leading-[1.6] ${checked ? 'text-notion-secondary line-through' : 'text-notion-text'}`}>
+                    {children}
+                  </span>
+                </li>
+              );
+            }
+            return <li className="text-[16px] leading-[1.6] text-notion-text" {...props}>{children}</li>;
+          },
           a({ node, children, ...props }: any) {
             return (
               <a className="text-notion-text underline decoration-notion-border underline-offset-4 hover:opacity-80 transition-opacity break-all" target="_blank" rel="noopener noreferrer" {...props}>
@@ -59,9 +99,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           ol({ node, children, ...props }: any) {
             return <ol className="pl-[24px] list-decimal mt-1 space-y-1 mb-4" {...props}>{children}</ol>;
-          },
-          li({ node, children, ...props }: any) {
-            return <li className="text-[16px] leading-[1.6] text-notion-text" {...props}>{children}</li>;
           },
           blockquote({ node, children, ...props }: any) {
             return (

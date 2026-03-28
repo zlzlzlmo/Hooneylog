@@ -10,6 +10,18 @@ const notion = new Client({
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
+// Add custom transformer for Callouts
+n2m.setCustomTransformer('callout', async (block) => {
+  const { callout } = block;
+  const icon = callout.icon?.type === 'emoji' ? callout.icon.emoji : '💡';
+  const text = callout.rich_text.map(t => t.plain_text).join('');
+  
+  return `<div class="notion-callout">
+    <div class="notion-callout-icon">${icon}</div>
+    <div class="notion-callout-content">${text}</div>
+  </div>`;
+});
+
 const databaseId = process.env.NOTION_DATABASE_ID ?? '';
 
 export const getNotionPageMarkdown = cache(async (pageId: string) => {
