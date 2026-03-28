@@ -27,7 +27,15 @@ const databaseId = process.env.NOTION_DATABASE_ID ?? '';
 
 export const getNotionPageMarkdown = cache(async (pageId: string) => {
   const mdblocks = await n2m.pageToMarkdown(pageId);
-  return n2m.toMarkdownString(mdblocks);
+  const mdString = n2m.toMarkdownString(mdblocks);
+  
+  // Fix notion-to-md's adjacent marker bugs that break ReactMarkdown
+  // Example: **`code`****text** -> **`code`text**
+  mdString.parent = mdString.parent
+    .replace(/\*\*\*\*/g, '')
+    .replace(/~~~~/g, '');
+
+  return mdString;
 });
 
 class NotionBlockMapper {
