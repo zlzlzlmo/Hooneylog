@@ -1,0 +1,12 @@
+{
+  "name": "@hooneylog/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.0.0",
+    "typescript": "^5.0.0"
+  }
+}
