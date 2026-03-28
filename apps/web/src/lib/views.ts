@@ -1,54 +1,64 @@
 import { kv } from '@vercel/kv';
 
 /**
- * 💡 업계 표준 조회수 관리 유틸리티
- * Redis의 원자적 연산(INCR)을 사용하여 초당 수만 건의 요청도 안전하게 처리합니다.
+ * 💡 업계 표준 조회수 관리 유틸리티 (고성능 파이프라인 방식)
  */
 
 export async function incrementView(slug: string): Promise<number> {
-  // views:포스트ID 형식의 키 사용
-  const key = `views:${slug}`;
+  const postKey = `views:post:${slug}`;
+  const totalKey = 'views:total';
+  
+  // 오늘 날짜 키 생성 (예: views:today:2024-03-28)
+  const today = new Date().toISOString().split('T')[0];
+  const todayKey = `views:today:${today}`;
   
   try {
-    // 💡 Redis INCR 명령어로 1 증가시키고 새로운 값을 즉시 반환
-    const newCount = await kv.incr(key);
-    return newCount;
+    // 💡 Redis Pipeline: 한 번의 네트워크 요청으로 3가지 작업을 동시에 처리
+    const pipeline = kv.pipeline();
+    pipeline.incr(postKey);  // 포스트 개별 조회수
+    pipeline.incr(totalKey); // 블로그 전체 누적 조회수
+    pipeline.incr(todayKey); // 오늘 하루 전체 조회수
+    
+    // 오늘 키는 48시간 뒤 자동 삭제 (메모리 절약)
+    pipeline.expire(todayKey, 60 * 60 * 48);
+    
+    const results = await pipeline.exec();
+    
+    // 첫 번째 결과(포스트 조회수) 반환
+    return (results[0] as number) ?? 0;
   } catch (error) {
     console.error(`❌ [KV] Failed to increment views for ${slug}:`, error);
-    // 에러 시 0 반환 (서비스는 계속 작동해야 함)
     return 0;
   }
 }
 
+/**
+ * 사이드바용 글로벌 통계 데이터 가져오기
+ */
+export async function getGlobalStats() {
+  const totalKey = 'views:total';
+  const today = new Date().toISOString().split('T')[0];
+  const todayKey = `views:today:${today}`;
+  
+  try {
+    const [total, todayCount] = await kv.mget<number[]>(totalKey, todayKey);
+    return {
+      total: total ?? 0,
+      today: todayCount ?? 0
+    };
+  } catch (error) {
+    console.error('❌ [KV] Failed to get global stats:', error);
+    return { total: 0, today: 0 };
+  }
+}
+
 export async function getViewCount(slug: string): Promise<number> {
-  const key = `views:${slug}`;
+  const key = `views:post:${slug}`;
   try {
     const count = await kv.get<number>(key);
     return count ?? 0;
   } catch (error) {
     console.error(`❌ [KV] Failed to get view count for ${slug}:`, error);
     return 0;
-  }
-}
-
-/**
- * 모든 포스트의 조회수를 한 번에 가져오는 배치 유틸리티
- * 메인 리스트에서 각 포스트의 조회수를 보여줄 때 유용합니다.
- */
-export async function getAllViewCounts(slugs: string[]): Promise<Record<string, number>> {
-  if (slugs.length === 0) return {};
-  
-  try {
-    const keys = slugs.map(slug => `views:${slug}`);
-    // 💡 Redis MGET 명령어로 한 번의 네트워크 요청으로 모든 값 조회
-    const counts = await kv.mget<number[]>(...keys);
-    
-    return slugs.reduce((acc, slug, index) => {
-      acc[slug] = counts[index] ?? 0;
-      return acc;
-    }, {} as Record<string, number>);
-  } catch (error) {
-    console.error('❌ [KV] Failed to get multiple view counts:', error);
-    return {};
   }
 }

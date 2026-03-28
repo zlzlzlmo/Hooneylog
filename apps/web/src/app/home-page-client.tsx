@@ -7,7 +7,13 @@ import { Search } from '@/components/features/search';
 import { Sidebar } from '@/components/layout/sidebar';
 import { PostItemList } from '@/components/blocks/post-item-list';
 
-export function HomePageClient({ initialPosts }: { initialPosts: NotionPost[] }) {
+export function HomePageClient({ 
+  initialPosts, 
+  stats 
+}: { 
+  initialPosts: NotionPost[],
+  stats: { total: number, today: number }
+}) {
   const {
     searchValue,
     currentActiveCategory,
@@ -25,6 +31,7 @@ export function HomePageClient({ initialPosts }: { initialPosts: NotionPost[] })
           categories={categoryCount.orderedListByDescendingCount}
           currentActiveCategory={currentActiveCategory}
           handleCurrentActiveCategory={setCurrentActiveCategory}
+          stats={stats}
         />
         
         {/* Main Content Area */}

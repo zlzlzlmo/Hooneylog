@@ -6,9 +6,10 @@ interface CategoryProps {
   categories: [string, number][];
   currentActiveCategory: string;
   handleCurrentActiveCategory: (cate: string) => void;
+  stats?: { total: number, today: number };
 }
 
-export function Sidebar({ categories, currentActiveCategory, handleCurrentActiveCategory }: CategoryProps) {
+export function Sidebar({ categories, currentActiveCategory, handleCurrentActiveCategory, stats }: CategoryProps) {
   return (
     <aside className="w-full lg:w-[220px] flex-shrink-0 lg:sticky lg:top-[120px] lg:max-h-[calc(100vh-120px)] pb-10">
       {/* Profile Section */}
@@ -25,7 +26,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
       <div className="text-[12px] font-semibold text-notion-secondary mb-2 px-2 uppercase tracking-wider hidden lg:block">
         Categories
       </div>
-      <ul className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-300px)] no-scrollbar pb-4 lg:pb-0">
+      <ul className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-450px)] no-scrollbar pb-4 lg:pb-0">
         {categories.map(([name]) => {
           const isActive = name === currentActiveCategory;
           
@@ -47,6 +48,25 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
           );
         })}
       </ul>
+
+      {/* Blog Stats Section */}
+      {stats && (
+        <div className="mt-10 px-3 hidden lg:block border-t border-notion-border pt-6">
+          <div className="text-[12px] font-semibold text-notion-secondary mb-3 uppercase tracking-wider">
+            Blog Stats
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center text-[13px]">
+              <span className="text-notion-secondary">Total Views</span>
+              <span className="font-mono text-notion-text font-medium">{stats.total.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center text-[13px]">
+              <span className="text-notion-secondary">Today</span>
+              <span className="font-mono text-notion-text font-medium text-blue-500">+{stats.today.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
