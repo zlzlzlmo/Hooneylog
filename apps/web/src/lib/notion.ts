@@ -25,8 +25,22 @@ n2m.setCustomTransformer('callout', async (block) => {
 
 const databaseId = process.env.NOTION_DATABASE_ID ?? '';
 
+// Helper for retrying Notion API calls to handle transient network errors
+async function withRetry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      console.warn(`Notion API call failed, retrying in ${delay}ms... (${retries} retries left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return withRetry(fn, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+}
+
 export const getNotionPageMarkdown = cache(async (pageId: string) => {
-  const mdblocks = await n2m.pageToMarkdown(pageId);
+  const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
   const mdString = n2m.toMarkdownString(mdblocks);
   
   // Fix notion-to-md's adjacent marker bugs that break ReactMarkdown
@@ -71,7 +85,7 @@ class NotionBlockMapper {
 export const getAllPosts = cache(async (): Promise<NotionPost[]> => {
   if (!databaseId) return [];
 
-  const response = await notion.databases.query({
+  const response = await withRetry(() => notion.databases.query({
     database_id: databaseId,
     filter: {
       property: 'status',
@@ -85,7 +99,7 @@ export const getAllPosts = cache(async (): Promise<NotionPost[]> => {
         direction: 'descending',
       },
     ],
-  });
+  }));
 
   const rawPosts = response.results as unknown as IRawNotionPost[];
 
@@ -113,10 +127,10 @@ export const getBlocksById = cache(async (id: string): Promise<BlockObjectRespon
   let cursor: string | undefined = undefined;
 
   while (true) {
-    const { results, next_cursor } = await notion.blocks.children.list({
+    const { results, next_cursor } = await withRetry(() => notion.blocks.children.list({
       block_id: id,
       start_cursor: cursor,
-    });
+    }));
     
     // Filter out partial blocks to ensure we have full BlockObjectResponse
     const fullBlocks = results.filter((block): block is BlockObjectResponse => 'type' in block);
