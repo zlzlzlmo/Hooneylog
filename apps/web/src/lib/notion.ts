@@ -12,9 +12,10 @@ const n2m = new NotionToMarkdown({ notionClient: notion });
 
 // Add custom transformer for Callouts
 n2m.setCustomTransformer('callout', async (block) => {
+  if (!('type' in block) || block.type !== 'callout') return '';
   const { callout } = block;
   const icon = callout.icon?.type === 'emoji' ? callout.icon.emoji : '💡';
-  const text = callout.rich_text.map(t => t.plain_text).join('');
+  const text = callout.rich_text.map((t) => t.plain_text).join('');
   
   return `<div class="notion-callout">
     <div class="notion-callout-icon">${icon}</div>
@@ -115,13 +116,14 @@ export const getBlocksById = cache(async (id: string) => {
     cursor = next_cursor;
   }
 
-  return blocks.map((block: any) => {
+  return blocks.map((block) => {
+    if (!('type' in block)) return { id: block.id };
     const { id, type } = block;
 
     return {
       id,
       type,
-      [type]: block[type],
+      [type as string]: (block as Record<string, unknown>)[type as string],
     };
   });
 });
