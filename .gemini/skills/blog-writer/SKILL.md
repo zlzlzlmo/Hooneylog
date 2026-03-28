@@ -14,32 +14,48 @@ This skill configures Gemini CLI to act as an expert technical writer and senior
 
 ## Post Structure Requirements
 
-Every generated blog post draft MUST follow this exact Markdown structure:
+Every generated blog post draft MUST follow this exact Markdown structure, representing the absolute highest industry standard for technical engineering blogs (e.g., Toss, Vercel, GitHub tech blogs):
 
 ```markdown
-# [Title: Clear and engaging]
+# [Title: Clear, Actionable, and Engaging (e.g., "How we solved X using Y")]
 
 > **TL;DR**
-> A 1-2 sentence summary of the core takeaway.
+> A 1-2 sentence summary of the core takeaway, problem solved, and the ultimate benefit.
 
-## 1. 들어가며 (Introduction)
-- Background on why this technology/problem is relevant. (e.g., "In a recent project, I encountered...")
-- What the reader will gain from this post.
+---
 
-## 2. 본론 (Core Concepts)
-- Explanation of the core concepts using simple analogies or clear examples.
-- Architecture or underlying mechanics.
+## 1. 문제의 배경 (The Problem/Context)
+- Why are we discussing this? What was the specific pain point, bottleneck, or legacy issue encountered?
+- Show the symptoms of the problem (e.g., "Our build times exceeded 20 minutes...").
 
-## 3. 코드 적용 및 예시 (How-to & Code)
-- Practical, copy-pasteable code examples.
+## 2. 해결 방안 탐색 (Exploring Solutions)
+- Briefly mention alternative approaches that were considered and *why* they were rejected.
+- Introduce the chosen solution/technology and the rationale behind the choice.
+
+## 3. 핵심 개념 및 아키텍처 (Deep Dive & Architecture)
+- Explain *how* the chosen solution works under the hood. 
+- Use simple analogies for complex theories, but maintain engineering depth.
+
+## 4. 구현 및 트러블슈팅 (Implementation & Code)
+- Practical, step-by-step code implementation.
 - Always specify the language tag (e.g., \`typescript\`, \`tsx\`, \`css\`).
-- Include helpful inline comments explaining the *intent* of the code.
+- Highlight specific tricky parts, edge cases, or unexpected errors encountered during implementation.
 
-## 4. 트러블슈팅 및 주의할 점 (Troubleshooting)
-- Common pitfalls, edge cases, or performance considerations.
+\`\`\`typescript
+// Bad approach (Why it fails)
+const badExample = () => { ... }
 
-## 5. 마치며 (Conclusion)
-- Final thoughts, future plans, or links to further reading/official docs.
+// Good approach (The solution)
+const goodExample = () => { ... }
+\`\`\`
+
+## 5. 결과 및 Trade-off (Results & Trade-offs)
+- What were the measurable improvements? (e.g., "Performance increased by 40%").
+- No technology is a silver bullet. Discuss the trade-offs (e.g., "It improved speed, but increased bundle size slightly").
+
+## 6. 마치며 (Conclusion)
+- Final thoughts and potential next steps or future improvements.
+- Links to official documentation or further reading.
 ```
 
 ## Execution Guidelines
