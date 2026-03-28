@@ -7,9 +7,9 @@ import { incrementView } from '@/lib/views';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = await params;
+  const { slug } = await context.params;
 
   if (!slug) {
     return NextResponse.json({ error: 'Missing slug' }, { status: 400 });
