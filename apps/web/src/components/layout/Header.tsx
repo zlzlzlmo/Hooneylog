@@ -18,21 +18,6 @@ export function Header() {
           <span className="font-semibold text-[15px] text-notion-text tracking-tight">HooneyLog</span>
         </Link>
         <div className="h-[20px] w-[1px] bg-notion-border mx-1 hidden sm:block"></div>
-        
-        {/* Navigation Dropdown Triggers */}
-        <nav className="hidden sm:flex items-center h-full">
-          <Link href="/" className="flex items-center gap-1 px-3 py-1 h-[32px] rounded-[4px] hover:bg-notion-hover text-[14px] font-medium text-notion-text transition-colors">
-            블로그
-          </Link>
-          <a 
-            href="https://github.com/cmarketplace" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="flex items-center gap-1 px-3 py-1 h-[32px] rounded-[4px] hover:bg-notion-hover text-[14px] font-medium text-notion-text transition-colors"
-          >
-            GitHub
-          </a>
-        </nav>
       </div>
       
       {/* Theme toggle or extra icons could go here in the future, currently empty to keep it clean */}

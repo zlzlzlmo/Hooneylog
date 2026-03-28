@@ -26,7 +26,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
       <div className="text-[12px] font-semibold text-notion-secondary mb-2 px-2 uppercase tracking-wider hidden lg:block">
         Categories
       </div>
-      <ul className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-x-visible no-scrollbar pb-4 lg:pb-0">
+      <ul className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-300px)] no-scrollbar pb-4 lg:pb-0">
         {categories.map(([name]) => {
           const isActive = name === currentActiveCategory;
           
