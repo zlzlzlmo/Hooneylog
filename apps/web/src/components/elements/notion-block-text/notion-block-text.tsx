@@ -18,6 +18,9 @@ export function NotionBlockText({ richText }: NotionBlockTextProps) {
           href,
         } = value;
 
+        // Clean up any remaining markdown escaping from the plain_text
+        const cleanText = plain_text.replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
+
         const classes = [
           bold ? 'font-bold' : '',
           italic ? 'italic' : '',
@@ -38,14 +41,14 @@ export function NotionBlockText({ richText }: NotionBlockTextProps) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {plain_text}
+              {cleanText}
             </a>
           );
         }
 
         return (
           <span key={index} className={classes} style={style}>
-            {plain_text}
+            {cleanText}
           </span>
         );
       })}

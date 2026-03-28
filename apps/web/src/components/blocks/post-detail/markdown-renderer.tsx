@@ -10,7 +10,27 @@ interface MarkdownRendererProps {
   content: string;
 }
 
+/**
+ * Final client-side cleanup for markdown strings.
+ * This handles any remaining over-escaping that might have bypassed server-side filters or caches.
+ */
+function finalCleanup(md: string): string {
+  if (!md) return md;
+  let result = md;
+  let previous;
+  
+  // Recursive unescape to handle multiple layers of backslashes
+  do {
+    previous = result;
+    result = result.replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
+  } while (result !== previous);
+
+  return result;
+}
+
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  const cleanContent = finalCleanup(content);
+
   return (
     <div className="prose prose-notion max-w-none w-full">
       <ReactMarkdown
@@ -170,7 +190,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           }
         }}
       >
-        {content}
+        {cleanContent}
       </ReactMarkdown>
     </div>
   );
