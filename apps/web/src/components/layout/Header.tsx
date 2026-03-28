@@ -21,12 +21,9 @@ export function Header() {
         
         {/* Navigation Dropdown Triggers */}
         <nav className="hidden sm:flex items-center h-full">
-          <button className="flex items-center gap-1 px-3 py-1 h-[32px] rounded-[4px] hover:bg-notion-hover text-[14px] font-medium text-notion-text transition-colors">
+          <Link href="/" className="flex items-center gap-1 px-3 py-1 h-[32px] rounded-[4px] hover:bg-notion-hover text-[14px] font-medium text-notion-text transition-colors">
             블로그
-            <svg className="w-2.5 h-2.5 ml-1 opacity-50" viewBox="0 0 30 30" fill="currentColor">
-              <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-            </svg>
-          </button>
+          </Link>
           <a 
             href="https://github.com/cmarketplace" 
             target="_blank" 
@@ -38,16 +35,8 @@ export function Header() {
         </nav>
       </div>
       
+      {/* Theme toggle or extra icons could go here in the future, currently empty to keep it clean */}
       <div className="flex items-center gap-2">
-        <a 
-          href="#" 
-          className="hidden sm:flex px-3 py-1 text-[14px] font-medium text-notion-text hover:bg-notion-hover rounded-[4px] transition-colors"
-        >
-          로그인
-        </a>
-        <button className="px-3 py-1.5 h-[32px] bg-notion-text text-white text-[14px] font-medium rounded-[4px] hover:bg-black transition-colors flex items-center justify-center">
-          Notion 무료로 사용하기
-        </button>
       </div>
     </header>
   );

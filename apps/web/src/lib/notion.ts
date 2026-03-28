@@ -2,12 +2,20 @@ import 'server-only';
 import { Client } from '@notionhq/client';
 import { cache } from 'react';
 import { INotionProperties, NotionPost, IRawNotionPost } from '@hooneylog/shared-types';
+import { NotionToMarkdown } from 'notion-to-md';
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
 
+const n2m = new NotionToMarkdown({ notionClient: notion });
+
 const databaseId = process.env.NOTION_DATABASE_ID ?? '';
+
+export const getNotionPageMarkdown = cache(async (pageId: string) => {
+  const mdblocks = await n2m.pageToMarkdown(pageId);
+  return n2m.toMarkdownString(mdblocks);
+});
 
 class NotionBlockMapper {
   private readonly properties: INotionProperties;

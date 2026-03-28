@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllPosts, getPostById, getBlocksById } from '@/lib/notion';
-import { PostDetailInfo } from '@/components/blocks/postDetail/PostDetailInfo';
-import { PostBlocks } from '@/components/blocks/postDetail/PostBlocks';
+import { getAllPosts, getPostById, getNotionPageMarkdown } from '@/lib/notion';
+import { PostHeader } from '@/components/blocks/postDetail/PostHeader';
+import { MarkdownRenderer } from '@/components/blocks/postDetail/MarkdownRenderer';
 import { MoveToAnotherPost } from '@/components/blocks/postDetail/MoveToAnotherPost';
 import { FacebookComment } from '@/components/blocks/postDetail/FacebookComment';
 import { getAdjacentPosts } from '@/utils/adjacentPosts';
@@ -44,10 +44,10 @@ export async function generateStaticParams() {
 export default async function PostDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
 
-  const [allPosts, post, blocks] = await Promise.all([
+  const [allPosts, post, markdown] = await Promise.all([
     getAllPosts(),
     getPostById(slug),
-    getBlocksById(slug)
+    getNotionPageMarkdown(slug)
   ]);
 
   if (!post) {
@@ -57,15 +57,30 @@ export default async function PostDetailPage({ params }: { params: Params }) {
   const { previousPost, nextPost } = getAdjacentPosts(allPosts, slug);
 
   return (
-    <main className="w-full max-w-[850px] mx-auto py-20 px-6">
-      <PostDetailInfo 
-        title={post.title} 
-        createdAt={post.createdAt} 
-        tags={post.tags} 
-      />
-      <PostBlocks blocks={blocks} />
-      <MoveToAnotherPost previousPost={previousPost} nextPost={nextPost} />
-      <FacebookComment slug={slug} />
-    </main>
+    <div className="w-full flex flex-col items-center pt-10 pb-20">
+      
+      {/* Unified Layout Container for Detail Page */}
+      <div className="w-full max-w-[800px] px-4 sm:px-6 mx-auto flex flex-col items-center">
+        
+        {/* 1. Top Section (Header + Author) */}
+        <section className="w-full mb-12">
+          <PostHeader 
+            title={post.title}
+            category={post.category}
+            createdAt={post.createdAt}
+            tags={post.tags}
+          />
+        </section>
+
+        {/* 2. Main Body Layout (Content) */}
+        <section className="w-full">
+          <MarkdownRenderer content={markdown.parent} />
+          
+          <MoveToAnotherPost previousPost={previousPost} nextPost={nextPost} />
+          <FacebookComment slug={slug} />
+        </section>
+        
+      </div>
+    </div>
   );
 }

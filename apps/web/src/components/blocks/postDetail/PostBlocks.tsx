@@ -9,7 +9,7 @@ export function PostBlocks({ blocks }: PostBlocksProps) {
   if (!blocks || blocks.length === 0) return null;
 
   return (
-    <article className="w-full mx-auto max-w-[850px] pb-20">
+    <article className="w-full pb-20">
       {blocks.map((block) => (
         <Fragment key={block.id}>
           <PostBlock block={block} />

@@ -59,15 +59,9 @@ export function PostItemList({ posts }: PostItemListProps) {
                 {post.description}
               </p>
               
-              {/* Fake Person/Author footer for authentic look */}
-              <div className="flex items-center gap-2 mt-auto pt-2">
-                <div className="w-[24px] h-[24px] rounded-full overflow-hidden relative border border-notion-border/50">
-                  <Image src="/images/profile.png" alt="Author" fill className="object-cover" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[13px] font-medium text-notion-text leading-tight">Seunghoon Shin</span>
-                  <span className="text-[12px] text-notion-secondary leading-tight">{formatDate(post.createdAt)}</span>
-                </div>
+              {/* Date footer */}
+              <div className="flex items-center justify-end mt-auto pt-4">
+                <span className="text-[13px] text-notion-secondary font-mono">{formatDate(post.createdAt)}</span>
               </div>
             </div>
           </Link>
