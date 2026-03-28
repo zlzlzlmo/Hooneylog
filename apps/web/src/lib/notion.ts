@@ -52,7 +52,7 @@ export const getNotionPageMarkdown = cache(async (pageId: string) => {
       .replace(/__ __/g, ' ')
       // Unescape markdown markers that notion-to-md often over-escapes
       // This ensures bold (**), italic (_), code (`), etc. render correctly
-      .replace(/\\([*|_~`\[\]()#])/g, '$1');
+      .replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
   }
 
   return mdString;
