@@ -1,0 +1,10 @@
+@import "styles/mixin";
+
+.container {
+    font-size: max(2.5vw,3rem);
+    @include flexCenter;
+
+    .text {
+        text-align: center;
+    }
+}

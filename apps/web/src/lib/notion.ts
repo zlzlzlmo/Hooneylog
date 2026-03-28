@@ -1,0 +1,107 @@
+import 'server-only';
+import { Client } from '@notionhq/client';
+import { cache } from 'react';
+import { INotionProperties, NotionPost, IRawNotionPost } from '@hooneylog/shared-types';
+
+const notion = new Client({
+  auth: process.env.NOTION_API_KEY,
+});
+
+const databaseId = process.env.NOTION_DATABASE_ID ?? '';
+
+class NotionBlockMapper {
+  private readonly properties: INotionProperties;
+
+  constructor(properties: INotionProperties) {
+    this.properties = properties;
+  }
+
+  get title() {
+    return this.properties.이름?.title?.[0]?.plain_text || '';
+  }
+
+  get createdAt() {
+    return this.properties.created_date?.created_time || '';
+  }
+
+  get category() {
+    return this.properties.category?.multi_select?.[0]?.name || '';
+  }
+
+  get tags() {
+    return this.properties.tag?.multi_select || [];
+  }
+
+  get description() {
+    return this.properties.description?.rich_text?.[0]?.plain_text || '';
+  }
+}
+
+export const getAllPosts = cache(async (): Promise<NotionPost[]> => {
+  if (!databaseId) return [];
+
+  const response = await notion.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: 'status',
+      select: {
+        equals: 'published',
+      },
+    },
+    sorts: [
+      {
+        timestamp: 'created_time',
+        direction: 'descending',
+      },
+    ],
+  });
+
+  const rawPosts = response.results as unknown as IRawNotionPost[];
+
+  return rawPosts.map(({ id, properties }) => {
+    const block = new NotionBlockMapper(properties);
+    return {
+      id,
+      title: block.title,
+      tags: block.tags,
+      createdAt: block.createdAt,
+      category: block.category,
+      description: block.description,
+    };
+  });
+});
+
+export const getPostById = cache(async (postId: string): Promise<NotionPost | undefined> => {
+  const posts = await getAllPosts();
+  return posts.find(({ id }) => id === postId);
+});
+
+export const getBlocksById = cache(async (id: string) => {
+  if (!id) return [];
+  const blocks = [];
+  let cursor: string | undefined = undefined;
+
+  while (true) {
+    const { results, next_cursor } = await notion.blocks.children.list({
+      block_id: id,
+      start_cursor: cursor,
+    });
+    
+    blocks.push(...results);
+    if (!next_cursor) {
+      break;
+    }
+
+    cursor = next_cursor;
+  }
+
+  return blocks.map((block: any) => {
+    const { id, type } = block;
+
+    return {
+      id,
+      type,
+      [type]: block[type],
+    };
+  });
+});
