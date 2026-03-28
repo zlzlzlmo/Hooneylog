@@ -29,7 +29,7 @@ export class BaseApiService {
     return this.request<T>(path, { ...options, method: 'GET' });
   }
 
-  protected post<T>(path: string, body?: any, options: RequestInit = {}): Promise<T> {
+  protected post<T>(path: string, body?: unknown, options: RequestInit = {}): Promise<T> {
     return this.request<T>(path, {
       ...options,
       method: 'POST',
@@ -37,7 +37,7 @@ export class BaseApiService {
     });
   }
 
-  protected put<T>(path: string, body?: any, options: RequestInit = {}): Promise<T> {
+  protected put<T>(path: string, body?: unknown, options: RequestInit = {}): Promise<T> {
     return this.request<T>(path, {
       ...options,
       method: 'PUT',
