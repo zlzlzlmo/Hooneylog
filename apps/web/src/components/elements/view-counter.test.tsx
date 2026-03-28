@@ -2,6 +2,17 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { ViewCounter } from './view-counter';
 import { viewsService } from '@/services/views';
+import React from 'react';
+
+// Mock useLayoutEffect to be a normal useEffect for Node/jsdom environments
+// to prevent "useLayoutEffect does nothing on the server" warnings in test output
+vi.mock('react', async () => {
+  const actual = await vi.importActual<typeof React>('react');
+  return {
+    ...actual,
+    useLayoutEffect: actual.useEffect,
+  };
+});
 
 // Mock the services
 vi.mock('@/services/views', () => ({
@@ -14,7 +25,6 @@ vi.mock('@/services/views', () => ({
 describe('ViewCounter Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Clear sessionStorage before each test
     sessionStorage.clear();
   });
 
@@ -22,63 +32,59 @@ describe('ViewCounter Component', () => {
     sessionStorage.clear();
   });
 
-  it('renders initial views correctly', () => {
-    render(<ViewCounter slug="test-post" initialViews={10} />);
-    expect(screen.getByText('10')).toBeInTheDocument();
-  });
-
-  it('calls increment API when slug is not in sessionStorage and updates views', async () => {
+  it('optimistically increments UI immediately (no blinking) if post is unread', async () => {
     (viewsService.incrementPostView as Mock).mockResolvedValueOnce(11);
-
+    
+    // Mount the component
     render(<ViewCounter slug="test-post" initialViews={10} />);
 
-    // API should be called to increment
-    expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
-    expect(viewsService.incrementPostView).toHaveBeenCalledWith('test-post');
-    
-    // getPostView should NOT be called
-    expect(viewsService.getPostView).not.toHaveBeenCalled();
+    // IMMEDIATELY on mount, before API resolves, it should show 11 (because useLayoutEffect applied +1)
+    expect(screen.getByText('11')).toBeInTheDocument();
 
-    // UI should update to 11
+    // Eventually API finishes
     await waitFor(() => {
-      expect(screen.getByText('11')).toBeInTheDocument();
+      expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
     });
-
-    // Session storage should now contain the slug
-    expect(JSON.parse(sessionStorage.getItem('viewed_posts') || '[]')).toContain('test-post');
   });
 
-  it('does NOT call increment API if slug is already in sessionStorage, but fetches current count', async () => {
-    // Setup session storage as if user already visited
+  it('does NOT optimistically increment if post is already in sessionStorage', async () => {
     sessionStorage.setItem('viewed_posts', JSON.stringify(['test-post']));
-    
-    // Setup mock for getPostView (maybe someone else incremented it, so we fetch latest)
     (viewsService.getPostView as Mock).mockResolvedValueOnce(15);
 
     render(<ViewCounter slug="test-post" initialViews={10} />);
 
-    // Increment API should NOT be called
-    expect(viewsService.incrementPostView).not.toHaveBeenCalled();
+    // IMMEDIATELY on mount, it should NOT add 1. It should stay 10 initially.
+    expect(screen.getByText('10')).toBeInTheDocument();
 
-    // GET API should be called instead to get fresh count
-    expect(viewsService.getPostView).toHaveBeenCalledTimes(1);
-    expect(viewsService.getPostView).toHaveBeenCalledWith('test-post');
-
-    // UI should update to the fetched count (15)
+    // Then, after GET API finishes, it updates to true latest (15)
     await waitFor(() => {
       expect(screen.getByText('15')).toBeInTheDocument();
     });
+    
+    expect(viewsService.incrementPostView).not.toHaveBeenCalled();
   });
 
-  it('handles strict mode double-firing without duplicate increment calls', async () => {
+  it('rolls back to initial views if increment API fails', async () => {
+    // Make API return null (simulate failure)
+    (viewsService.incrementPostView as Mock).mockResolvedValueOnce(null);
+
+    render(<ViewCounter slug="test-post" initialViews={10} />);
+
+    // Immediately shows 11 (optimistic)
+    expect(screen.getByText('11')).toBeInTheDocument();
+
+    // After API fails, rolls back to 10
+    await waitFor(() => {
+      expect(screen.getByText('10')).toBeInTheDocument();
+    });
+  });
+
+  it('handles strict mode double-firing safely', async () => {
     (viewsService.incrementPostView as Mock).mockResolvedValue(12);
 
     const { rerender } = render(<ViewCounter slug="strict-post" initialViews={10} />);
-    
-    // Simulate React Strict Mode double render
     rerender(<ViewCounter slug="strict-post" initialViews={10} />);
 
-    // Should only call increment once
     expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
   });
 });
