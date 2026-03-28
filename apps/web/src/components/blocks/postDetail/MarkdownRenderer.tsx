@@ -86,6 +86,33 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           hr({ node, ...props }: any) {
             return <hr className="w-full h-[1px] bg-notion-border border-none my-[16px]" {...props} />;
+          },
+          // Notion-style Table Customization
+          table({ node, children, ...props }: any) {
+            return (
+              <div className="my-6 overflow-x-auto">
+                <table className="w-full border-collapse border border-notion-border text-[14px]" {...props}>
+                  {children}
+                </table>
+              </div>
+            );
+          },
+          thead({ node, children, ...props }: any) {
+            return <thead className="bg-[#F7F6F3]" {...props}>{children}</thead>;
+          },
+          th({ node, children, ...props }: any) {
+            return (
+              <th className="border border-notion-border px-4 py-2 text-left font-semibold text-notion-secondary uppercase tracking-wider" {...props}>
+                {children}
+              </th>
+            );
+          },
+          td({ node, children, ...props }: any) {
+            return (
+              <td className="border border-notion-border px-4 py-2 text-notion-text" {...props}>
+                {children}
+              </td>
+            );
           }
         }}
       >
