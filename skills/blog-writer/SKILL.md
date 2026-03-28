@@ -22,8 +22,7 @@ This skill configures Gemini CLI to act as an expert technical writer and senior
 ```markdown
 # [초안 제목: 명확하고 시선을 끄는 제목]
 
-> **TL;DR**
-> 이 글의 핵심 내용, 해결한 문제, 그리고 얻은 이점을 1~2문장으로 요약합니다.
+<div class="notion-callout"><div class="notion-callout-icon">💡</div><div class="notion-callout-content">이 글의 핵심 내용과 해결한 문제, 그리고 얻은 이점을 1~2문장으로 요약합니다.</div></div>
 
 ---
 

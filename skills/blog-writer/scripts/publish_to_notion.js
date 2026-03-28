@@ -18,6 +18,14 @@ async function publish(title, markdownContent, category, tagsJson) {
     const blocks = markdownToBlocks(markdownContent);
     const tagOptions = tags.map(tag => ({ name: tag }));
 
+    // Clean up markdown for the description (strip #, *, >)
+    const cleanDescription = markdownContent
+      .replace(/[#*>`]/g, '') // Remove MD markers
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Keep link text, remove URL
+      .substring(0, 160)
+      .trim()
+      .replace(/\n/g, ' ') + '...';
+
     const response = await notion.pages.create({
       parent: { database_id: DATABASE_ID },
       properties: {
@@ -34,7 +42,7 @@ async function publish(title, markdownContent, category, tagsJson) {
           multi_select: tagOptions,
         },
         'description': {
-          rich_text: [{ text: { content: markdownContent.substring(0, 150).replace(/\n/g, ' ') + '...' } }],
+          rich_text: [{ text: { content: cleanDescription } }],
         }
       },
       children: blocks,
