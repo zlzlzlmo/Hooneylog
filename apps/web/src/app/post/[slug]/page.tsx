@@ -6,7 +6,7 @@ import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-rende
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
 import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
-import { getCategoryImage } from '@/utils/category-image';
+import { getCategoryImageSrc } from '@/utils/category-image';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return { title: 'Post Not Found' };
   }
 
-  const categoryImage = getCategoryImage(post.category);
+  const categoryImage = getCategoryImageSrc(post.category);
 
   return {
     title: post.title, // layout.tsx의 template에 의해 제목 | HooneyLog로 표시됨
@@ -84,7 +84,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: getCategoryImage(post.category),
+    image: getCategoryImageSrc(post.category),
     datePublished: post.createdAt,
     dateModified: post.createdAt,
     author: {
