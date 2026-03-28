@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { incrementView } from '@/lib/views';
+import { incrementView, getViewCount } from '@/lib/views';
+
+/**
+ * 💡 업계 표준: 조회수 조회 API
+ */
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await context.params;
+
+  if (!slug) {
+    return NextResponse.json({ error: 'Missing slug' }, { status: 400 });
+  }
+
+  try {
+    const count = await getViewCount(slug);
+    return NextResponse.json({ views: count });
+  } catch (error) {
+    console.error(`❌ [API] Failed to get views for ${slug}:`, error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
 
 /**
  * 💡 업계 표준: 조회수 증가 API

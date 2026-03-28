@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { kv } from '@vercel/kv';
-import { incrementView, getGlobalStats, getViewCount, getViewCounts } from './views';
+import { incrementView, getGlobalStats, getViewCount, getViewCounts, incrementGlobalStats } from './views';
 
 // Mock the @vercel/kv module
 vi.mock('@vercel/kv', () => ({
@@ -29,6 +29,38 @@ describe('views utility', () => {
 
   afterEach(() => {
     console.error = originalConsoleError;
+  });
+
+  describe('incrementGlobalStats', () => {
+    it('successfully increments global total and today views', async () => {
+      const result = await incrementGlobalStats();
+      
+      expect(kv.pipeline).toHaveBeenCalled();
+      
+      const pipeline = kv.pipeline();
+      expect(pipeline.incr).toHaveBeenCalledWith('views:total');
+      
+      const today = new Date().toISOString().split('T')[0];
+      expect(pipeline.incr).toHaveBeenCalledWith(`views:today:${today}`);
+      expect(pipeline.expire).toHaveBeenCalledWith(`views:today:${today}`, 172800);
+      expect(pipeline.exec).toHaveBeenCalled();
+      
+      expect(result).toEqual({ total: 10, today: 100 });
+    });
+
+    it('returns default values on error', async () => {
+      const mockPipeline = {
+        incr: vi.fn(),
+        expire: vi.fn(),
+        exec: vi.fn().mockRejectedValue(new Error('Global increment failed')),
+      };
+      (kv.pipeline as Mock).mockReturnValue(mockPipeline);
+
+      const result = await incrementGlobalStats();
+      
+      expect(result).toEqual({ total: 0, today: 0 });
+      expect(console.error).toHaveBeenCalled();
+    });
   });
 
   describe('incrementView', () => {

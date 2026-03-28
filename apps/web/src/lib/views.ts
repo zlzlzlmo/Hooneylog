@@ -4,6 +4,29 @@ import { kv } from '@vercel/kv';
  * 💡 업계 표준 조회수 관리 유틸리티 (고성능 파이프라인 방식)
  */
 
+export async function incrementGlobalStats(): Promise<{ total: number; today: number }> {
+  const totalKey = 'views:total';
+  const today = new Date().toISOString().split('T')[0];
+  const todayKey = `views:today:${today}`;
+  
+  try {
+    const pipeline = kv.pipeline();
+    pipeline.incr(totalKey);
+    pipeline.incr(todayKey);
+    pipeline.expire(todayKey, 60 * 60 * 48);
+    
+    const results = await pipeline.exec();
+    
+    return {
+      total: (results[0] as number) ?? 0,
+      today: (results[1] as number) ?? 0
+    };
+  } catch (error) {
+    console.error('❌ [KV] Failed to increment global stats:', error);
+    return { total: 0, today: 0 };
+  }
+}
+
 export async function incrementView(slug: string): Promise<number> {
   const postKey = `views:post:${slug}`;
   const totalKey = 'views:total';

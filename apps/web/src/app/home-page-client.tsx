@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { NotionPost } from '@hooneylog/shared-types';
 import { useFilterPost } from '@/hooks/use-filter-post';
 import { CategoryCount } from '@/utils/category';
@@ -7,15 +8,21 @@ import { Search } from '@/components/features/search';
 import { Sidebar } from '@/components/layout/sidebar';
 import { PostItemList } from '@/components/blocks/post-item-list';
 
+import { viewsService } from '@/services/views';
+
 export function HomePageClient({ 
   initialPosts, 
-  stats,
-  viewsMap
+  stats: initialStats,
+  viewsMap: initialViewsMap
 }: { 
   initialPosts: NotionPost[],
   stats: { total: number, today: number },
   viewsMap: Record<string, number>
 }) {
+  const [stats, setStats] = useState(initialStats);
+  const [viewsMap, setViewsMap] = useState(initialViewsMap);
+  const hasIncremented = useRef(false);
+
   const {
     searchValue,
     currentActiveCategory,
@@ -25,6 +32,23 @@ export function HomePageClient({
   } = useFilterPost(initialPosts);
 
   const categoryCount = new CategoryCount(initialPosts);
+
+  // 💡 실시간 데이터 동기화 (ISR 캐시 우회)
+  useEffect(() => {
+    const syncViews = async () => {
+      // 1. 전체 통계 업데이트 및 가져오기 (서비스 레이어 사용)
+      const latestStats = await viewsService.getStats({ increment: !hasIncremented.current });
+      hasIncremented.current = true;
+      setStats(latestStats);
+
+      // 2. 현재 페이지의 포스트들 조회수 가져오기 (서비스 레이어 사용)
+      const slugs = initialPosts.map(p => p.id);
+      const latestViews = await viewsService.getMultipleCounts(slugs);
+      setViewsMap(latestViews);
+    };
+
+    syncViews();
+  }, [initialPosts]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 w-full mx-auto px-2 items-start mt-8">

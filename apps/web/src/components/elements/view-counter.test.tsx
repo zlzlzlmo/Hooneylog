@@ -26,9 +26,12 @@ describe('ViewCounter Component', () => {
 
     // API should be called once with POST
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith('/api/views/test-post', {
+    expect(global.fetch).toHaveBeenCalledWith('/api/views/test-post', expect.objectContaining({
       method: 'POST',
-    });
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }));
 
     // We optimistically update to 11 right away in the UI
     await waitFor(() => {
