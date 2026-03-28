@@ -43,12 +43,16 @@ export const getNotionPageMarkdown = cache(async (pageId: string) => {
   const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
   const mdString = n2m.toMarkdownString(mdblocks);
   
-  // Fix notion-to-md's adjacent marker bugs that break ReactMarkdown
-  // Example: **`code`****text** -> **`code`text**
+  // Fix notion-to-md's adjacent marker bugs and over-escaping that break ReactMarkdown
   if (mdString.parent) {
     mdString.parent = mdString.parent
       .replace(/\*\*\*\*/g, '')
-      .replace(/~~~~/g, '');
+      .replace(/~~~~/g, '')
+      .replace(/\*\* \*\*/g, ' ')
+      .replace(/__ __/g, ' ')
+      // Unescape markdown markers that notion-to-md often over-escapes
+      // This ensures bold (**), italic (_), code (`), etc. render correctly
+      .replace(/\\([*|_~`\[\]()#])/g, '$1');
   }
 
   return mdString;
