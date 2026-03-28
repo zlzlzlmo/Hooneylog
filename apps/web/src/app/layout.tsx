@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   description: "HooneyLog Blog based on Notion API",
   verification: {
-    google: "fRen9BNDD5VjyRybbMKn5tm68CqHW5r_XjGb4BTvmSg",
+    google: "uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE",
   },
   alternates: {
     canonical: "/",
