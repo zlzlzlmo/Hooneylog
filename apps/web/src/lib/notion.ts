@@ -46,13 +46,16 @@ export const getNotionPageMarkdown = cache(async (pageId: string) => {
   // Fix notion-to-md's adjacent marker bugs and over-escaping that break ReactMarkdown
   if (mdString.parent) {
     mdString.parent = mdString.parent
+      // 1. Remove redundant or empty markers
       .replace(/\*\*\*\*/g, '')
       .replace(/~~~~/g, '')
       .replace(/\*\* \*\*/g, ' ')
       .replace(/__ __/g, ' ')
-      // Unescape markdown markers that notion-to-md often over-escapes
-      // This ensures bold (**), italic (_), code (`), etc. render correctly
-      .replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
+      // 2. Unescape markdown markers that notion-to-md often over-escapes
+      // Covers: bold (**), italic (_), code (`), links ([]), images (![]), lists (-, 1.), etc.
+      .replace(/\\([*|_~`\[\]()#+!.-])/g, '$1')
+      // 3. Clean up excessive whitespace
+      .replace(/\n\n+/g, '\n\n');
   }
 
   return mdString;
