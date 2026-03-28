@@ -1,24 +1,20 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function Introduction() {
   return (
-    <div className="w-full py-20">
-      <section className="flex items-center gap-12 max-mobile:flex-col max-mobile:items-start">
-        <div className="w-[12rem] h-[12rem] rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+    <div className="w-full pt-[60px] pb-[40px] px-2 flex flex-col items-start w-full mx-auto">
+      <Link href="/" className="mb-8 hover:opacity-80 transition-opacity">
+        <div className="relative w-[157px] h-[93px]">
           <Image 
-            src="/images/profile.png"
-            alt="프로필 이미지"
-            width={192}
-            height={192}
+            src="/images/tools-and-craft-logo.svg" 
+            alt="Tools & Craft" 
+            fill 
+            className="object-contain"
             priority
-            className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex flex-col">
-          <h2 className="text-5xl font-bold mb-4">신승훈 블로그</h2>
-          <p className="text-3xl text-black/55">기록과 함께 성장해 나가는 한 프론트엔드개발자의 이야기</p>
-        </div>
-      </section>
+      </Link>
     </div>
   );
 }

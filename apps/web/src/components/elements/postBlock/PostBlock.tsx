@@ -1,16 +1,11 @@
 import React, { Fragment } from 'react';
-import Image from 'next/image';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { NotionBlockText } from '../notionBlockText/NotionBlockText';
 
-// Recursively render nested lists
 const BlockNestedList = (block: any) => {
   if (!block.has_children) return null;
-  
-  // Note: Nested children rendering requires fetching them first in Notion API. 
-  // For simplicity, assuming children are populated or ignoring them if not.
   return (
-    <ul className="pl-6 list-disc mt-2 space-y-1">
+    <ul className="pl-[24px] list-disc mt-1 space-y-1">
       {block.children?.map((child: any) => (
         <Fragment key={child.id}>
           <PostBlock block={child} />
@@ -29,28 +24,28 @@ export function PostBlock({ block }: { block: any }) {
   switch (type) {
     case 'paragraph':
       return (
-        <p className="text-[1.8rem] leading-[1.8] mb-[1.5rem] break-keep font-light">
+        <p className="text-[16px] leading-[1.6] mb-[2px] break-keep min-h-[24px] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
         </p>
       );
       
     case 'heading_1':
       return (
-        <h1 className="text-[4rem] font-bold mt-[5rem] mb-[2rem] leading-tight transition-opacity duration-500">
+        <h1 className="text-[30px] font-bold mt-[2em] mb-[4px] leading-[1.3] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
         </h1>
       );
       
     case 'heading_2':
       return (
-        <h2 className="text-[3rem] font-bold mt-[4rem] mb-[1.5rem] leading-tight pb-2 border-b border-gray-200 transition-opacity duration-500">
+        <h2 className="text-[24px] font-semibold mt-[1.4em] mb-[1px] leading-[1.3] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
         </h2>
       );
       
     case 'heading_3':
       return (
-        <h3 className="text-[2rem] font-bold mt-[3rem] mb-[1rem] leading-tight">
+        <h3 className="text-[20px] font-semibold mt-[1em] mb-[1px] leading-[1.3] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
         </h3>
       );
@@ -58,7 +53,7 @@ export function PostBlock({ block }: { block: any }) {
     case 'bulleted_list_item':
     case 'numbered_list_item':
       return (
-        <li className="text-[1.8rem] leading-[1.8] list-disc ml-6 mb-2">
+        <li className="text-[16px] leading-[1.6] list-disc ml-[24px] mb-[2px] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
           {BlockNestedList(block)}
         </li>
@@ -66,11 +61,16 @@ export function PostBlock({ block }: { block: any }) {
       
     case 'toggle':
       return (
-        <details className="mb-4 bg-gray-50 p-4 rounded-lg">
-          <summary className="cursor-pointer text-[1.8rem] font-medium outline-none">
-            <NotionBlockText richText={value.rich_text} />
+        <details className="mb-[2px] text-[16px] text-notion-text group">
+          <summary className="cursor-pointer list-none flex items-start outline-none hover:bg-notion-hover rounded-[3px] p-[2px] transition-colors -ml-[2px]">
+            <div className="w-[24px] h-[24px] flex items-center justify-center flex-shrink-0 transition-transform group-open:rotate-90">
+              <svg viewBox="0 0 100 100" className="w-[10px] h-[10px] fill-notion-secondary"><polygon points="5.9,88.2 5.9,11.8 81.1,50"></polygon></svg>
+            </div>
+            <div className="flex-1 leading-[1.5]">
+              <NotionBlockText richText={value.rich_text} />
+            </div>
           </summary>
-          <div className="mt-4">
+          <div className="pl-[24px] mt-1">
             {value.children?.map((child: any) => (
               <Fragment key={child.id}><PostBlock block={child} /></Fragment>
             ))}
@@ -82,31 +82,35 @@ export function PostBlock({ block }: { block: any }) {
       const src = value.type === 'external' ? value.external.url : value.file.url;
       const caption = value.caption && value.caption.length > 0 ? value.caption[0]?.plain_text : '';
       return (
-        <figure className="my-8 flex flex-col items-center">
+        <figure className="my-3 flex flex-col items-start w-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src={src} 
-            alt={caption || '블로그 이미지'} 
-            className="max-w-full rounded-lg shadow-sm"
+            alt={caption || 'image'} 
+            className="max-w-full rounded-[4px] border border-notion-border object-contain max-h-[70vh]"
           />
-          {caption && <figcaption className="mt-2 text-gray-500 text-sm text-center">{caption}</figcaption>}
+          {caption && <figcaption className="mt-2 text-[14px] text-notion-secondary">{caption}</figcaption>}
         </figure>
       );
       
     case 'divider':
-      return <hr className="my-10 border-t border-gray-300" />;
+      return <hr className="w-full h-[1px] bg-notion-border border-none my-[16px]" />;
       
     case 'quote':
       return (
-        <blockquote className="border-l-4 border-sub pl-6 py-2 my-6 bg-gray-50 text-[1.8rem] text-gray-700 italic rounded-r-lg">
+        <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[4px] text-[16px] leading-[1.5] text-notion-text">
           <NotionBlockText richText={value.rich_text} />
         </blockquote>
       );
       
     case 'code':
       return (
-        <div className="my-6 text-[1.6rem] rounded-lg overflow-hidden shadow-sm">
-          <SyntaxHighlighter language={value.language || 'typescript'}>
+        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden bg-[#F7F6F3] p-8 border border-notion-border font-mono">
+          <SyntaxHighlighter 
+            language={value.language || 'typescript'}
+            useInlineStyles={false}
+            className="code-highlighter !bg-transparent !p-0 !m-0 overflow-x-auto"
+          >
             {value.rich_text[0]?.plain_text || ''}
           </SyntaxHighlighter>
         </div>
@@ -119,17 +123,20 @@ export function PostBlock({ block }: { block: any }) {
           href={href} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="block my-4 p-4 border border-gray-200 rounded-lg text-sub hover:bg-gray-50 break-all transition-colors"
+          className="flex items-center border border-notion-border rounded-[3px] hover:bg-notion-hover transition-colors overflow-hidden my-[4px] no-underline h-[118px]"
         >
-          {href}
+          <div className="flex flex-col p-[14px] flex-1 min-w-0 justify-between h-full">
+             <div className="text-[14px] text-notion-text line-clamp-1 mb-[2px]">{href}</div>
+             <div className="text-[12px] text-notion-secondary line-clamp-2 mb-[6px]">{href}</div>
+             <div className="text-[12px] text-notion-text line-clamp-1 flex items-center gap-2">
+               🔗 {new URL(href).hostname}
+             </div>
+          </div>
         </a>
       );
       
     default:
-      return (
-        <div className="my-4 p-4 bg-red-50 text-red-500 rounded border border-red-200 text-sm">
-          ❌ Unsupported block type: {type === 'unsupported' ? 'unsupported by Notion API' : type}
-        </div>
-      );
+      // Silently ignore unsupported blocks or render a tiny placeholder
+      return null;
   }
 }

@@ -9,15 +9,17 @@ interface SearchProps {
 
 export function Search({ searchValue, handleSearchValue }: SearchProps) {
   return (
-    <section className="w-full h-16 border-[0.2rem] border-sub rounded-lg overflow-hidden relative mb-4">
-      <input
-        type="text"
-        placeholder="검색어를 입력하세요"
-        value={searchValue}
-        onChange={(e) => handleSearchValue(e.target.value)}
-        className="border-none h-full pl-20 w-full outline-none caret-sub text-[1.8rem] bg-transparent"
-      />
-      <BiSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 text-main" />
+    <section className="w-full relative mb-6 group">
+      <div className="flex items-center w-full bg-white border border-notion-border rounded-[4px] px-3 py-2 transition-all focus-within:border-[#A1A1AA] focus-within:shadow-[0_0_0_2px_rgba(46,170,220,0.2)]">
+        <BiSearch className="w-5 h-5 text-notion-secondary flex-shrink-0" />
+        <input
+          type="text"
+          placeholder="검색어를 입력하세요..."
+          value={searchValue}
+          onChange={(e) => handleSearchValue(e.target.value)}
+          className="w-full bg-transparent border-none outline-none text-[15px] ml-2 text-notion-text placeholder:text-notion-secondary/60"
+        />
+      </div>
     </section>
   );
 }

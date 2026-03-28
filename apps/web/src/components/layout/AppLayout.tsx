@@ -7,9 +7,9 @@ interface LayoutProps {
 
 export function AppLayout({ children }: LayoutProps) {
   return (
-    <div className="grid grid-rows-[6rem_1fr_10rem] relative w-full min-h-screen">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
-      <main className="max-w-[var(--container-max)] w-full mx-auto max-mobile:px-5">
+      <main className="flex-1 w-full max-w-[1392px] mx-auto px-4 sm:px-6 md:px-12">
         {children}
       </main>
       <Footer />

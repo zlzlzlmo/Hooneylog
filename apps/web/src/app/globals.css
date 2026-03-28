@@ -1,44 +1,38 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-main: #3F6393;
-  --color-sub: #5696FD;
-  --color-black26: #262626;
-  --color-light-grey: #F8F8F8;
-  --color-grey: #808080;
+  --color-notion-bg: #FFFFFF;
+  --color-notion-text: #37352F;
+  --color-notion-text-light: rgba(55, 53, 47, 0.65);
+  --color-notion-border: rgba(55, 53, 47, 0.16);
+  --color-notion-hover: rgba(55, 53, 47, 0.08);
+  --color-notion-gray-bg: #F1F1EF;
+  --color-notion-blue-bg: #E7F3F8;
+  --color-notion-blue-text: #0B6E99;
   
-  --container-max: 85rem;
-  --mobile-max: 60rem;
+  --container-max: 900px;
+  --breakpoint-mobile: 768px;
 
-  --breakpoint-mobile: 60rem;
-  
-  --animate-fadeIn: fadeIn 0.6s ease-in-out;
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  --font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-serif: 'Lyon-Text', Georgia, 'YuMincho', 'Nanum Myeongjo', serif;
+  --font-mono: 'iA Writer Quattro', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: var(--color-notion-bg);
+  --foreground: var(--color-notion-text);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .text-notion-secondary {
+    color: var(--color-notion-text-light);
+  }
 }
