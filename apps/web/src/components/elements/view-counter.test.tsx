@@ -1,13 +1,25 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { ViewCounter } from './view-counter';
+import { viewsService } from '@/services/views';
 
-// Mock fetch
-global.fetch = vi.fn();
+// Mock the services
+vi.mock('@/services/views', () => ({
+  viewsService: {
+    incrementPostView: vi.fn(),
+    getPostView: vi.fn(),
+  },
+}));
 
 describe('ViewCounter Component', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
+    // Clear sessionStorage before each test
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
   });
 
   it('renders initial views correctly', () => {
@@ -15,58 +27,58 @@ describe('ViewCounter Component', () => {
     expect(screen.getByText('10')).toBeInTheDocument();
   });
 
-  it('calls increment API exactly once on mount and updates the view count optimistically', async () => {
-    const mockResponse = { views: 11 };
-    (global.fetch as Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
-    });
+  it('calls increment API when slug is not in sessionStorage and updates views', async () => {
+    (viewsService.incrementPostView as Mock).mockResolvedValueOnce(11);
 
     render(<ViewCounter slug="test-post" initialViews={10} />);
 
-    // API should be called once with POST
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith('/api/views/test-post', expect.objectContaining({
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }));
+    // API should be called to increment
+    expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
+    expect(viewsService.incrementPostView).toHaveBeenCalledWith('test-post');
+    
+    // getPostView should NOT be called
+    expect(viewsService.getPostView).not.toHaveBeenCalled();
 
-    // We optimistically update to 11 right away in the UI
+    // UI should update to 11
     await waitFor(() => {
       expect(screen.getByText('11')).toBeInTheDocument();
     });
+
+    // Session storage should now contain the slug
+    expect(JSON.parse(sessionStorage.getItem('viewed_posts') || '[]')).toContain('test-post');
   });
 
-  it('does not increment multiple times on re-render (Strict Mode simulation)', () => {
-    (global.fetch as Mock).mockResolvedValue({
-      ok: true,
-      json: async () => ({ views: 11 }),
-    });
-
-    const { rerender } = render(<ViewCounter slug="test-post" initialViews={10} />);
+  it('does NOT call increment API if slug is already in sessionStorage, but fetches current count', async () => {
+    // Setup session storage as if user already visited
+    sessionStorage.setItem('viewed_posts', JSON.stringify(['test-post']));
     
-    // Simulate a re-render like Strict Mode does
-    rerender(<ViewCounter slug="test-post" initialViews={10} />);
-
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('falls back to initial view count if API fails', async () => {
-    (global.fetch as Mock).mockRejectedValueOnce(new Error('Network Error'));
-
-    // Console.error will be called, let's mock it to keep test output clean
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Setup mock for getPostView (maybe someone else incremented it, so we fetch latest)
+    (viewsService.getPostView as Mock).mockResolvedValueOnce(15);
 
     render(<ViewCounter slug="test-post" initialViews={10} />);
 
-    // Should still show 10 (since optimistic update might have changed it, we should revert it if failed, or just assume it stays 10 if we increment AFTER success or just catch the error and do nothing)
-    // Actually, optimistic UI usually adds 1, and if it fails, reverts to initial.
-    await waitFor(() => {
-      expect(screen.getByText('10')).toBeInTheDocument();
-    });
+    // Increment API should NOT be called
+    expect(viewsService.incrementPostView).not.toHaveBeenCalled();
 
-    consoleSpy.mockRestore();
+    // GET API should be called instead to get fresh count
+    expect(viewsService.getPostView).toHaveBeenCalledTimes(1);
+    expect(viewsService.getPostView).toHaveBeenCalledWith('test-post');
+
+    // UI should update to the fetched count (15)
+    await waitFor(() => {
+      expect(screen.getByText('15')).toBeInTheDocument();
+    });
+  });
+
+  it('handles strict mode double-firing without duplicate increment calls', async () => {
+    (viewsService.incrementPostView as Mock).mockResolvedValue(12);
+
+    const { rerender } = render(<ViewCounter slug="strict-post" initialViews={10} />);
+    
+    // Simulate React Strict Mode double render
+    rerender(<ViewCounter slug="strict-post" initialViews={10} />);
+
+    // Should only call increment once
+    expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
   });
 });
