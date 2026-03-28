@@ -11,6 +11,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "HooneyLog",
   description: "HooneyLog Blog based on Notion API",
+  verification: {
+    google: "fRen9BNDD5VjyRybbMKn5tm68CqHW5r_XjGb4BTvmSg",
+  }
 };
 
 export default function RootLayout({
