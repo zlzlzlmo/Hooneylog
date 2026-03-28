@@ -17,8 +17,8 @@ export function FacebookComment({ slug }: FbCommentProps) {
       script.defer = true;
       script.crossOrigin = 'anonymous';
       document.body.appendChild(script);
-    } else if ((window as any).FB) {
-      (window as any).FB.XFBML.parse();
+    } else if ('FB' in window) {
+      (window as unknown as { FB: { XFBML: { parse: () => void } } }).FB.XFBML.parse();
     }
   }, [slug]);
 

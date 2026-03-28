@@ -1,62 +1,63 @@
 import React, { Fragment } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { BlockObjectResponse } from '@hooneylog/shared-types';
 import { NotionBlockText } from '../notion-block-text/notion-block-text';
 
-const BlockNestedList = (block: Record<string, unknown>) => {
-  if (!block.has_children) return null;
-  return (
-    <ul className="pl-[24px] list-disc mt-1 space-y-1">
-      {(block.children as Record<string, unknown>[])?.map((child) => (
-        <Fragment key={child.id as string}>
-          <PostBlock block={child} />
-        </Fragment>
-      ))}
-    </ul>
-  );
+const BlockNestedList = ({ block }: { block: BlockObjectResponse }) => {
+  if (!('has_children' in block) || !block.has_children) return null;
+  
+  // Note: Notion API doesn't return children in the list call, 
+  // you usually need to fetch them separately or they might be added by a mapper.
+  // In the current implementation, children are not pre-fetched for nested lists.
+  // This is a known limitation of the current getBlocksById implementation.
+  return null;
 };
 
-export function PostBlock({ block }: { block: Record<string, unknown> }) {
-  const { type, id: _id } = block;
-  const value = block[type as string] as Record<string, unknown>;
-
-  if (!value) return null;
+export function PostBlock({ block }: { block: BlockObjectResponse }) {
+  const { type } = block;
 
   switch (type) {
     case 'paragraph':
       return (
         <p className="text-[16px] leading-[1.6] mb-[2px] break-keep min-h-[24px] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
+          <NotionBlockText richText={block.paragraph.rich_text} />
         </p>
       );
       
     case 'heading_1':
       return (
         <h1 className="text-[30px] font-bold mt-[2em] mb-[4px] leading-[1.3] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
+          <NotionBlockText richText={block.heading_1.rich_text} />
         </h1>
       );
       
     case 'heading_2':
       return (
         <h2 className="text-[24px] font-semibold mt-[1.4em] mb-[1px] leading-[1.3] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
+          <NotionBlockText richText={block.heading_2.rich_text} />
         </h2>
       );
       
     case 'heading_3':
       return (
         <h3 className="text-[20px] font-semibold mt-[1em] mb-[1px] leading-[1.3] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
+          <NotionBlockText richText={block.heading_3.rich_text} />
         </h3>
       );
       
     case 'bulleted_list_item':
+      return (
+        <li className="text-[16px] leading-[1.6] list-disc ml-[24px] mb-[2px] text-notion-text">
+          <NotionBlockText richText={block.bulleted_list_item.rich_text} />
+          <BlockNestedList block={block} />
+        </li>
+      );
+
     case 'numbered_list_item':
       return (
         <li className="text-[16px] leading-[1.6] list-disc ml-[24px] mb-[2px] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
-          {BlockNestedList(block)}
+          <NotionBlockText richText={block.numbered_list_item.rich_text} />
+          <BlockNestedList block={block} />
         </li>
       );
       
@@ -68,20 +69,17 @@ export function PostBlock({ block }: { block: Record<string, unknown> }) {
               <svg viewBox="0 0 100 100" className="w-[10px] h-[10px] fill-notion-secondary"><polygon points="5.9,88.2 5.9,11.8 81.1,50"></polygon></svg>
             </div>
             <div className="flex-1 leading-[1.5]">
-              <NotionBlockText richText={value.rich_text as unknown[]} />
+              <NotionBlockText richText={block.toggle.rich_text} />
             </div>
           </summary>
-          <div className="pl-[24px] mt-1">
-            {(value.children as Record<string, unknown>[])?.map((child) => (
-              <Fragment key={child.id as string}><PostBlock block={child} /></Fragment>
-            ))}
-          </div>
+          {/* Note: Children fetching logic needed here if toggles should show content */}
         </details>
       );
       
     case 'image': {
-      const src = value.type === 'external' ? (value.external as Record<string, string>).url : (value.file as Record<string, string>).url;
-      const caption = (value.caption as unknown[]) && (value.caption as unknown[]).length > 0 ? (value.caption as unknown[])[0]?.plain_text : '';
+      const value = block.image;
+      const src = value.type === 'external' ? value.external.url : value.file.url;
+      const caption = value.caption && value.caption.length > 0 ? value.caption[0]?.plain_text : '';
       return (
         <figure className="my-3 flex flex-col items-start w-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -101,25 +99,25 @@ export function PostBlock({ block }: { block: Record<string, unknown> }) {
     case 'quote':
       return (
         <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[4px] text-[16px] leading-[1.5] text-notion-text">
-          <NotionBlockText richText={value.rich_text as unknown[]} />
+          <NotionBlockText richText={block.quote.rich_text} />
         </blockquote>
       );
       
     case 'code':
       return (
-        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
+        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden bg-[#F7F6F3] p-8 border border-notion-border font-mono">
           <SyntaxHighlighter 
-            language={value.language || 'typescript'}
-            style={vscDarkPlus}
-            className="code-highlighter !m-0 !p-6 overflow-x-auto"
+            language={block.code.language || 'typescript'}
+            useInlineStyles={false}
+            className="code-highlighter !bg-transparent !p-0 !m-0 overflow-x-auto"
           >
-            {value.rich_text[0]?.plain_text || ''}
+            {block.code.rich_text[0]?.plain_text || ''}
           </SyntaxHighlighter>
         </div>
       );
       
     case 'bookmark': {
-      const href = value.url as string;
+      const href = block.bookmark.url;
       return (
         <a 
           href={href} 

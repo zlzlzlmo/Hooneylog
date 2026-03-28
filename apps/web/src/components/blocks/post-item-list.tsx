@@ -1,7 +1,7 @@
 import { NotionPost } from '@hooneylog/shared-types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCategoryImageSrc } from '@/utils/categoryImage';
+import { getCategoryImageSrc } from '@/utils/category-image';
 import { formatDate } from '@/utils/date';
 
 interface PostItemListProps {

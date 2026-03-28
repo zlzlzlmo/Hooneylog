@@ -1,7 +1,7 @@
 import 'server-only';
 import { Client } from '@notionhq/client';
 import { cache } from 'react';
-import { INotionProperties, NotionPost, IRawNotionPost } from '@hooneylog/shared-types';
+import { INotionProperties, NotionPost, IRawNotionPost, BlockObjectResponse } from '@hooneylog/shared-types';
 import { NotionToMarkdown } from 'notion-to-md';
 
 const notion = new Client({
@@ -31,9 +31,11 @@ export const getNotionPageMarkdown = cache(async (pageId: string) => {
   
   // Fix notion-to-md's adjacent marker bugs that break ReactMarkdown
   // Example: **`code`****text** -> **`code`text**
-  mdString.parent = mdString.parent
-    .replace(/\*\*\*\*/g, '')
-    .replace(/~~~~/g, '');
+  if (mdString.parent) {
+    mdString.parent = mdString.parent
+      .replace(/\*\*\*\*/g, '')
+      .replace(/~~~~/g, '');
+  }
 
   return mdString;
 });
@@ -105,9 +107,9 @@ export const getPostById = cache(async (postId: string): Promise<NotionPost | un
   return posts.find(({ id }) => id === postId);
 });
 
-export const getBlocksById = cache(async (id: string) => {
+export const getBlocksById = cache(async (id: string): Promise<BlockObjectResponse[]> => {
   if (!id) return [];
-  const blocks = [];
+  const blocks: BlockObjectResponse[] = [];
   let cursor: string | undefined = undefined;
 
   while (true) {
@@ -116,7 +118,10 @@ export const getBlocksById = cache(async (id: string) => {
       start_cursor: cursor,
     });
     
-    blocks.push(...results);
+    // Filter out partial blocks to ensure we have full BlockObjectResponse
+    const fullBlocks = results.filter((block): block is BlockObjectResponse => 'type' in block);
+    blocks.push(...fullBlocks);
+    
     if (!next_cursor) {
       break;
     }
@@ -124,14 +129,5 @@ export const getBlocksById = cache(async (id: string) => {
     cursor = next_cursor;
   }
 
-  return blocks.map((block) => {
-    if (!('type' in block)) return { id: block.id };
-    const { id, type } = block;
-
-    return {
-      id,
-      type,
-      [type as string]: (block as Record<string, unknown>)[type as string],
-    };
-  });
+  return blocks;
 });

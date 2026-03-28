@@ -1,20 +1,7 @@
+import { RichTextItemResponse } from '@hooneylog/shared-types';
+
 interface NotionBlockTextProps {
-  richText: {
-    text: {
-      content: string;
-      link: {
-        url: string;
-      } | null;
-    };
-    annotations: {
-      bold: boolean;
-      code: boolean;
-      color: string;
-      italic: boolean;
-      strikethrough: boolean;
-      underline: boolean;
-    };
-  }[];
+  richText: RichTextItemResponse[];
 }
 
 export function NotionBlockText({ richText }: NotionBlockTextProps) {
@@ -27,7 +14,8 @@ export function NotionBlockText({ richText }: NotionBlockTextProps) {
       {richText.map((value, index) => {
         const {
           annotations: { bold, code, color, italic, strikethrough, underline },
-          text,
+          plain_text,
+          href,
         } = value;
 
         const classes = [
@@ -40,24 +28,24 @@ export function NotionBlockText({ richText }: NotionBlockTextProps) {
 
         const style = color !== 'default' ? { color } : {};
 
-        if (text.link) {
+        if (href) {
           return (
             <a 
               key={index} 
-              href={text.link.url} 
+              href={href} 
               className={`${classes} text-sub hover:underline`}
               style={style}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {text.content}
+              {plain_text}
             </a>
           );
         }
 
         return (
           <span key={index} className={classes} style={style}>
-            {text.content}
+            {plain_text}
           </span>
         );
       })}

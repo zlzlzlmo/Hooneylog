@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllPosts, getPostById, getNotionPageMarkdown } from '@/lib/notion';
-import { PostHeader } from '@/components/blocks/postDetail/PostHeader';
-import { MarkdownRenderer } from '@/components/blocks/postDetail/MarkdownRenderer';
-import { MoveToAnotherPost } from '@/components/blocks/postDetail/MoveToAnotherPost';
-import { FacebookComment } from '@/components/blocks/postDetail/FacebookComment';
-import { getAdjacentPosts } from '@/utils/adjacentPosts';
+import { PostHeader } from '@/components/blocks/post-detail/post-header';
+import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-renderer';
+import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
+import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
+import { getAdjacentPosts } from '@/utils/adjacent-posts';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -74,9 +74,9 @@ export default async function PostDetailPage({ params }: { params: Params }) {
 
         {/* 2. Main Body Layout (Content) */}
         <section className="w-full">
-          <MarkdownRenderer content={markdown.parent} />
+          <MarkdownRenderer content={markdown.parent ?? ''} />
           
-          <MoveToAnotherPost previousPost={previousPost} nextPost={nextPost} />
+          <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
           <FacebookComment slug={slug} />
         </section>
         

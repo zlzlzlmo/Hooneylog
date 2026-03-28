@@ -1,11 +1,11 @@
 'use client';
 
 import { NotionPost } from '@hooneylog/shared-types';
-import { useFilterPost } from '@/hooks/useFilterPost';
+import { useFilterPost } from '@/hooks/use-filter-post';
 import { CategoryCount } from '@/utils/category';
-import { Search } from '@/components/features/Search';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { PostItemList } from '@/components/blocks/PostItemList';
+import { Search } from '@/components/features/search';
+import { Sidebar } from '@/components/layout/sidebar';
+import { PostItemList } from '@/components/blocks/post-item-list';
 
 export function HomePageClient({ initialPosts }: { initialPosts: NotionPost[] }) {
   const {

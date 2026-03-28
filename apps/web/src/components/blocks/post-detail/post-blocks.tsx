@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
-import { PostBlock } from '@/components/elements/postBlock/PostBlock';
+import { BlockObjectResponse } from '@hooneylog/shared-types';
+import { PostBlock } from '@/components/elements/post-block/post-block';
 
 interface PostBlocksProps {
-  blocks: any[];
+  blocks: BlockObjectResponse[];
 }
 
 export function PostBlocks({ blocks }: PostBlocksProps) {
@@ -11,7 +12,7 @@ export function PostBlocks({ blocks }: PostBlocksProps) {
   return (
     <article className="w-full pb-20">
       {blocks.map((block) => (
-        <Fragment key={block.id}>
+        <Fragment key={block.id as React.Key}>
           <PostBlock block={block} />
         </Fragment>
       ))}

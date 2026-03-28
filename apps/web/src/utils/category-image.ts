@@ -1,4 +1,3 @@
-import { NotionPost } from '@hooneylog/shared-types';
 
 export function getCategoryImageSrc(category: string): string {
   const categoryMap: Record<string, string> = {

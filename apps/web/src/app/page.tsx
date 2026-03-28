@@ -1,5 +1,5 @@
 import { getAllPosts } from '@/lib/notion';
-import { HomePageClient } from './HomePageClient';
+import { HomePageClient } from './home-page-client';
 
 // Revalidate every 60 seconds (ISR)
 export const revalidate = 60;
