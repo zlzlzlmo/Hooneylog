@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BlockObjectResponse } from '@hooneylog/shared-types';
 import { NotionBlockText } from '../notion-block-text/notion-block-text';
-import { Mermaid } from '../Mermaid';
+import { Mermaid } from '../mermaid';
 
 const BlockNestedList = ({ block }: { block: BlockObjectResponse }) => {
   if (!('has_children' in block) || !block.has_children) return null;

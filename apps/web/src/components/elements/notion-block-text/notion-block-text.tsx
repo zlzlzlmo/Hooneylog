@@ -19,7 +19,7 @@ export function NotionBlockText({ richText }: NotionBlockTextProps) {
         } = value;
 
         // Clean up any remaining markdown escaping from the plain_text
-        const cleanText = plain_text.replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
+        const cleanText = plain_text.replace(/\\([*|_~`[]()#+!.-])/g, '$1');
 
         const classes = [
           bold ? 'font-bold' : '',

@@ -9,5 +9,8 @@
   "dependencies": {
     "@notionhq/client": "^2.3.0",
     "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@hooneylog/typescript-config": "workspace:^"
   }
 }

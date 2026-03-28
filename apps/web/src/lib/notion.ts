@@ -45,25 +45,29 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Pr
  */
 function fixMarkdown(md: string): string {
   if (!md) return md;
-  
-  // 1. Initial cleanup of redundant markers
+
+  // 1. Initial cleanup of redundant markers and unescaping
   let result = md
     .replace(/\*\*\*\*/g, '')
     .replace(/~~~~/g, '')
     .replace(/\*\* \*\*/g, ' ')
     .replace(/__ __/g, ' ');
 
-  // 2. Unescape markers recursively (handles double/triple escaping like \\*)
+  // 2. Unescape markers recursively (handles double/triple escaping)
   let previous;
   do {
     previous = result;
     result = result.replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
   } while (result !== previous);
 
-  // 3. Final cleanup of adjacent markers that might have been revealed
+  // 3. Force bold markers into HTML strong tags
+  // This bypasses markdown parser limitations when bold is adjacent to other text
+  result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+  // 4. Final cleanup of adjacent markers that might have been revealed
   result = result.replace(/\*\*\*\*/g, '');
-  
-  // 4. Fix Notion's "1)" list style to standard "1." for better compatibility
+
+  // 5. Fix Notion's "1)" list style to standard "1."
   result = result.replace(/^(\s*)(\d+)\)\s/gm, '$1$2. ');
 
   return result;

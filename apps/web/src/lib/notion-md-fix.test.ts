@@ -4,7 +4,7 @@ const fixMarkdown = (md: string) => {
     .replace(/~~~~/g, '')
     // Add more patterns here if needed
     .replace(/\*\* \*\*/g, '') // Empty bold with space
-    .replace(/\*\*([^*]+)\*\*/g, (match, content) => {
+    .replace(/\*\*([^*]+)\*\*/g, (match) => {
        // If there's an unnecessary escaping or messy markers, we could fix here.
        // But usually standard bold is fine.
        return match;
@@ -29,9 +29,9 @@ const testCases = [
 testCases.forEach(({ input, expected }, i) => {
   const result = fixMarkdown(input);
   if (result !== expected) {
-    console.error(\`Test Case \${i} Failed: Input "\${input}", Expected "\${expected}", Got "\${result}"\`);
+    console.error(`Test Case ${i} Failed: Input "${input}", Expected "${expected}", Got "${result}"`);
     process.exit(1);
   } else {
-    console.log(\`Test Case \${i} Passed\`);
+    console.log(`Test Case ${i} Passed`);
   }
 });
