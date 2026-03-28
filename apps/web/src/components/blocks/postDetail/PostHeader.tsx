@@ -52,7 +52,7 @@ export function PostHeader({ title, category, createdAt }: PostHeaderProps) {
               작성자 Seunghoon Shin
             </span>
             <span className="text-[13px] text-notion-secondary">
-              프론트엔드 개발자
+              풀스택 개발자
             </span>
           </div>
         </div>

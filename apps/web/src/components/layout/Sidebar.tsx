@@ -19,7 +19,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
         </div>
         <h3 className="font-semibold text-notion-text text-[15px] mb-1">Seunghoon Shin</h3>
         <p className="text-[13px] text-notion-secondary leading-snug">
-          기록과 함께 성장해 나가는<br/>프론트엔드 개발자
+          기록과 함께 성장해 나가는<br/>풀스택 개발자
         </p>
       </div>
 
