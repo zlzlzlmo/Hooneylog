@@ -57,8 +57,7 @@ function fixMarkdown(md: string): string {
   let previous;
   do {
     previous = result;
-    result = result.replace(/\\([*|_~`\[\]()#+!.-])/g, '$1');
-  } while (result !== previous);
+    result = result.replace(/\\([*|_~`[\]()#+!.-])/g, '$1');  } while (result !== previous);
 
   // 3. Force bold markers into HTML strong tags
   // This bypasses markdown parser limitations when bold is adjacent to other text
