@@ -5,10 +5,6 @@ import { kv } from '@vercel/kv';
  * Redis의 원자적 연산(INCR)을 사용하여 초당 수만 건의 요청도 안전하게 처리합니다.
  */
 
-// 개발 환경에서는 조회수가 너무 많이 올라가는 것을 방지하기 위해 
-// 실제 증가 로직을 선택적으로 비활성화할 수도 있습니다.
-const IS_PROD = process.env.NODE_ENV === 'production';
-
 export async function incrementView(slug: string): Promise<number> {
   // views:포스트ID 형식의 키 사용
   const key = `views:${slug}`;
