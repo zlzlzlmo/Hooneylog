@@ -4,6 +4,8 @@ import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { Mermaid } from '@/components/elements/Mermaid';
 import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
@@ -40,12 +42,19 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           code({ _node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec((className as string) || '');
+            const language = match ? match[1] : '';
+
+            // 💡 Mermaid 다이어그램 처리
+            if (language === 'mermaid') {
+              return <Mermaid content={String(children).replace(/\n$/, '')} />;
+            }
+
             return !inline && match ? (
-              <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden bg-[#F7F6F3] p-8 border border-notion-border font-mono">
+              <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
                 <SyntaxHighlighter
-                  language={match[1] as string}
-                  useInlineStyles={false}
-                  className="code-highlighter !bg-transparent !p-0 !m-0 overflow-x-auto"
+                  language={language}
+                  style={vscDarkPlus}
+                  className="code-highlighter !m-0 !p-6 overflow-x-auto"
                   PreTag="div"
                   {...(props as any)}
                 >

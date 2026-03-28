@@ -1,7 +1,9 @@
 import React, { Fragment } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BlockObjectResponse } from '@hooneylog/shared-types';
 import { NotionBlockText } from '../notion-block-text/notion-block-text';
+import { Mermaid } from '../Mermaid';
 
 const BlockNestedList = ({ block }: { block: BlockObjectResponse }) => {
   if (!('has_children' in block) || !block.has_children) return null;
@@ -103,18 +105,26 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
         </blockquote>
       );
       
-    case 'code':
+    case 'code': {
+      const language = block.code.language || 'typescript';
+      const content = block.code.rich_text[0]?.plain_text || '';
+
+      if (language === 'mermaid') {
+        return <Mermaid content={content} />;
+      }
+
       return (
-        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden bg-[#F7F6F3] p-8 border border-notion-border font-mono">
+        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
           <SyntaxHighlighter 
-            language={block.code.language || 'typescript'}
-            useInlineStyles={false}
-            className="code-highlighter !bg-transparent !p-0 !m-0 overflow-x-auto"
+            language={language}
+            style={vscDarkPlus}
+            className="code-highlighter !m-0 !p-6 overflow-x-auto"
           >
-            {block.code.rich_text[0]?.plain_text || ''}
+            {content}
           </SyntaxHighlighter>
         </div>
       );
+    }
       
     case 'bookmark': {
       const href = block.bookmark.url;
