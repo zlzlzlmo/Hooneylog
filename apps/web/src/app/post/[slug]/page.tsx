@@ -7,6 +7,7 @@ import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-anoth
 import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
+import { incrementView } from '@/lib/views';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -76,6 +77,9 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     notFound();
   }
 
+  // 💡 조회수 증가 및 가져오기 (Vercel KV)
+  const views = await incrementView(slug);
+
   const { previousPost, nextPost } = getAdjacentPosts(allPosts, slug);
 
   // JSON-LD for Search Engine Optimization
@@ -116,6 +120,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
             category={post.category}
             createdAt={post.createdAt}
             tags={post.tags}
+            views={views}
           />
         </section>
 

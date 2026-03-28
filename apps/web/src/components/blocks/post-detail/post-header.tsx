@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { formatDate } from '@/utils/date';
 import { ITag } from '@hooneylog/shared-types';
 
@@ -8,9 +8,10 @@ interface PostHeaderProps {
   category: string;
   createdAt: string;
   tags: ITag[];
+  views?: number;
 }
 
-export function PostHeader({ title, category, createdAt }: PostHeaderProps) {
+export function PostHeader({ title, category, createdAt, views }: PostHeaderProps) {
   return (
     <header className="w-full">
       {/* Back button */}
@@ -25,15 +26,26 @@ export function PostHeader({ title, category, createdAt }: PostHeaderProps) {
       </div>
 
       <div className="w-full">
-        {/* Category & Date */}
-        <div className="flex items-center gap-3 text-[14px] mb-4">
+        {/* Category & Date & Views */}
+        <div className="flex items-center gap-4 text-[14px] mb-4">
           <Link 
             href="/" 
             className="text-notion-text font-medium border-b border-transparent hover:border-notion-text transition-colors"
           >
             {category || '미분류'}
           </Link>
-          <span className="text-notion-secondary font-mono">{formatDate(createdAt)}</span>
+          <div className="flex items-center gap-2 text-notion-secondary font-mono">
+            <span>{formatDate(createdAt)}</span>
+            {views !== undefined && (
+              <>
+                <span className="text-notion-border">•</span>
+                <div className="flex items-center gap-1">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{views.toLocaleString()}</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Title */}
