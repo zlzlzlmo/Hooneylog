@@ -6,6 +6,7 @@ import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-rende
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
 import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
+import { getCategoryImage } from '@/utils/category-image';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -21,14 +22,35 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return { title: 'Post Not Found' };
   }
 
+  const categoryImage = getCategoryImage(post.category);
+
   return {
-    title: `Hooneylog - ${post.title}`,
+    title: post.title, // layout.tsx의 template에 의해 제목 | HooneyLog로 표시됨
     description: post.description,
+    alternates: {
+      canonical: `/post/${post.id}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://www.hooneylog.com/post/${post.id}`,
+      url: `https://hooneylog.com/post/${post.id}`,
       type: 'article',
+      publishedTime: post.createdAt,
+      authors: ['Hooney'],
+      images: [
+        {
+          url: categoryImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [categoryImage],
     }
   };
 }
@@ -41,7 +63,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PostDetailPage({ params }: { params: Params }) {
+export default async function PostDetailPage({ params }: { params: Params }): Promise<React.JSX.Element> {
   const { slug } = await params;
 
   const [allPosts, post, markdown] = await Promise.all([
@@ -56,10 +78,35 @@ export default async function PostDetailPage({ params }: { params: Params }) {
 
   const { previousPost, nextPost } = getAdjacentPosts(allPosts, slug);
 
+  // JSON-LD for Search Engine Optimization
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: getCategoryImage(post.category),
+    datePublished: post.createdAt,
+    dateModified: post.createdAt,
+    author: {
+      '@type': 'Person',
+      name: 'Hooney',
+      url: 'https://hooneylog.com',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://hooneylog.com/post/${post.id}`,
+    },
+    keywords: post.tags.join(', '),
+  };
+
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
+      {/* 💡 SEO: Structured Data for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
-      {/* Unified Layout Container for Detail Page */}
       <div className="w-full max-w-[800px] px-4 sm:px-6 mx-auto flex flex-col items-center">
         
         {/* 1. Top Section (Header + Author) */}
