@@ -9,10 +9,12 @@ import { PostItemList } from '@/components/blocks/post-item-list';
 
 export function HomePageClient({ 
   initialPosts, 
-  stats 
+  stats,
+  viewsMap
 }: { 
   initialPosts: NotionPost[],
-  stats: { total: number, today: number }
+  stats: { total: number, today: number },
+  viewsMap: Record<string, number>
 }) {
   const {
     searchValue,
@@ -41,7 +43,7 @@ export function HomePageClient({
             handleSearchValue={setSearchValue} 
           />
           <div className="mt-8">
-            <PostItemList posts={filteredPosts} />
+            <PostItemList posts={filteredPosts} viewsMap={viewsMap} />
           </div>
         </div>
       </div>

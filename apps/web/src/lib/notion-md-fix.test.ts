@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 const fixMarkdown = (md: string) => {
   return md
     .replace(/\*\*\*\*/g, '')
@@ -11,27 +13,26 @@ const fixMarkdown = (md: string) => {
     });
 };
 
-const testCases = [
-  {
-    input: "**Supavisor(연결 풀러)**",
-    expected: "**Supavisor(연결 풀러)**", // This should be rendered as bold by ReactMarkdown
-  },
-  {
-    input: "**`code`****text**",
-    expected: "**`code`text**",
-  },
-  {
-    input: "****",
-    expected: "",
-  }
-];
+describe('notion-md-fix', () => {
+  const testCases = [
+    {
+      input: "**Supavisor(연결 풀러)**",
+      expected: "**Supavisor(연결 풀러)**", // This should be rendered as bold by ReactMarkdown
+    },
+    {
+      input: "**`code`****text**",
+      expected: "**`code`text**",
+    },
+    {
+      input: "****",
+      expected: "",
+    }
+  ];
 
-testCases.forEach(({ input, expected }, i) => {
-  const result = fixMarkdown(input);
-  if (result !== expected) {
-    console.error(`Test Case ${i} Failed: Input "${input}", Expected "${expected}", Got "${result}"`);
-    process.exit(1);
-  } else {
-    console.log(`Test Case ${i} Passed`);
-  }
+  it('fixes markdown correctly', () => {
+    testCases.forEach(({ input, expected }) => {
+      const result = fixMarkdown(input);
+      expect(result).toBe(expected);
+    });
+  });
 });

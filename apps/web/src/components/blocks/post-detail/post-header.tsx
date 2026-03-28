@@ -1,17 +1,19 @@
 import Link from 'next/link';
-import { ArrowLeft, Eye } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/utils/date';
 import { ITag } from '@hooneylog/shared-types';
+import { ViewCounter } from '@/components/elements/view-counter';
 
 interface PostHeaderProps {
   title: string;
   category: string;
   createdAt: string;
   tags: ITag[];
-  views?: number;
+  slug: string;
+  initialViews: number;
 }
 
-export function PostHeader({ title, category, createdAt, views }: PostHeaderProps) {
+export function PostHeader({ title, category, createdAt, slug, initialViews }: PostHeaderProps) {
   return (
     <header className="w-full">
       {/* Back button */}
@@ -36,15 +38,8 @@ export function PostHeader({ title, category, createdAt, views }: PostHeaderProp
           </Link>
           <div className="flex items-center gap-2 text-notion-secondary font-mono">
             <span>{formatDate(createdAt)}</span>
-            {views !== undefined && (
-              <>
-                <span className="text-notion-border">•</span>
-                <div className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{views.toLocaleString()}</span>
-                </div>
-              </>
-            )}
+            <span className="text-notion-border">•</span>
+            <ViewCounter slug={slug} initialViews={initialViews} />
           </div>
         </div>
 

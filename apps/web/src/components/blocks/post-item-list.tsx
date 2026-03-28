@@ -6,9 +6,10 @@ import { formatDate } from '@/utils/date';
 
 interface PostItemListProps {
   posts: NotionPost[];
+  viewsMap?: Record<string, number>;
 }
 
-export function PostItemList({ posts }: PostItemListProps) {
+export function PostItemList({ posts, viewsMap = {} }: PostItemListProps) {
   if (posts.length === 0) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-notion-secondary col-span-full">
@@ -41,7 +42,7 @@ export function PostItemList({ posts }: PostItemListProps) {
             </div>
             
             {/* Content */}
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1">
               {/* Eyebrow / Category */}
               <div className="mb-2">
                 <span className="text-[13px] font-medium text-notion-secondary">
@@ -59,9 +60,16 @@ export function PostItemList({ posts }: PostItemListProps) {
                 {post.description}
               </p>
               
-              {/* Date footer */}
-              <div className="flex items-center justify-end mt-auto pt-4">
-                <span className="text-[13px] text-notion-secondary font-mono">{formatDate(post.createdAt)}</span>
+              {/* Footer (Views & Date) */}
+              <div className="flex items-center justify-between mt-auto pt-4 text-[13px] text-notion-secondary font-mono">
+                <span className="flex items-center gap-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  {viewsMap[post.id] ?? 0}
+                </span>
+                <span>{formatDate(post.createdAt)}</span>
               </div>
             </div>
           </Link>

@@ -62,3 +62,20 @@ export async function getViewCount(slug: string): Promise<number> {
     return 0;
   }
 }
+
+export async function getViewCounts(slugs: string[]): Promise<Record<string, number>> {
+  if (slugs.length === 0) return {};
+  
+  const keys = slugs.map(slug => `views:post:${slug}`);
+  try {
+    const counts = await kv.mget<number[]>(...keys);
+    
+    return slugs.reduce((acc, slug, index) => {
+      acc[slug] = counts[index] ?? 0;
+      return acc;
+    }, {} as Record<string, number>);
+  } catch (error) {
+    console.error('❌ [KV] Failed to get multiple view counts:', error);
+    return {};
+  }
+}

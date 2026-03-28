@@ -8,7 +8,6 @@ import { FacebookComment } from '@/components/blocks/post-detail/facebook-commen
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
 import { getViewCount } from '@/lib/views';
-import { ViewCounter } from '@/components/elements/view-counter';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -106,9 +105,6 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
 
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
-      {/* 💡 실시간 조회수 증가 트리거 (클라이언트 사이드) */}
-      <ViewCounter slug={slug} />
-
       {/* 💡 SEO: Structured Data for Google Rich Results */}
       <script
         type="application/ld+json"
@@ -124,7 +120,8 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
             category={post.category}
             createdAt={post.createdAt}
             tags={post.tags}
-            views={views}
+            slug={slug}
+            initialViews={views}
           />
         </section>
 
