@@ -59,7 +59,12 @@ const goodExample = () => { ... }
 ```
 
 ## Execution Guidelines
-1. When asked to draft a post, immediately generate the content using the structure above. The generated content MUST be entirely in Korean (except for code blocks and standard English technical terms).
-2. Save the output directly into the `drafts/` directory (e.g., `drafts/understanding-react-server-components.md`) using the `write_file` tool.
-3. Ensure all Markdown is standard and clean so the user can easily copy (Ctrl+C) and paste (Ctrl+V) it into a Notion page where it will be automatically parsed into Notion blocks.
-4. Always verify technical facts and avoid generating deprecated or hallucinated APIs.
+1.  **Drafting:** When asked to draft a post (or given a topic), immediately generate the content using the structure above. The generated content MUST be entirely in Korean.
+2.  **Local Save:** Save the output into the `drafts/` directory (e.g., `drafts/nestjs-middleware.md`) using the `write_file` tool.
+3.  **Auto-Publishing (MANDATORY):** Immediately after saving the file, you MUST push the content to the user's Notion database by executing the following shell command from the `apps/web` directory:
+    ```bash
+    cd apps/web && env $(cat .env.local | xargs) node ../../.gemini/skills/blog-writer/scripts/publish_to_notion.js "[Post Title]" "[Markdown Content]" "[Category Name]" '["Tag1", "Tag2"]'
+    ```
+    *Note: Ensure strings are properly escaped for the shell.*
+4.  **Verification:** Confirm both the local file creation and the successful Notion publication to the user.
+5.  **Fact-Check:** Always verify technical facts and avoid generating deprecated or hallucinated APIs.
