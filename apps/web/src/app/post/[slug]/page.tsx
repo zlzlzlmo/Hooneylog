@@ -7,7 +7,8 @@ import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-anoth
 import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
-import { incrementView } from '@/lib/views';
+import { getViewCount } from '@/lib/views';
+import { ViewCounter } from '@/components/elements/view-counter';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -77,8 +78,8 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     notFound();
   }
 
-  // 💡 조회수 증가 및 가져오기 (Vercel KV)
-  const views = await incrementView(slug);
+  // 💡 서버에서는 초기 조회수만 가져옵니다 (캐시된 값일 수 있음)
+  const views = await getViewCount(slug);
 
   const { previousPost, nextPost } = getAdjacentPosts(allPosts, slug);
 
@@ -105,6 +106,9 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
 
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
+      {/* 💡 실시간 조회수 증가 트리거 (클라이언트 사이드) */}
+      <ViewCounter slug={slug} />
+
       {/* 💡 SEO: Structured Data for Google Rich Results */}
       <script
         type="application/ld+json"
