@@ -8,6 +8,13 @@ interface FbCommentProps {
 
 export function FacebookComment({ slug }: FbCommentProps) {
   useEffect(() => {
+    // Ensure fb-root exists outside of React's direct control to prevent unmount crashes
+    if (!document.getElementById('fb-root')) {
+      const fbRoot = document.createElement('div');
+      fbRoot.id = 'fb-root';
+      document.body.appendChild(fbRoot);
+    }
+
     // Dynamically load FB SDK if not exists
     if (!document.getElementById('facebook-jssdk')) {
       const script = document.createElement('script');
@@ -24,7 +31,6 @@ export function FacebookComment({ slug }: FbCommentProps) {
 
   return (
     <div className="mt-10 mb-20">
-      <div id="fb-root" />
       <div 
         className="fb-comments" 
         data-href={`https://www.hooneylog.com/post/${slug}`} 
