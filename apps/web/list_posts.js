@@ -1,4 +1,3 @@
-/* eslint-disable */
 const { Client } = require('@notionhq/client');
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY;

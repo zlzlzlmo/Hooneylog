@@ -3,10 +3,18 @@ import { describe, it, expect, vi } from 'vitest';
 import { GiscusComment } from './giscus-comment';
 import { CommentProvider } from './comment-context';
 
+interface GiscusMockProps {
+  repo: string;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  theme?: string;
+  lang?: string;
+}
+
 // @giscus/react 모킹
 vi.mock('@giscus/react', () => ({
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  default: (props: any) => <div data-testid="giscus-mock" data-props={JSON.stringify(props)} />
+  default: (props: GiscusMockProps) => <div data-testid="giscus-mock" data-props={JSON.stringify(props)} />
 }));
 
 describe('GiscusComment', () => {
