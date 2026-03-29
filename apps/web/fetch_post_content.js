@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { Client } = require('@notionhq/client');
 const { NotionToMarkdown } = require('notion-to-md');
 

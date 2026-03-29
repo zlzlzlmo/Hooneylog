@@ -5,6 +5,7 @@ import { CommentProvider } from './comment-context';
 
 // @giscus/react 모킹
 vi.mock('@giscus/react', () => ({
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   default: (props: any) => <div data-testid="giscus-mock" data-props={JSON.stringify(props)} />
 }));
 

@@ -19,7 +19,7 @@ export function GiscusComment() {
   return (
     <div className="mt-12 py-8 border-t border-notion-border">
       <Giscus
-        repo={repo as any}
+        repo={repo as `${string}/${string}`}
         repoId={repoId}
         category={category}
         categoryId={categoryId}
