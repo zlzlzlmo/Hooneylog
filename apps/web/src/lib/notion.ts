@@ -25,18 +25,49 @@ n2m.setCustomTransformer('callout', async (block) => {
 
 const databaseId = process.env.NOTION_DATABASE_ID ?? '';
 
-// Helper for retrying Notion API calls to handle transient network errors
-async function withRetry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
-  try {
-    return await fn();
-  } catch (error) {
-    if (retries > 0) {
-      console.warn(`Notion API call failed, retrying in ${delay}ms... (${retries} retries left)`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return withRetry(fn, retries - 1, delay * 2);
+// Simple in-memory queue to strictly serialize Notion API calls
+let queue = Promise.resolve();
+
+// Helper for retrying Notion API calls to handle transient network errors and rate limits (429)
+async function withRetry<T>(fn: () => Promise<T>, retries = 5, delay = 2000): Promise<T> {
+  const execute = async (currentRetries: number, currentDelay: number): Promise<T> => {
+    try {
+      return await fn();
+    } catch (error: unknown) {
+      if (currentRetries > 0) {
+        const isRateLimited = typeof error === 'object' && error !== null && 
+          (('status' in error && error.status === 429) || ('code' in error && error.code === 'rate_limited'));
+          
+        if (isRateLimited) {
+          console.warn(`Notion API rate limited (429). Retrying in ${currentDelay}ms... (${currentRetries} retries left)`);
+        } else {
+          console.warn(`Notion API call failed, retrying in ${currentDelay}ms... (${currentRetries} retries left)`);
+        }
+        
+        const jitter = Math.floor(Math.random() * 1000);
+        await new Promise(resolve => setTimeout(resolve, currentDelay + jitter));
+        
+        return execute(currentRetries - 1, currentDelay * 2);
+      }
+      throw error;
     }
-    throw error;
-  }
+  };
+
+  // Add the execution to the global queue to prevent concurrent requests
+  const result = new Promise<T>((resolve, reject) => {
+    queue = queue.then(async () => {
+      // Small pause between all requests to keep average rate low
+      await new Promise(r => setTimeout(r, 400)); 
+      try {
+        const res = await execute(retries, delay);
+        resolve(res);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  });
+
+  return result;
 }
 
 /**

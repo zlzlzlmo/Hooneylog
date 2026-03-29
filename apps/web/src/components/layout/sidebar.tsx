@@ -13,7 +13,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
   return (
     <aside className="w-full lg:w-[220px] flex-shrink-0 lg:sticky lg:top-[120px] lg:max-h-[calc(100vh-120px)] pb-10">
       {/* Profile Section */}
-      <div className="hidden lg:flex flex-col mb-8 p-4 bg-notion-gray-bg/50 rounded-lg border border-notion-border">
+      <div className="flex flex-col mb-8 p-4 bg-notion-gray-bg/50 rounded-lg border border-notion-border">
         <div className="w-[48px] h-[48px] relative rounded-full overflow-hidden mb-3 border border-notion-border bg-white">
           <Image src="/images/profile.png" alt="Seunghoon Shin" fill className="object-cover" />
         </div>
@@ -37,7 +37,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
         )}
       </div>
 
-      <div className="text-[12px] font-semibold text-notion-secondary mb-2 px-2 uppercase tracking-wider hidden lg:block">
+      <div className="text-[12px] font-semibold text-notion-secondary mb-2 px-2 uppercase tracking-wider">
         Categories
       </div>
       <ul className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-450px)] no-scrollbar pb-4 lg:pb-0">

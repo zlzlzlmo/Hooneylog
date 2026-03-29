@@ -4,7 +4,8 @@ import { getAllPosts, getPostById, getNotionPageMarkdown } from '@/lib/notion';
 import { PostHeader } from '@/components/blocks/post-detail/post-header';
 import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-renderer';
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
-import { FacebookComment } from '@/components/blocks/post-detail/facebook-comment';
+import { GiscusComment } from '@/components/blocks/post-detail/giscus-comment';
+import { CommentProvider } from '@/components/blocks/post-detail/comment-context';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
 import { getViewCount } from '@/lib/views';
@@ -130,7 +131,9 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
           <MarkdownRenderer content={markdown.parent ?? ''} />
           
           <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
-          <FacebookComment slug={slug} />
+          <CommentProvider>
+            <GiscusComment />
+          </CommentProvider>
         </section>
         
       </div>
