@@ -16,9 +16,9 @@ const CommentContext = createContext<CommentConfig | undefined>(undefined);
 export function CommentProvider({ 
   children, 
   repo = process.env.NEXT_PUBLIC_GISCUS_REPO || 'zlzlzlmo/Hooneylog',
-  repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || '',
-  category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'Comments',
-  categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || '',
+  repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || 'R_kgDORy83hA',
+  category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'General',
+  categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDORy83hM4C5hoe',
   theme = 'light',
   lang = 'ko'
 }: { 

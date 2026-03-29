@@ -1,7 +1,39 @@
+# dependencies
 node_modules/
+
+# build outputs
 dist/
+build/
+out/
 .next/
+
+# turbo
 .turbo/
+
+# drafts
 drafts/
+
+# env files
 .env*
 !.env.example
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# MacOS
+.DS_Store
+
+# Vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Gemini internal tmp and sessions
+.gemini/tmp/
+.gemini/sessions/
