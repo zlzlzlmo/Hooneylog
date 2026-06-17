@@ -37,7 +37,11 @@ async function main() {
     const result = await createPost(notion, databaseId, input);
     console.log(JSON.stringify(result));
   } catch (err) {
-    console.error(`Publish failed: ${err.message}`);
+    if (err.pageUrl) {
+      console.error(`Publish partially failed: page created at ${err.pageUrl} but ${err.message}. Fix or delete it in Notion.`);
+    } else {
+      console.error(`Publish failed: ${err.message}`);
+    }
     process.exit(1);
   }
 }
