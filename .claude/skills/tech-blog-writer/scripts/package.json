@@ -1,0 +1,11 @@
+{
+  "name": "tech-blog-writer-scripts",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Publish helper for the tech-blog-writer skill",
+  "dependencies": {
+    "@notionhq/client": "^2.3.0",
+    "@tryfabric/martian": "^1.2.4"
+  }
+}
