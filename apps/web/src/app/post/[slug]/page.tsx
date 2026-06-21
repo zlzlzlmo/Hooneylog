@@ -11,6 +11,8 @@ import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
 import { getViewCount } from '@/lib/views';
 import { extractToc, readingTime } from '@/utils/toc';
+import { RelatedPosts } from '@/components/blocks/post-detail/related-posts';
+import { getRelatedPosts } from '@/utils/related-posts';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -88,6 +90,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
   const md = markdown.parent ?? '';
   const toc = extractToc(md);
   const readingMinutes = readingTime(md);
+  const relatedPosts = getRelatedPosts(allPosts, post);
 
   // JSON-LD for Search Engine Optimization
   const jsonLd = {
@@ -107,7 +110,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
       '@type': 'WebPage',
       '@id': `https://hooneylog.com/post/${post.id}`,
     },
-    keywords: post.tags.join(', '),
+    keywords: post.tags.map((t) => t.name).join(', '),
   };
 
   return (
@@ -141,6 +144,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
             <section className="w-full">
               <MarkdownRenderer content={md} />
               <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
+              <RelatedPosts posts={relatedPosts} />
               <CommentProvider>
                 <GiscusComment />
               </CommentProvider>
