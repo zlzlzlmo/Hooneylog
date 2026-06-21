@@ -8,14 +8,27 @@ import { CategoryFallbackImage } from '@/components/elements/category-fallback-i
 interface PostItemListProps {
   posts: NotionPost[];
   viewsMap?: Record<string, number>;
+  query?: string;
+  onReset?: () => void;
 }
 
-export function PostItemList({ posts, viewsMap = {} }: PostItemListProps) {
+export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemListProps) {
   if (posts.length === 0) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-notion-secondary col-span-full">
         <span className="text-[24px] mb-2">📄</span>
-        <p className="text-[15px]">검색 결과가 없습니다.</p>
+        <p className="text-[15px]">
+          {query ? `'${query}'에 대한 검색 결과가 없습니다.` : '검색 결과가 없습니다.'}
+        </p>
+        {onReset && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="mt-4 px-4 py-2 text-[14px] rounded-[4px] border border-notion-border text-notion-text hover:bg-notion-hover transition-colors cursor-pointer"
+          >
+            검색 초기화
+          </button>
+        )}
       </div>
     );
   }
@@ -24,14 +37,14 @@ export function PostItemList({ posts, viewsMap = {} }: PostItemListProps) {
   // just the image and text flowing naturally.
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12 pb-20 w-full">
-      {posts.map((post) => {
+      {posts.map((post, index) => {
         const imageSrc = getCategoryImageSrc(post.category);
         const isDefault = imageSrc === '/images/default.png';
 
         return (
           <article key={post.id} className="group flex flex-col w-full relative">
-            <Link 
-              href={`/post/${post.id}`} 
+            <Link
+              href={`/post/${post.id}`}
               className="flex flex-col flex-1"
             >
               {/* Cover Image */}
@@ -40,10 +53,11 @@ export function PostItemList({ posts, viewsMap = {} }: PostItemListProps) {
                 {isDefault ? (
                   <CategoryFallbackImage category={post.category} />
                 ) : (
-                  <Image 
+                  <Image
                     src={imageSrc}
                     alt={post.category || 'Cover image'}
                     fill
+                    priority={index === 0}
                     className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
@@ -60,7 +74,7 @@ export function PostItemList({ posts, viewsMap = {} }: PostItemListProps) {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-[18px] sm:text-[20px] font-bold text-notion-text leading-[1.3] mb-2 group-hover:text-notion-blue-text transition-colors line-clamp-3">
+                <h3 className="text-[18px] sm:text-[20px] font-bold text-notion-text leading-[1.3] mb-2 group-hover:text-accent transition-colors line-clamp-3">
                   {post.title}
                 </h3>
                 

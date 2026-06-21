@@ -60,12 +60,17 @@ export function HomePageClient({
         
         {/* Main Content Area */}
         <div className="flex-1 w-full min-w-0">
-          <Search 
-            searchValue={searchValue} 
-            handleSearchValue={setSearchValue} 
+          <Search
+            searchValue={searchValue}
+            handleSearchValue={setSearchValue}
           />
+          {searchValue && (
+            <p className="mt-2 text-[13px] text-notion-secondary" role="status" aria-live="polite">
+              검색 결과 {filteredPosts.length}개
+            </p>
+          )}
           <div className="mt-8">
-            <PostItemList posts={filteredPosts} viewsMap={viewsMap} />
+            <PostItemList posts={filteredPosts} viewsMap={viewsMap} query={searchValue} onReset={() => setSearchValue('')} />
           </div>
         </div>
       </div>
