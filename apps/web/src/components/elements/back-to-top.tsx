@@ -15,10 +15,15 @@ export function BackToTop() {
 
   if (!visible) return null;
 
+  const scrollToTop = () => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  };
+
   return (
     <button
       type="button"
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      onClick={scrollToTop}
       aria-label="맨 위로"
       className="fixed bottom-6 right-6 z-[60] w-11 h-11 rounded-full border border-notion-border bg-notion-bg text-notion-text shadow-sm hover:bg-notion-hover transition-colors flex items-center justify-center cursor-pointer"
     >
