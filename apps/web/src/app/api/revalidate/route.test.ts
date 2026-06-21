@@ -13,6 +13,11 @@ function makeRequest(secret?: string) {
   return new Request('http://localhost/api/revalidate', { method: 'POST', headers });
 }
 
+function makeQueryRequest(secret: string) {
+  const url = `http://localhost/api/revalidate?secret=${encodeURIComponent(secret)}`;
+  return new Request(url, { method: 'POST' });
+}
+
 describe('POST /api/revalidate', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -37,6 +42,22 @@ describe('POST /api/revalidate', () => {
 
   it('rejects with 401 when no secret header is provided', async () => {
     const res = await POST(makeRequest());
+
+    expect(res.status).toBe(401);
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it('revalidates when the secret is provided as a ?secret= query parameter', async () => {
+    const res = await POST(makeQueryRequest('top-secret'));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({ revalidated: true });
+    expect(revalidateTag).toHaveBeenCalledWith(POSTS_TAG, 'max');
+    expect(revalidateTag).toHaveBeenCalledWith(POST_BLOCKS_TAG, 'max');
+  });
+
+  it('rejects with 401 when the query secret is wrong', async () => {
+    const res = await POST(makeQueryRequest('wrong'));
 
     expect(res.status).toBe(401);
     expect(revalidateTag).not.toHaveBeenCalled();
