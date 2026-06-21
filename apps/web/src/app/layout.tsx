@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+    types: {
+      'application/rss+xml': [{ url: '/feed.xml', title: 'HooneyLog RSS' }],
+    },
   }
 };
 
