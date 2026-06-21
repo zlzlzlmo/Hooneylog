@@ -15,7 +15,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
     <aside className="w-full lg:w-[220px] flex-shrink-0 lg:sticky lg:top-[120px] lg:max-h-[calc(100vh-120px)] pb-10">
       {/* Profile Section */}
       <div className="flex flex-col mb-8 p-4 bg-notion-gray-bg/50 rounded-lg border border-notion-border">
-        <div className="w-[48px] h-[48px] relative rounded-full overflow-hidden mb-3 border border-notion-border bg-white">
+        <div className="w-[48px] h-[48px] relative rounded-full overflow-hidden mb-3 border border-notion-border bg-notion-bg">
           <Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
         </div>
         <h3 className="font-semibold text-notion-text text-[15px] mb-1">{AUTHOR.name}</h3>

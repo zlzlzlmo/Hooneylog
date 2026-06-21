@@ -53,7 +53,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             return !inline && match ? (
               <CodeBlock code={String(children).replace(/\n$/, '')} language={language} />
             ) : (
-              <code className="bg-gray-100 text-[#B91C1C] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
+              <code className="bg-gray-100 dark:bg-[#2C2C2C] text-[#B91C1C] dark:text-[#F0918B] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
                 {children as React.ReactNode}
               </code>
             );
@@ -188,7 +188,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           thead({ children, ...props }: any) {
-            return <thead className="bg-[#F7F6F3]" {...props}>{children as React.ReactNode}</thead>;
+            return <thead className="bg-[#F7F6F3] dark:bg-[#2C2C2C]" {...props}>{children as React.ReactNode}</thead>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           th({ children, ...props }: any) {
