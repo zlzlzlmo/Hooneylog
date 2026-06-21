@@ -2,10 +2,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
+import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Mermaid } from '@/components/elements/mermaid';
+import { CodeBlock } from './code-block';
 import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
@@ -38,12 +38,12 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     <div className="prose prose-notion max-w-none w-full">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeRaw, rehypeKatex]}
+        rehypePlugins={[rehypeRaw, rehypeSlug, rehypeKatex]}
         components={{
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           code({ inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec((className as string) || '');
-            const language = match ? match[1] : '';
+            const language = match?.[1] ?? '';
 
             // 💡 Mermaid 다이어그램 처리
             if (language === 'mermaid') {
@@ -51,17 +51,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             }
 
             return !inline && match ? (
-              <div className="my-[1.2em] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
-                <SyntaxHighlighter
-                  language={language}
-                  style={vscDarkPlus}
-                  className="code-highlighter !m-0 !p-6 overflow-x-auto"
-                  PreTag="div"
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-              </div>
+              <CodeBlock code={String(children).replace(/\n$/, '')} language={language} />
             ) : (
               <code className="bg-gray-100 text-[#B91C1C] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
                 {children as React.ReactNode}
@@ -117,16 +107,30 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             );
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          h1({ children, ...props }: any) {
-            return <h1 className="text-[30px] font-bold mt-[2em] mb-[0.5em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h1>;
+          h1({ id, children, ...props }: any) {
+            return <h1 id={id as string} className="text-[30px] font-bold mt-[2em] mb-[0.5em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h1>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          h2({ children, ...props }: any) {
-            return <h2 className="text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h2>;
+          h2({ id, children, ...props }: any) {
+            return (
+              <h2 id={id as string} className="group/anchor text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text scroll-mt-[72px]" {...props}>
+                {children as React.ReactNode}
+                {id && (
+                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 text-notion-secondary opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
+                )}
+              </h2>
+            );
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          h3({ children, ...props }: any) {
-            return <h3 className="text-[20px] font-semibold mt-[1.2em] mb-[0.3em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h3>;
+          h3({ id, children, ...props }: any) {
+            return (
+              <h3 id={id as string} className="group/anchor text-[20px] font-semibold mt-[1.2em] mb-[0.3em] leading-[1.3] text-notion-text scroll-mt-[72px]" {...props}>
+                {children as React.ReactNode}
+                {id && (
+                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 text-notion-secondary opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
+                )}
+              </h3>
+            );
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           p({ children, ...props }: any) {
