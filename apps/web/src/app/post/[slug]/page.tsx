@@ -91,7 +91,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: getCategoryImageSrc(post.category),
+    image: getCategoryImageSrc(post.category, post.tags),
     datePublished: post.createdAt,
     dateModified: post.createdAt,
     author: {
@@ -132,7 +132,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
           </section>
         </div>
 
-        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 items-start">
+        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10">
           {/* Reading column */}
           <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
             <TableOfContents items={toc} variant="inline" />
