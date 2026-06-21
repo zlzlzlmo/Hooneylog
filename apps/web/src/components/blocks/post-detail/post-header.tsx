@@ -12,9 +12,10 @@ interface PostHeaderProps {
   tags: ITag[];
   slug: string;
   initialViews: number;
+  readingMinutes: number;
 }
 
-export function PostHeader({ title, category, createdAt, slug, initialViews }: PostHeaderProps) {
+export function PostHeader({ title, category, createdAt, slug, initialViews, readingMinutes }: PostHeaderProps) {
   return (
     <header className="w-full">
       {/* Back button */}
@@ -41,6 +42,8 @@ export function PostHeader({ title, category, createdAt, slug, initialViews }: P
             <span>{formatDate(createdAt)}</span>
             <span className="text-notion-border">•</span>
             <ViewCounter slug={slug} initialViews={initialViews} />
+            <span className="text-notion-border">•</span>
+            <span>약 {readingMinutes}분</span>
           </div>
         </div>
 
