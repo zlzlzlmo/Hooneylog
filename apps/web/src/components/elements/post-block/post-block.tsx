@@ -57,7 +57,7 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
 
     case 'numbered_list_item':
       return (
-        <li className="text-[16px] leading-[1.6] list-disc ml-[24px] mb-[2px] text-notion-text">
+        <li className="text-[16px] leading-[1.6] list-decimal ml-[24px] mb-[2px] text-notion-text">
           <NotionBlockText richText={block.numbered_list_item.rich_text} />
           <BlockNestedList block={block} />
         </li>
