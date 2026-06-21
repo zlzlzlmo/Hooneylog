@@ -16,6 +16,9 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+  --color-accent: #0F7B6C;
+  --color-accent-bg: #E3F2EF;
 }
 
 :root {
