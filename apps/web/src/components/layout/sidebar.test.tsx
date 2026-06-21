@@ -39,4 +39,44 @@ describe('Sidebar', () => {
     );
     expect(screen.getByRole('list', { name: '카테고리 필터' })).toBeInTheDocument();
   });
+
+  it('uses Korean labels for the category section heading', () => {
+    render(
+      <Sidebar categories={categories} currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()} />
+    );
+    expect(screen.getByText('카테고리')).toBeInTheDocument();
+  });
+
+  it('uses Korean labels for the blog stats', () => {
+    render(
+      <Sidebar categories={categories} currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()} stats={{ total: 1234, today: 56 }} />
+    );
+    expect(screen.getByText('총 조회수')).toBeInTheDocument();
+    expect(screen.getByText('오늘')).toBeInTheDocument();
+    expect(screen.getByText('1,234')).toBeInTheDocument();
+    expect(screen.getByText('+56')).toBeInTheDocument();
+  });
+
+  it('gives the active category an accent indicator distinct from hover', () => {
+    render(
+      <Sidebar categories={categories} currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()} />
+    );
+    const active = screen.getByRole('button', { name: /React/ });
+    expect(active.className).toMatch(/border-accent/);
+    expect(active.className).toMatch(/text-accent/);
+    const inactive = screen.getByRole('button', { name: /CSS/ });
+    expect(inactive.className).not.toMatch(/border-accent/);
+  });
+
+  it('gives category buttons a visible focus ring (a11y)', () => {
+    render(
+      <Sidebar categories={categories} currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()} />
+    );
+    const active = screen.getByRole('button', { name: /React/ });
+    expect(active.className).toMatch(/focus-visible:ring-accent/);
+  });
 });

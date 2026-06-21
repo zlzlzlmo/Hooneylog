@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/date';
 import { ITag } from '@hooneylog/shared-types';
 import { ViewCounter } from '@/components/elements/view-counter';
 import { AuthorBadge } from '@/components/elements/author-badge';
+import { TagList } from '@/components/elements/tag-list';
 
 interface PostHeaderProps {
   title: string;
@@ -12,9 +13,10 @@ interface PostHeaderProps {
   tags: ITag[];
   slug: string;
   initialViews: number;
+  readingMinutes: number;
 }
 
-export function PostHeader({ title, category, createdAt, slug, initialViews }: PostHeaderProps) {
+export function PostHeader({ title, category, createdAt, tags, slug, initialViews, readingMinutes }: PostHeaderProps) {
   return (
     <header className="w-full">
       {/* Back button */}
@@ -41,6 +43,8 @@ export function PostHeader({ title, category, createdAt, slug, initialViews }: P
             <span>{formatDate(createdAt)}</span>
             <span className="text-notion-border">•</span>
             <ViewCounter slug={slug} initialViews={initialViews} />
+            <span className="text-notion-border">•</span>
+            <span>약 {readingMinutes}분</span>
           </div>
         </div>
 
@@ -51,6 +55,7 @@ export function PostHeader({ title, category, createdAt, slug, initialViews }: P
 
         {/* Author Info */}
         <AuthorBadge />
+        <TagList tags={tags} className="mt-6" />
       </div>
     </header>
   );

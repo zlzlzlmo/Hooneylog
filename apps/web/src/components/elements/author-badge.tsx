@@ -6,7 +6,7 @@ export function AuthorBadge({ size = 'md' }: { size?: 'sm' | 'md' }) {
   return (
     <div className="flex items-center gap-3">
       <div
-        className="relative rounded-full overflow-hidden border border-notion-border bg-white flex-shrink-0"
+        className="relative rounded-full overflow-hidden border border-notion-border bg-notion-bg flex-shrink-0"
         style={{ width: dim, height: dim }}
       >
         <Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
