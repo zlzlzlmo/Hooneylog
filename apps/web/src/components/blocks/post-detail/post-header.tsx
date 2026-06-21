@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/date';
 import { ITag } from '@hooneylog/shared-types';
 import { ViewCounter } from '@/components/elements/view-counter';
 import { AuthorBadge } from '@/components/elements/author-badge';
+import { TagList } from '@/components/elements/tag-list';
 
 interface PostHeaderProps {
   title: string;
@@ -15,7 +16,7 @@ interface PostHeaderProps {
   readingMinutes: number;
 }
 
-export function PostHeader({ title, category, createdAt, slug, initialViews, readingMinutes }: PostHeaderProps) {
+export function PostHeader({ title, category, createdAt, tags, slug, initialViews, readingMinutes }: PostHeaderProps) {
   return (
     <header className="w-full">
       {/* Back button */}
@@ -54,6 +55,7 @@ export function PostHeader({ title, category, createdAt, slug, initialViews, rea
 
         {/* Author Info */}
         <AuthorBadge />
+        <TagList tags={tags} className="mt-6" />
       </div>
     </header>
   );
