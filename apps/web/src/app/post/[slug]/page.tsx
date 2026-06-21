@@ -17,8 +17,9 @@ import { ShareButtons } from '@/components/blocks/post-detail/share-buttons';
 import { ReadingProgress } from '@/components/elements/reading-progress';
 import { BackToTop } from '@/components/elements/back-to-top';
 
-// ISR every 60 seconds
-export const revalidate = 60;
+// Hourly ISR; post content is Data-Cached for the same window and invalidated
+// on-demand via /api/revalidate.
+export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
 
