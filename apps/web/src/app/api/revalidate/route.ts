@@ -9,7 +9,10 @@ import { POSTS_TAG, POST_BLOCKS_TAG } from '@/lib/cache-tags';
  * Notion Data Cache the moment content changes, instead of waiting for the
  * time-based revalidation window. Secured with a shared secret.
  *
- *   POST /api/revalidate   header: x-revalidate-secret: <REVALIDATE_SECRET>
+ * The secret may be supplied either as a header or a query parameter, since
+ * Notion's native "Send webhook" automation can only set a URL (no headers):
+ *   POST /api/revalidate            header: x-revalidate-secret: <REVALIDATE_SECRET>
+ *   POST /api/revalidate?secret=<REVALIDATE_SECRET>
  */
 export async function POST(request: Request) {
   const secret = process.env.REVALIDATE_SECRET;
@@ -21,7 +24,11 @@ export async function POST(request: Request) {
     );
   }
 
-  if (request.headers.get('x-revalidate-secret') !== secret) {
+  const provided =
+    request.headers.get('x-revalidate-secret') ??
+    new URL(request.url).searchParams.get('secret');
+
+  if (provided !== secret) {
     return NextResponse.json(
       { revalidated: false, message: 'Invalid revalidation secret.' },
       { status: 401 }
