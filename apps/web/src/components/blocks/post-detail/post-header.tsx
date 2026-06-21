@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/utils/date';
 import { ITag } from '@hooneylog/shared-types';
 import { ViewCounter } from '@/components/elements/view-counter';
+import { AuthorBadge } from '@/components/elements/author-badge';
 
 interface PostHeaderProps {
   title: string;
@@ -49,20 +50,7 @@ export function PostHeader({ title, category, createdAt, slug, initialViews }: P
         </h1>
 
         {/* Author Info */}
-        <div className="flex items-center gap-3">
-          <div className="w-[48px] h-[48px] rounded-full bg-notion-gray-bg border border-notion-border flex items-center justify-center overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/profile.png" alt="Seunghoon Shin" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[15px] font-medium text-notion-text">
-              작성자 Seunghoon Shin
-            </span>
-            <span className="text-[13px] text-notion-secondary">
-              풀스택 개발자
-            </span>
-          </div>
-        </div>
+        <AuthorBadge />
       </div>
     </header>
   );

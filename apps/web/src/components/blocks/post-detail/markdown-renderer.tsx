@@ -51,7 +51,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             }
 
             return !inline && match ? (
-              <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
+              <div className="my-[1.2em] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
                 <SyntaxHighlighter
                   language={language}
                   style={vscDarkPlus}
@@ -63,7 +63,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
                 </SyntaxHighlighter>
               </div>
             ) : (
-              <code className="bg-gray-100 text-[#EB5757] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
+              <code className="bg-gray-100 text-[#B91C1C] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
                 {children as React.ReactNode}
               </code>
             );
@@ -118,19 +118,19 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h1({ children, ...props }: any) {
-            return <h1 className="text-[30px] font-bold mt-[2em] mb-[4px] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h1>;
+            return <h1 className="text-[30px] font-bold mt-[2em] mb-[0.5em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h1>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h2({ children, ...props }: any) {
-            return <h2 className="text-[24px] font-semibold mt-[1.4em] mb-[1px] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h2>;
+            return <h2 className="text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h2>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h3({ children, ...props }: any) {
-            return <h3 className="text-[20px] font-semibold mt-[1em] mb-[1px] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h3>;
+            return <h3 className="text-[20px] font-semibold mt-[1.2em] mb-[0.3em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h3>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           p({ children, ...props }: any) {
-            return <p className="text-[16px] leading-[1.6] mb-[2px] break-keep min-h-[24px] text-notion-text" {...props}>{children as React.ReactNode}</p>;
+            return <p className="text-[16px] leading-[1.6] mb-[0.8em] break-keep min-h-[24px] text-notion-text" {...props}>{children as React.ReactNode}</p>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ul({ children, ...props }: any) {
@@ -143,7 +143,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           blockquote({ children, ...props }: any) {
             return (
-              <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[12px] text-[16px] leading-[1.5] text-notion-text italic" {...props}>
+              <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[1.2em] text-[16px] leading-[1.5] text-notion-text italic" {...props}>
                 {children as React.ReactNode}
               </blockquote>
             );
@@ -152,20 +152,24 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           img({ src, alt, ...props }: any) {
             return (
               <figure className="my-6 flex flex-col items-start w-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={src as string} 
-                  alt={(alt as string) || 'image'} 
-                  className="max-w-full rounded-[4px] object-contain max-h-[70vh]"
-                  {...props}
-                />
+                <div className="w-full max-h-[70vh] aspect-[16/10] overflow-hidden rounded-[4px] bg-notion-gray-bg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src as string}
+                    alt={(alt as string) || ''}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-contain"
+                    {...props}
+                  />
+                </div>
                 {alt && <figcaption className="mt-2 text-[14px] text-notion-secondary">{alt as React.ReactNode}</figcaption>}
               </figure>
             );
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           hr({ ...props }: any) {
-            return <hr className="w-full h-[1px] bg-notion-border border-none my-[16px]" {...props} />;
+            return <hr className="w-full h-[1px] bg-notion-border border-none my-[1.2em]" {...props} />;
           },
           // Notion-style Table Customization
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

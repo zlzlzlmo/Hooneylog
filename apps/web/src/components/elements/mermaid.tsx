@@ -38,7 +38,8 @@ export function Mermaid({ content }: MermaidProps) {
   const [svg, setSvg] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
   // 💡 매번 고유한 ID를 생성하여 렌더링 충돌 방지
   const idRef = useRef(`mermaid-${Math.random().toString(36).substring(2, 9)}`);
 
@@ -62,7 +63,7 @@ export function Mermaid({ content }: MermaidProps) {
     renderChart();
   }, [renderChart]);
 
-  // 💡 ESC 키로 모달 닫기
+  // 💡 ESC 키로 모달 닫기 + 포커스 관리
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsModalOpen(false);
@@ -70,6 +71,7 @@ export function Mermaid({ content }: MermaidProps) {
     if (isModalOpen) {
       window.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+      closeBtnRef.current?.focus();
     }
     return () => {
       window.removeEventListener('keydown', handleEsc);
@@ -79,14 +81,15 @@ export function Mermaid({ content }: MermaidProps) {
 
   return (
     <>
-      <div className="group relative flex justify-center my-10 w-full bg-white/50 dark:bg-zinc-900/50 rounded-lg p-6 border border-notion-border/40 hover:bg-white/80 dark:hover:bg-zinc-900/80 transition-all duration-200 shadow-sm">
+      <div className="group relative flex justify-center my-10 w-full min-h-[200px] bg-white/50 dark:bg-zinc-900/50 rounded-lg p-6 border border-notion-border/40 hover:bg-white/80 dark:hover:bg-zinc-900/80 transition-all duration-200 shadow-sm">
         {/* 확대 버튼 */}
         <button
           onClick={() => setIsModalOpen(true)}
+          aria-label="다이어그램 확대"
           className="absolute top-4 right-4 p-2 rounded-md bg-white dark:bg-zinc-800 border border-notion-border/40 text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10"
           title="자세히 보기"
         >
-          <Maximize2 size={18} />
+          <Maximize2 size={18} aria-hidden="true" />
         </button>
 
         <div 
@@ -98,20 +101,25 @@ export function Mermaid({ content }: MermaidProps) {
 
       {/* 라이트박스 모달 (업계 표준 상세 보기 구현) */}
       {isModalOpen && (
-        <div 
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="다이어그램 확대 보기"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setIsModalOpen(false)}
         >
-          <div 
+          <div
             className="relative w-[95vw] h-[90vh] bg-white dark:bg-zinc-900 rounded-xl p-10 flex items-center justify-center overflow-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
           >
             {/* 닫기 버튼 */}
             <button
+              ref={closeBtnRef}
               onClick={() => setIsModalOpen(false)}
+              aria-label="닫기"
               className="absolute top-6 right-6 p-2 rounded-full hover:bg-notion-hover dark:hover:bg-zinc-800 text-notion-secondary hover:text-notion-text transition-colors cursor-pointer"
             >
-              <X size={24} />
+              <X size={24} aria-hidden="true" />
             </button>
 
             {/* 상세 보기 다이어그램 */}

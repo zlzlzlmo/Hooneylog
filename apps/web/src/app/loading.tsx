@@ -24,15 +24,15 @@ export default function HomeLoading() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="flex flex-col">
-                <div className="w-full aspect-video bg-notion-gray-bg rounded-[6px] mb-4"></div>
-                <div className="w-full h-6 bg-notion-gray-bg rounded mb-2"></div>
-                <div className="w-3/4 h-6 bg-notion-gray-bg rounded mb-4"></div>
-                <div className="flex items-center gap-2 mt-auto">
-                  <div className="w-6 h-6 rounded-full bg-notion-gray-bg"></div>
-                  <div className="flex flex-col gap-1">
-                    <div className="w-20 h-3 bg-notion-gray-bg rounded"></div>
-                    <div className="w-16 h-2 bg-notion-gray-bg rounded"></div>
-                  </div>
+                <div className="w-full aspect-[4/3] sm:aspect-video bg-notion-gray-bg rounded-[6px] mb-4"></div>
+                <div className="w-24 h-3 bg-notion-gray-bg rounded mb-2"></div>
+                <div className="w-full h-5 bg-notion-gray-bg rounded mb-2"></div>
+                <div className="w-3/4 h-5 bg-notion-gray-bg rounded mb-3"></div>
+                <div className="w-full h-4 bg-notion-gray-bg rounded mb-1"></div>
+                <div className="w-2/3 h-4 bg-notion-gray-bg rounded mb-4"></div>
+                <div className="flex items-center justify-between mt-auto pt-4">
+                  <div className="w-12 h-3 bg-notion-gray-bg rounded"></div>
+                  <div className="w-16 h-3 bg-notion-gray-bg rounded"></div>
                 </div>
               </div>
             ))}
