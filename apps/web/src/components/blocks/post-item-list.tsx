@@ -38,7 +38,7 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12 pb-20 w-full">
       {posts.map((post, index) => {
-        const imageSrc = getCategoryImageSrc(post.category);
+        const imageSrc = getCategoryImageSrc(post.category, post.tags);
         const isDefault = imageSrc === '/images/default.png';
 
         return (

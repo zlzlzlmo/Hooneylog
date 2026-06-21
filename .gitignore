@@ -15,6 +15,7 @@ drafts/
 
 # tech-blog-writer temp post payloads (created at repo root, then deleted after publish)
 .tmp-*.json
+.tmp-*/
 
 # env files
 .env*
