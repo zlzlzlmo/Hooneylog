@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Claude Code local/personal settings (shared skills & config stay tracked)
 .claude/settings.local.json
+
+# Superpowers SDD scratch (briefs, review packages, progress ledger)
+.superpowers/
