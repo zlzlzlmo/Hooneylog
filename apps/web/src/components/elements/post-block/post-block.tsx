@@ -21,28 +21,28 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
   switch (type) {
     case 'paragraph':
       return (
-        <p className="text-[16px] leading-[1.6] mb-[2px] break-keep min-h-[24px] text-notion-text">
+        <p className="text-[16px] leading-[1.6] mb-[0.8em] break-keep min-h-[24px] text-notion-text">
           <NotionBlockText richText={block.paragraph.rich_text} />
         </p>
       );
       
     case 'heading_1':
       return (
-        <h1 className="text-[30px] font-bold mt-[2em] mb-[4px] leading-[1.3] text-notion-text">
+        <h1 className="text-[30px] font-bold mt-[2em] mb-[0.5em] leading-[1.3] text-notion-text">
           <NotionBlockText richText={block.heading_1.rich_text} />
         </h1>
       );
       
     case 'heading_2':
       return (
-        <h2 className="text-[24px] font-semibold mt-[1.4em] mb-[1px] leading-[1.3] text-notion-text">
+        <h2 className="text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text">
           <NotionBlockText richText={block.heading_2.rich_text} />
         </h2>
       );
       
     case 'heading_3':
       return (
-        <h3 className="text-[20px] font-semibold mt-[1em] mb-[1px] leading-[1.3] text-notion-text">
+        <h3 className="text-[20px] font-semibold mt-[1.2em] mb-[0.3em] leading-[1.3] text-notion-text">
           <NotionBlockText richText={block.heading_3.rich_text} />
         </h3>
       );
@@ -84,23 +84,27 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
       const caption = value.caption && value.caption.length > 0 ? value.caption[0]?.plain_text : '';
       return (
         <figure className="my-3 flex flex-col items-start w-full">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={src} 
-            alt={caption || 'image'} 
-            className="max-w-full rounded-[4px] border border-notion-border object-contain max-h-[70vh]"
-          />
+          <div className="w-full max-h-[70vh] aspect-[16/10] overflow-hidden rounded-[4px] border border-notion-border bg-notion-gray-bg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={caption || ''}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-contain"
+            />
+          </div>
           {caption && <figcaption className="mt-2 text-[14px] text-notion-secondary">{caption}</figcaption>}
         </figure>
       );
     }
       
     case 'divider':
-      return <hr className="w-full h-[1px] bg-notion-border border-none my-[16px]" />;
+      return <hr className="w-full h-[1px] bg-notion-border border-none my-[1.2em]" />;
       
     case 'quote':
       return (
-        <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[4px] text-[16px] leading-[1.5] text-notion-text">
+        <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[1.2em] text-[16px] leading-[1.5] text-notion-text">
           <NotionBlockText richText={block.quote.rich_text} />
         </blockquote>
       );
@@ -114,7 +118,7 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
       }
 
       return (
-        <div className="my-[4px] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
+        <div className="my-[1.2em] text-[14px] rounded-[3px] overflow-hidden border border-notion-border font-mono">
           <SyntaxHighlighter 
             language={language}
             style={vscDarkPlus}
@@ -133,7 +137,7 @@ export function PostBlock({ block }: { block: BlockObjectResponse }) {
           href={href} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="flex items-center border border-notion-border rounded-[3px] hover:bg-notion-hover transition-colors overflow-hidden my-[4px] no-underline h-[118px]"
+          className="flex items-center border border-notion-border rounded-[3px] hover:bg-notion-hover transition-colors overflow-hidden my-[1.2em] no-underline h-[118px]"
         >
           <div className="flex flex-col p-[14px] flex-1 min-w-0 justify-between h-full">
              <div className="text-[14px] text-notion-text line-clamp-1 mb-[2px]">{href}</div>
