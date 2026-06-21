@@ -6,11 +6,11 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full h-[56px] bg-notion-bg/80 backdrop-blur-md border-b border-notion-border flex items-center justify-between px-4 sm:px-6">
       <Link
         href="/"
-        className="flex items-center gap-2 h-full px-2 rounded-[4px] hover:bg-notion-hover transition-colors"
+        className="flex items-center gap-2 h-full px-2 rounded-[4px] hover:bg-notion-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
       >
         <span
           aria-hidden="true"
-          className="w-[24px] h-[24px] rounded-[6px] bg-accent text-white flex items-center justify-center font-bold text-[14px] tracking-tight"
+          className="w-[24px] h-[24px] rounded-[6px] bg-accent text-on-accent flex items-center justify-center font-bold text-[14px] tracking-tight"
         >
           H
         </span>

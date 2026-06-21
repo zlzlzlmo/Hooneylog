@@ -18,15 +18,15 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
       <div className="py-20 flex flex-col items-center justify-center text-notion-secondary col-span-full">
         <span className="text-[24px] mb-2">📄</span>
         <p className="text-[15px]">
-          {query ? `'${query}'에 대한 검색 결과가 없습니다.` : '검색 결과가 없습니다.'}
+          {query ? `'${query}'에 대한 검색 결과가 없어요.` : '아직 글이 없어요.'}
         </p>
         {onReset && (
           <button
             type="button"
-            onClick={onReset}
-            className="mt-4 px-4 py-2 text-[14px] rounded-[4px] border border-notion-border text-notion-text hover:bg-notion-hover transition-colors cursor-pointer"
+            onClick={() => onReset?.()}
+            className="mt-4 px-4 py-2 text-[14px] rounded-[4px] border border-notion-border text-notion-text hover:bg-notion-hover active:bg-notion-gray-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
           >
-            검색 초기화
+            전체 글 보기
           </button>
         )}
       </div>
@@ -45,20 +45,20 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
           <article key={post.id} className="group flex flex-col w-full relative">
             <Link
               href={`/post/${post.id}`}
-              className="flex flex-col flex-1"
+              className="flex flex-col flex-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
             >
               {/* Cover Image */}
               {/* Notion uses a simple container without borders, and the image spans full width of the grid cell */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-[6px] overflow-hidden mb-4 bg-notion-gray-bg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05)]">
+              <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-[6px] overflow-hidden mb-4 bg-notion-gray-bg ring-1 ring-inset ring-notion-border">
                 {isDefault ? (
                   <CategoryFallbackImage category={post.category} />
                 ) : (
                   <Image
                     src={imageSrc}
-                    alt={post.category || 'Cover image'}
+                    alt={post.title || '대표 이미지'}
                     fill
-                    priority={index === 0}
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    priority={index < 2}
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02] group-focus-within:scale-[1.02]"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 )}
@@ -69,12 +69,12 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
                 {/* Eyebrow / Category */}
                 <div className="mb-2">
                   <span className="text-[13px] font-medium text-notion-secondary">
-                    {post.category || 'Notion HQ'}
+                    {post.category || '미분류'}
                   </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-[18px] sm:text-[20px] font-bold text-notion-text leading-[1.3] mb-2 group-hover:text-accent transition-colors line-clamp-3">
+                <h3 className="text-[18px] sm:text-[20px] font-bold text-notion-text leading-[1.3] mb-2 group-hover:text-accent group-focus-within:text-accent transition-colors line-clamp-3">
                   {post.title}
                 </h3>
                 

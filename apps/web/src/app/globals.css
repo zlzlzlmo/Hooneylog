@@ -5,7 +5,8 @@
 @theme {
   --color-notion-bg: #FFFFFF;
   --color-notion-text: #37352F;
-  --color-notion-text-light: rgba(55, 53, 47, 0.65);
+  /* Raised from 0.65 → 0.72 so secondary text clears WCAG AA 4.5:1 on white */
+  --color-notion-text-light: rgba(55, 53, 47, 0.72);
   --color-notion-border: rgba(55, 53, 47, 0.16);
   --color-notion-hover: rgba(55, 53, 47, 0.08);
   --color-notion-gray-bg: #F1F1EF;
@@ -21,6 +22,8 @@
 
   --color-accent: #0F7B6C;
   --color-accent-bg: #E3F2EF;
+  /* Foreground placed on top of an accent fill (logo badge, etc.) */
+  --color-on-accent: #FFFFFF;
 }
 
 :root {
@@ -39,6 +42,8 @@
   --color-notion-blue-text: #5BA8C9;
   --color-accent: #4FD1C5;
   --color-accent-bg: #1D3330;
+  /* Dark accent is a light mint → needs a dark glyph for contrast */
+  --color-on-accent: #191919;
 }
 
 body {
