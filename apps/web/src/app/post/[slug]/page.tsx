@@ -6,9 +6,11 @@ import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-rende
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
 import { GiscusComment } from '@/components/blocks/post-detail/giscus-comment';
 import { CommentProvider } from '@/components/blocks/post-detail/comment-context';
+import { TableOfContents } from '@/components/blocks/post-detail/table-of-contents';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
 import { getViewCount } from '@/lib/views';
+import { extractToc, readingTime } from '@/utils/toc';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -83,6 +85,10 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
 
   const { previousPost, nextPost } = getAdjacentPosts(allPosts, slug);
 
+  const md = markdown.parent ?? '';
+  const toc = extractToc(md);
+  const readingMinutes = readingTime(md);
+
   // JSON-LD for Search Engine Optimization
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -112,30 +118,40 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <div className="w-full max-w-[720px] px-4 sm:px-6 mx-auto flex flex-col items-center">
-        
-        {/* 1. Top Section (Header + Author) */}
-        <section className="w-full mb-12">
-          <PostHeader 
-            title={post.title}
-            category={post.category}
-            createdAt={post.createdAt}
-            tags={post.tags}
-            slug={slug}
-            initialViews={views}
-          />
-        </section>
+      <div className="w-full max-w-[980px] px-4 sm:px-6 mx-auto">
+        {/* Top: header spans the reading column width */}
+        <div className="max-w-[720px] mx-auto xl:mx-0">
+          <section className="w-full mb-12">
+            <PostHeader
+              title={post.title}
+              category={post.category}
+              createdAt={post.createdAt}
+              tags={post.tags}
+              slug={slug}
+              initialViews={views}
+              readingMinutes={readingMinutes}
+            />
+          </section>
+        </div>
 
-        {/* 2. Main Body Layout (Content) */}
-        <section className="w-full">
-          <MarkdownRenderer content={markdown.parent ?? ''} />
-          
-          <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
-          <CommentProvider>
-            <GiscusComment />
-          </CommentProvider>
-        </section>
-        
+        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 items-start">
+          {/* Reading column */}
+          <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
+            <TableOfContents items={toc} variant="inline" />
+            <section className="w-full">
+              <MarkdownRenderer content={md} />
+              <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
+              <CommentProvider>
+                <GiscusComment />
+              </CommentProvider>
+            </section>
+          </div>
+
+          {/* TOC rail (desktop only) */}
+          <aside className="hidden xl:block">
+            <TableOfContents items={toc} variant="rail" />
+          </aside>
+        </div>
       </div>
     </div>
   );
