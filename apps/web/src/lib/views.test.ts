@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { kv } from '@vercel/kv';
-import { incrementView, getGlobalStats, getViewCount, getViewCounts, incrementGlobalStats } from './views';
+import { incrementView, getGlobalStats, getViewCount, getViewCounts, incrementGlobalStats, markViewedOnce } from './views';
 
 // Mock the @vercel/kv module
 vi.mock('@vercel/kv', () => ({
@@ -8,6 +8,7 @@ vi.mock('@vercel/kv', () => ({
     pipeline: vi.fn(),
     mget: vi.fn(),
     get: vi.fn(),
+    set: vi.fn(),
   },
 }));
 
@@ -184,6 +185,57 @@ describe('views utility', () => {
       const result = await getViewCounts(['post-1', 'post-2']);
 
       expect(result).toEqual({});
+      expect(console.error).toHaveBeenCalled();
+    });
+  });
+
+  describe('markViewedOnce', () => {
+    it('returns true when the seen-key is newly set (NX success)', async () => {
+      (kv.set as Mock).mockResolvedValue('OK');
+
+      const result = await markViewedOnce('test-post', 'abc123');
+
+      expect(result).toBe(true);
+    });
+
+    it('returns false when the seen-key already exists (NX returns null)', async () => {
+      (kv.set as Mock).mockResolvedValue(null);
+
+      const result = await markViewedOnce('test-post', 'abc123');
+
+      expect(result).toBe(false);
+    });
+
+    it('uses a per-slug-per-iphash key with nx and a TTL', async () => {
+      (kv.set as Mock).mockResolvedValue('OK');
+
+      await markViewedOnce('test-post', 'abc123', 3600);
+
+      expect(kv.set).toHaveBeenCalledWith(
+        'views:seen:test-post:abc123',
+        1,
+        { nx: true, ex: 3600 }
+      );
+    });
+
+    it('defaults to a 24h TTL', async () => {
+      (kv.set as Mock).mockResolvedValue('OK');
+
+      await markViewedOnce('test-post', 'abc123');
+
+      expect(kv.set).toHaveBeenCalledWith(
+        'views:seen:test-post:abc123',
+        1,
+        { nx: true, ex: 86400 }
+      );
+    });
+
+    it('fails open (returns true) and logs on KV error', async () => {
+      (kv.set as Mock).mockRejectedValue(new Error('Redis down'));
+
+      const result = await markViewedOnce('test-post', 'abc123');
+
+      expect(result).toBe(true);
       expect(console.error).toHaveBeenCalled();
     });
   });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { incrementView, getViewCount } from '@/lib/views';
+import { incrementView, getViewCount, markViewedOnce } from '@/lib/views';
+import { getClientIp, hashIp } from '@/lib/view-guard';
 
 /**
  * 💡 업계 표준: 조회수 조회 API
@@ -38,10 +39,13 @@ export async function POST(
   }
 
   try {
-    // 💡 실제 KV 데이터 증가
-    const newCount = await incrementView(slug);
-    
-    return NextResponse.json({ views: newCount });
+    // 💡 서버측 어뷰징 방어: 같은 (해시 IP, slug) 조합은 24h 동안 1회만 집계
+    const ipHash = hashIp(getClientIp(request.headers));
+    const first = await markViewedOnce(slug, ipHash);
+
+    const views = first ? await incrementView(slug) : await getViewCount(slug);
+
+    return NextResponse.json({ views, counted: first });
   } catch (error) {
     console.error('❌ [API] Failed to increment views:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
