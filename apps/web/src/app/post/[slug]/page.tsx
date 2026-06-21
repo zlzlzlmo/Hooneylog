@@ -112,7 +112,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <div className="w-full max-w-[800px] px-4 sm:px-6 mx-auto flex flex-col items-center">
+      <div className="w-full max-w-[720px] px-4 sm:px-6 mx-auto flex flex-col items-center">
         
         {/* 1. Top Section (Header + Author) */}
         <section className="w-full mb-12">
