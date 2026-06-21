@@ -33,7 +33,8 @@ export function CategoryFallbackImage({ category, className = '' }: CategoryFall
   const initial = (category || 'Notion').substring(0, 2).toUpperCase();
 
   return (
-    <div 
+    <div
+      aria-hidden="true"
       className={`w-full h-full flex items-center justify-center ${className}`}
       style={{
         background: `linear-gradient(135deg, ${colors.from} 0%, ${colors.to} 100%)`
