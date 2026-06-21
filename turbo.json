@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NOTION_API_KEY", "NOTION_DATABASE_ID", "REVALIDATE_SECRET"],
+  "globalEnv": ["NOTION_API_KEY", "NOTION_DATABASE_ID", "REVALIDATE_SECRET", "VIEW_HASH_SALT"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

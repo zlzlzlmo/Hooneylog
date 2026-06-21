@@ -27,6 +27,27 @@ export async function incrementGlobalStats(): Promise<{ total: number; today: nu
   }
 }
 
+/**
+ * 같은 (slug, ipHash) 조합의 첫 조회인지 표시합니다.
+ * `views:seen:<slug>:<ipHash>` 를 NX + TTL 로 세팅해, 새로 세팅되면 첫 조회(true),
+ * 이미 존재하면 중복(false)으로 판정합니다.
+ * KV 에러 시에는 정상 조회를 잃지 않도록 fail-open(true) 합니다.
+ */
+export async function markViewedOnce(
+  slug: string,
+  ipHash: string,
+  ttlSec = 60 * 60 * 24
+): Promise<boolean> {
+  const seenKey = `views:seen:${slug}:${ipHash}`;
+  try {
+    const result = await kv.set(seenKey, 1, { nx: true, ex: ttlSec });
+    return result !== null;
+  } catch (error) {
+    console.error(`❌ [KV] Failed to mark view for ${slug}:`, error);
+    return true; // fail-open: 정상 사용자의 조회를 차단하지 않음
+  }
+}
+
 export async function incrementView(slug: string): Promise<number> {
   const postKey = `views:post:${slug}`;
   const totalKey = 'views:total';
