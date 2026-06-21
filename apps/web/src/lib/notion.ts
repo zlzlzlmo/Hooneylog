@@ -1,8 +1,15 @@
 import 'server-only';
 import { Client } from '@notionhq/client';
-import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { INotionProperties, NotionPost, IRawNotionPost, BlockObjectResponse } from '@hooneylog/shared-types';
 import { NotionToMarkdown } from 'notion-to-md';
+import { POSTS_TAG, POST_BLOCKS_TAG } from './cache-tags';
+
+// Notion content changes rarely, so serve it from the Next.js Data Cache for an
+// hour. Because these use the Notion SDK (not fetch), they would otherwise bypass
+// the Data Cache entirely and hit the API on every render. Immediate updates are
+// handled out-of-band by the tag-based /api/revalidate webhook.
+const CACHE_REVALIDATE_SECONDS = 3600;
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -103,16 +110,20 @@ function fixMarkdown(md: string): string {
   return result;
 }
 
-export const getNotionPageMarkdown = cache(async (pageId: string) => {
-  const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
-  const mdString = n2m.toMarkdownString(mdblocks);
-  
-  if (mdString.parent) {
-    mdString.parent = fixMarkdown(mdString.parent);
-  }
+export const getNotionPageMarkdown = unstable_cache(
+  async (pageId: string) => {
+    const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
+    const mdString = n2m.toMarkdownString(mdblocks);
 
-  return mdString;
-});
+    if (mdString.parent) {
+      mdString.parent = fixMarkdown(mdString.parent);
+    }
+
+    return mdString;
+  },
+  ['notion-page-markdown'],
+  { tags: [POST_BLOCKS_TAG], revalidate: CACHE_REVALIDATE_SECONDS }
+);
 
 class NotionBlockMapper {
   private readonly properties: INotionProperties;
@@ -142,7 +153,8 @@ class NotionBlockMapper {
   }
 }
 
-export const getAllPosts = cache(async (): Promise<NotionPost[]> => {
+export const getAllPosts = unstable_cache(
+  async (): Promise<NotionPost[]> => {
   if (!databaseId) return [];
 
   const response = await withRetry(() => notion.databases.query({
@@ -174,14 +186,19 @@ export const getAllPosts = cache(async (): Promise<NotionPost[]> => {
       description: block.description,
     };
   });
-});
+  },
+  ['notion-all-posts'],
+  { tags: [POSTS_TAG], revalidate: CACHE_REVALIDATE_SECONDS }
+);
 
-export const getPostById = cache(async (postId: string): Promise<NotionPost | undefined> => {
+export const getPostById = async (postId: string): Promise<NotionPost | undefined> => {
+  // getAllPosts is already Data-Cached, so this stays cheap without its own entry.
   const posts = await getAllPosts();
   return posts.find(({ id }) => id === postId);
-});
+};
 
-export const getBlocksById = cache(async (id: string): Promise<BlockObjectResponse[]> => {
+export const getBlocksById = unstable_cache(
+  async (id: string): Promise<BlockObjectResponse[]> => {
   if (!id) return [];
   const blocks: BlockObjectResponse[] = [];
   let cursor: string | undefined = undefined;
@@ -204,4 +221,7 @@ export const getBlocksById = cache(async (id: string): Promise<BlockObjectRespon
   }
 
   return blocks;
-});
+  },
+  ['notion-blocks-by-id'],
+  { tags: [POST_BLOCKS_TAG], revalidate: CACHE_REVALIDATE_SECONDS }
+);
