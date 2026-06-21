@@ -13,6 +13,9 @@ import { getViewCount } from '@/lib/views';
 import { extractToc, readingTime } from '@/utils/toc';
 import { RelatedPosts } from '@/components/blocks/post-detail/related-posts';
 import { getRelatedPosts } from '@/utils/related-posts';
+import { ShareButtons } from '@/components/blocks/post-detail/share-buttons';
+import { ReadingProgress } from '@/components/elements/reading-progress';
+import { BackToTop } from '@/components/elements/back-to-top';
 
 // ISR every 60 seconds
 export const revalidate = 60;
@@ -28,8 +31,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return { title: 'Post Not Found' };
   }
 
-  const categoryImage = getCategoryImageSrc(post.category);
-
   return {
     title: post.title, // layout.tsx의 template에 의해 제목 | HooneyLog로 표시됨
     description: post.description,
@@ -43,20 +44,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       type: 'article',
       publishedTime: post.createdAt,
       authors: ['Hooney'],
-      images: [
-        {
-          url: categoryImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        }
-      ]
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      images: [categoryImage],
     }
   };
 }
@@ -115,6 +107,8 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
 
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
+      <ReadingProgress />
+      <BackToTop />
       {/* 💡 SEO: Structured Data for Google Rich Results */}
       <script
         type="application/ld+json"
@@ -143,6 +137,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
             <TableOfContents items={toc} variant="inline" />
             <section className="w-full">
               <MarkdownRenderer content={md} />
+              <ShareButtons title={post.title} slug={slug} />
               <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
               <RelatedPosts posts={relatedPosts} />
               <CommentProvider>
