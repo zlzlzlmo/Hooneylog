@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@theme inline {
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
   --color-notion-bg: #FFFFFF;
   --color-notion-text: #37352F;
   --color-notion-text-light: rgba(55, 53, 47, 0.65);
@@ -24,6 +26,19 @@
 :root {
   --background: var(--color-notion-bg);
   --foreground: var(--color-notion-text);
+}
+
+.dark {
+  --color-notion-bg: #191919;
+  --color-notion-text: #E6E6E5;
+  --color-notion-text-light: rgba(235, 235, 235, 0.55);
+  --color-notion-border: rgba(255, 255, 255, 0.13);
+  --color-notion-hover: rgba(255, 255, 255, 0.055);
+  --color-notion-gray-bg: #2C2C2C;
+  --color-notion-blue-bg: #1D3A4D;
+  --color-notion-blue-text: #5BA8C9;
+  --color-accent: #4FD1C5;
+  --color-accent-bg: #1D3330;
 }
 
 body {
