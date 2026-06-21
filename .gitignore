@@ -40,3 +40,6 @@ next-env.d.ts
 # Gemini internal tmp and sessions
 .gemini/tmp/
 .gemini/sessions/
+
+# Claude Code local/personal settings (shared skills & config stay tracked)
+.claude/settings.local.json
