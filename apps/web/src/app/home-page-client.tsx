@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+const PAGE_SIZE = 12;
 import { NotionPost } from '@hooneylog/shared-types';
 import { useFilterPost } from '@/hooks/use-filter-post';
 import { CategoryCount } from '@/utils/category';
@@ -31,6 +33,15 @@ export function HomePageClient({
   } = useFilterPost(initialPosts);
 
   const categoryCount = new CategoryCount(initialPosts);
+
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchValue, currentActiveCategory]);
+
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+  const hasMore = filteredPosts.length > visibleCount;
 
   // 💡 실시간 데이터 동기화 (ISR 캐시 우회)
   useEffect(() => {
@@ -70,7 +81,18 @@ export function HomePageClient({
             </p>
           )}
           <div className="mt-8">
-            <PostItemList posts={filteredPosts} viewsMap={viewsMap} query={searchValue} onReset={() => setSearchValue('')} />
+            <PostItemList posts={visiblePosts} viewsMap={viewsMap} query={searchValue} onReset={() => setSearchValue('')} />
+            {hasMore && (
+              <div className="flex justify-center mt-10">
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  className="px-5 py-2.5 text-[14px] rounded-[6px] border border-notion-border text-notion-text hover:bg-notion-hover transition-colors cursor-pointer"
+                >
+                  더 보기 ({filteredPosts.length - visibleCount}개 남음)
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
