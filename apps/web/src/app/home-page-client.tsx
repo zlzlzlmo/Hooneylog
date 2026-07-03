@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const PAGE_SIZE = 12;
 import { NotionPost } from '@hooneylog/shared-types';
@@ -33,7 +33,8 @@ export function HomePageClient({
     filteredPosts
   } = useFilterPost(initialPosts);
 
-  const categoryCount = new CategoryCount(initialPosts);
+  // initialPosts is stable for the page, so build the category index once.
+  const categoryCount = useMemo(() => new CategoryCount(initialPosts), [initialPosts]);
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -76,8 +77,8 @@ export function HomePageClient({
   useEffect(() => {
     const syncViews = async () => {
       try {
-        // 1. 전체 통계 가져오기 (증가 X)
-        const latestStats = await viewsService.getStats({ increment: false });
+        // 1. 전체 통계 가져오기
+        const latestStats = await viewsService.getStats();
 
         // 2. 현재 페이지의 포스트들 조회수 가져오기 (서비스 레이어 사용)
         const slugs = initialPosts.map(p => p.id);

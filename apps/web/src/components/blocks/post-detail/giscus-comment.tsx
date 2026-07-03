@@ -1,11 +1,27 @@
 'use client';
 
 import Giscus from '@giscus/react';
-import { useComment } from './comment-context';
 
-export function GiscusComment() {
-  const { repo, repoId, category, categoryId, theme, lang } = useComment();
+interface GiscusCommentProps {
+  repo?: string;
+  repoId?: string;
+  category?: string;
+  categoryId?: string;
+  theme?: string;
+  lang?: string;
+}
 
+// The giscus config is a handful of static env-backed constants, so read them
+// directly here (with sensible fallbacks) instead of threading them through a
+// single-consumer React context.
+export function GiscusComment({
+  repo = process.env.NEXT_PUBLIC_GISCUS_REPO || 'zlzlzlmo/Hooneylog',
+  repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || 'R_kgDORy83hA',
+  category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'General',
+  categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDORy83hM4C5hoe',
+  theme = 'light',
+  lang = 'ko',
+}: GiscusCommentProps = {}) {
   // repoId와 categoryId가 없으면 렌더링하지 않음 (설정 대기 상태)
   if (!repoId || !categoryId) {
     return (

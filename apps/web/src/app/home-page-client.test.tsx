@@ -35,6 +35,7 @@ describe('HomePageClient', () => {
       title: 'Test Post 1',
       category: 'React',
       createdAt: '2024-03-28T00:00:00Z',
+      updatedAt: '2024-03-28T00:00:00Z',
       description: 'A test post',
       tags: [],
     },
@@ -64,9 +65,9 @@ describe('HomePageClient', () => {
     );
 
     await waitFor(() => {
-      // It should call getStats once, with { increment: false }
+      // It should call the read-only getStats once (no increment side effect).
       expect(viewsService.getStats).toHaveBeenCalledTimes(1);
-      expect(viewsService.getStats).toHaveBeenCalledWith({ increment: false });
+      expect(viewsService.getStats).toHaveBeenCalledWith();
     });
 
     await waitFor(() => {
@@ -160,6 +161,7 @@ describe('HomePageClient', () => {
           title: 'Test Post 1',
           category: 'React',
           createdAt: '2024-03-28T00:00:00Z',
+          updatedAt: '2024-03-28T00:00:00Z',
           description: 'A test post',
           tags: [],
         },

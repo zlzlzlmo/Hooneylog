@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import mermaid from 'mermaid';
 import { Maximize2, X } from 'lucide-react';
 
 interface MermaidProps {
@@ -9,10 +8,10 @@ interface MermaidProps {
 }
 
 // 💡 업계 표준에 부합하는 고급 설정 (Notion/GitHub 스타일)
-mermaid.initialize({
-  startOnLoad: true,
-  theme: 'base', // 커스텀 테마 사용을 위해 base 설정
-  securityLevel: 'loose',
+const MERMAID_CONFIG = {
+  startOnLoad: false,
+  theme: 'base' as const, // 커스텀 테마 사용을 위해 base 설정
+  securityLevel: 'loose' as const,
   fontFamily: 'Inter, system-ui, sans-serif',
   themeVariables: {
     primaryColor: '#ffffff',
@@ -26,13 +25,28 @@ mermaid.initialize({
   flowchart: {
     useMaxWidth: true,
     htmlLabels: true,
-    curve: 'basis',
+    curve: 'basis' as const,
   },
   sequence: {
     useMaxWidth: true,
     showSequenceNumbers: true,
+  },
+};
+
+// mermaid는 프론트엔드에서 가장 무거운 라이브러리 중 하나라, 정적 import 대신 동적 import로
+// 코드 분할한다. 다이어그램이 포함된 글을 클라이언트에서 실제로 열 때만 별도 청크로 로드되고,
+// initialize도 import 시점이 아니라 첫 렌더 시점에 한 번만 실행된다.
+let mermaidPromise: Promise<typeof import('mermaid').default> | null = null;
+function loadMermaid() {
+  if (!mermaidPromise) {
+    mermaidPromise = import('mermaid').then((mod) => {
+      const instance = mod.default;
+      instance.initialize(MERMAID_CONFIG);
+      return instance;
+    });
   }
-});
+  return mermaidPromise;
+}
 
 export function Mermaid({ content }: MermaidProps) {
   const [svg, setSvg] = useState('');
@@ -45,6 +59,7 @@ export function Mermaid({ content }: MermaidProps) {
 
   const renderChart = useCallback(async () => {
     try {
+      const mermaid = await loadMermaid();
       const { svg: generatedSvg } = await mermaid.render(idRef.current, content);
       
       // 💡 업계 표준 팁: SVG 내부의 고정 width/height를 제거하여 CSS로 제어 가능하게 만듭니다.

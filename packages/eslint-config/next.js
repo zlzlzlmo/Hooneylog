@@ -1,7 +1,4 @@
-import js from "@eslint/js";
 import { globalIgnores } from "eslint/config";
-import eslintConfigPrettier from "eslint-config-prettier";
-import tseslint from "typescript-eslint";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReact from "eslint-plugin-react";
 import globals from "globals";
@@ -15,10 +12,8 @@ import { config as baseConfig } from "./base.js";
  * @type {import("eslint").Linter.Config}
  * */
 export const nextJsConfig = [
+  // baseConfig already brings js.recommended, tseslint.recommended and prettier.
   ...baseConfig,
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
   globalIgnores([
     ".next/**",
     "out/**",

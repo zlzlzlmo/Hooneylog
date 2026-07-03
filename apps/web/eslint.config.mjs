@@ -4,7 +4,8 @@ import { nextJsConfig } from "@hooneylog/eslint-config/next-js";
 const config = [
   ...nextJsConfig,
   {
-    ignores: ["fetch_post_content.js", "list_posts.js"],
+    // One-off Notion helper scripts (CommonJS, run manually via node).
+    ignores: ["scripts/**"],
   },
 ];
 

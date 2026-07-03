@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
+import { timingSafeEqual } from 'node:crypto';
 import { POSTS_TAG, POST_BLOCKS_TAG } from '@/lib/cache-tags';
+
+/** Constant-time secret comparison to avoid leaking length/content via timing. */
+function secretsMatch(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
 
 /**
  * On-demand revalidation endpoint.
@@ -28,7 +37,7 @@ export async function POST(request: Request) {
     request.headers.get('x-revalidate-secret') ??
     new URL(request.url).searchParams.get('secret');
 
-  if (provided !== secret) {
+  if (!provided || !secretsMatch(provided, secret)) {
     return NextResponse.json(
       { revalidated: false, message: 'Invalid revalidation secret.' },
       { status: 401 }

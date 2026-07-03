@@ -6,6 +6,7 @@ const mk = (id: string, category: string, tagNames: string[], createdAt = '2026-
   id,
   category,
   createdAt,
+  updatedAt: createdAt,
   description: '',
   title: id,
   tags: tagNames.map((n) => ({ id: n, name: n })),

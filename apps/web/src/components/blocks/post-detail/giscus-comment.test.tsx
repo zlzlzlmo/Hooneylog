@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { GiscusComment } from './giscus-comment';
-import { CommentProvider } from './comment-context';
 
 interface GiscusMockProps {
   repo: string;
@@ -28,11 +27,7 @@ describe('GiscusComment', () => {
       lang: 'ko'
     };
 
-    render(
-      <CommentProvider {...config}>
-        <GiscusComment />
-      </CommentProvider>
-    );
+    render(<GiscusComment {...config} />);
 
     const giscusMock = screen.getByTestId('giscus-mock');
     const passedProps = JSON.parse(giscusMock.getAttribute('data-props') || '{}');

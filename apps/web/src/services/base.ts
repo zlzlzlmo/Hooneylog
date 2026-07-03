@@ -37,15 +37,4 @@ export class BaseApiService {
     });
   }
 
-  protected put<T>(path: string, body?: unknown, options: RequestInit = {}): Promise<T> {
-    return this.request<T>(path, {
-      ...options,
-      method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  }
-
-  protected delete<T>(path: string, options: RequestInit = {}): Promise<T> {
-    return this.request<T>(path, { ...options, method: 'DELETE' });
-  }
 }
