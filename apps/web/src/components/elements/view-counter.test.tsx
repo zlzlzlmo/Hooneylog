@@ -2,17 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { ViewCounter } from './view-counter';
 import { viewsService } from '@/services/views';
-import React from 'react';
-
-// Mock useLayoutEffect to be a normal useEffect for Node/jsdom environments
-// to prevent "useLayoutEffect does nothing on the server" warnings in test output
-vi.mock('react', async () => {
-  const actual = await vi.importActual<typeof React>('react');
-  return {
-    ...actual,
-    useLayoutEffect: actual.useEffect,
-  };
-});
 
 // Mock the services
 vi.mock('@/services/views', () => ({
@@ -77,6 +66,39 @@ describe('ViewCounter Component', () => {
     await waitFor(() => {
       expect(screen.getByText('10')).toBeInTheDocument();
     });
+  });
+
+  it('counts a new view after client-side navigation to a different slug', async () => {
+    (viewsService.incrementPostView as Mock).mockResolvedValue(5);
+
+    const { rerender } = render(<ViewCounter slug="post-a" initialViews={1} />);
+    await waitFor(() => {
+      expect(viewsService.incrementPostView).toHaveBeenCalledWith('post-a');
+    });
+
+    // Navigate to another post without a remount (same dynamic route).
+    rerender(<ViewCounter slug="post-b" initialViews={100} />);
+    await waitFor(() => {
+      expect(viewsService.incrementPostView).toHaveBeenCalledWith('post-b');
+    });
+  });
+
+  it('does not display or persist a non-positive count from a failed increment', async () => {
+    // KV outage: the API responds 200 with a bogus 0 instead of the real count.
+    (viewsService.incrementPostView as Mock).mockResolvedValueOnce(0);
+
+    render(<ViewCounter slug="kv-down" initialViews={1200} />);
+
+    await waitFor(() => {
+      expect(viewsService.incrementPostView).toHaveBeenCalledTimes(1);
+    });
+
+    // The healthy count must not be clobbered with 0...
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+    expect(screen.getByText('1,200')).toBeInTheDocument();
+    // ...and the post must not be recorded as viewed (so it retries next mount).
+    const viewed = JSON.parse(sessionStorage.getItem('viewed_posts') || '[]');
+    expect(viewed).not.toContain('kv-down');
   });
 
   it('handles strict mode double-firing safely', async () => {

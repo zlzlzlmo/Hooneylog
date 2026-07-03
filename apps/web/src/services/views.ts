@@ -11,14 +11,11 @@ export interface GlobalStats {
  */
 class ViewsService extends BaseApiService {
   /**
-   * 블로그 전체 통계 조회 (increment가 true면 방문 수 1 증가)
+   * 블로그 전체 통계 조회
    */
-  async getStats(options: { increment?: boolean } = {}): Promise<GlobalStats> {
-    const path = '/api/views/stats';
+  async getStats(): Promise<GlobalStats> {
     try {
-      return options.increment 
-        ? await this.post<GlobalStats>(path) 
-        : await this.get<GlobalStats>(path);
+      return await this.get<GlobalStats>('/api/views/stats');
     } catch (error) {
       console.error('❌ [Service] Failed to get stats:', error);
       return { total: 0, today: 0 };

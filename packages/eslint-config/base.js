@@ -10,7 +10,6 @@ import tseslint from "typescript-eslint";
  * */
 export const config = [
   js.configs.recommended,
-  eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
     plugins: {
@@ -20,6 +19,8 @@ export const config = [
       "turbo/no-undeclared-env-vars": "warn",
     },
   },
+  // Prettier last so it can turn off any stylistic rules the presets enabled.
+  eslintConfigPrettier,
   {
     ignores: ["dist/**"],
   },

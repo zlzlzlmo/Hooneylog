@@ -25,20 +25,6 @@ describe('ViewsService (inherited from BaseApiService)', () => {
       expect(result).toEqual(mockStats);
     });
 
-    it('calls POST /api/views/stats when increment is true', async () => {
-      const mockStats = { total: 101, today: 11 };
-      (global.fetch as Mock).mockResolvedValue({
-        ok: true,
-        json: async () => mockStats,
-      });
-
-      const result = await viewsService.getStats({ increment: true });
-
-      expect(global.fetch).toHaveBeenCalledWith('/api/views/stats', expect.objectContaining({
-        method: 'POST'
-      }));
-      expect(result).toEqual(mockStats);
-    });
   });
 
   describe('getMultipleCounts', () => {

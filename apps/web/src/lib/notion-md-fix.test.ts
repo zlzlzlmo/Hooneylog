@@ -1,38 +1,44 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
-const fixMarkdown = (md: string) => {
-  return md
-    .replace(/\*\*\*\*/g, '')
-    .replace(/~~~~/g, '')
-    // Add more patterns here if needed
-    .replace(/\*\* \*\*/g, '') // Empty bold with space
-    .replace(/\*\*([^*]+)\*\*/g, (match) => {
-       // If there's an unnecessary escaping or messy markers, we could fix here.
-       // But usually standard bold is fine.
-       return match;
-    });
-};
+// notion.ts pulls in server-only + the Notion SDK at import; stub them so we can
+// exercise the REAL fixMarkdown instead of a throwaway inline reimplementation.
+vi.mock('server-only', () => ({}));
+vi.mock('@notionhq/client', () => ({ Client: class {} }));
+vi.mock('notion-to-md', () => ({
+  NotionToMarkdown: class {
+    setCustomTransformer = vi.fn();
+  },
+}));
+vi.mock('next/cache', () => ({
+  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
+  revalidateTag: vi.fn(),
+}));
 
-describe('notion-md-fix', () => {
-  const testCases = [
-    {
-      input: "**Supavisor(연결 풀러)**",
-      expected: "**Supavisor(연결 풀러)**", // This should be rendered as bold by ReactMarkdown
-    },
-    {
-      input: "**`code`****text**",
-      expected: "**`code`text**",
-    },
-    {
-      input: "****",
-      expected: "",
-    }
-  ];
+import { fixMarkdown } from './notion';
 
-  it('fixes markdown correctly', () => {
-    testCases.forEach(({ input, expected }) => {
-      const result = fixMarkdown(input);
-      expect(result).toBe(expected);
-    });
+describe('fixMarkdown (real implementation)', () => {
+  it('converts bold markers to <strong> so adjacent text still renders bold', () => {
+    expect(fixMarkdown('**Supavisor(연결 풀러)**')).toBe('<strong>Supavisor(연결 풀러)</strong>');
+  });
+
+  it('removes empty bold markers', () => {
+    expect(fixMarkdown('****')).toBe('');
+  });
+
+  it('collapses a bold marker containing only a space into a single space', () => {
+    expect(fixMarkdown('** **')).toBe(' ');
+  });
+
+  it('recursively unescapes over-escaped markers (single and double)', () => {
+    expect(fixMarkdown('\\*hello\\*')).toBe('*hello*');
+    expect(fixMarkdown('\\\\*deep\\\\*')).toBe('*deep*');
+  });
+
+  it("normalizes Notion's '1)' ordered-list style to '1.'", () => {
+    expect(fixMarkdown('1) first\n2) second')).toBe('1. first\n2. second');
+  });
+
+  it('returns empty/falsy input unchanged', () => {
+    expect(fixMarkdown('')).toBe('');
   });
 });

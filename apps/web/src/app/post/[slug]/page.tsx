@@ -5,7 +5,6 @@ import { PostHeader } from '@/components/blocks/post-detail/post-header';
 import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-renderer';
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
 import { GiscusComment } from '@/components/blocks/post-detail/giscus-comment';
-import { CommentProvider } from '@/components/blocks/post-detail/comment-context';
 import { TableOfContents } from '@/components/blocks/post-detail/table-of-contents';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
@@ -44,6 +43,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       url: `https://hooneylog.com/post/${post.id}`,
       type: 'article',
       publishedTime: post.createdAt,
+      modifiedTime: post.updatedAt,
       authors: ['Hooney'],
     },
     twitter: {
@@ -91,9 +91,11 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: getCategoryImageSrc(post.category, post.tags),
+    // Structured-data image must be an absolute URL (metadataBase does not apply
+    // to hand-written JSON-LD).
+    image: new URL(getCategoryImageSrc(post.category, post.tags), 'https://hooneylog.com').toString(),
     datePublished: post.createdAt,
-    dateModified: post.createdAt,
+    dateModified: post.updatedAt,
     author: {
       '@type': 'Person',
       name: 'Hooney',
@@ -141,9 +143,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
               <ShareButtons title={post.title} slug={slug} />
               <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
               <RelatedPosts posts={relatedPosts} />
-              <CommentProvider>
-                <GiscusComment />
-              </CommentProvider>
+              <GiscusComment />
             </section>
           </div>
 

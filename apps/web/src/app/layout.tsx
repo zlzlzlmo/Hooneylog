@@ -15,7 +15,8 @@ export const metadata: Metadata = {
     google: "uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE",
   },
   alternates: {
-    canonical: "/",
+    // No root-level canonical: it would be inherited by any route that doesn't
+    // set its own, self-canonicalizing them to "/". Each route declares its own.
     types: {
       'application/rss+xml': [{ url: '/feed.xml', title: 'HooneyLog RSS' }],
     },
