@@ -26,14 +26,11 @@ export function buildDescription(markdown: string): string {
     : clean.trim().replace(/\n/g, ' ');
 }
 
-export function buildNotionProperties(
-  input: PublishInput,
-  aiCategory: string,
-): Record<string, unknown> {
+export function buildNotionProperties(input: PublishInput): Record<string, unknown> {
   return {
     이름: { title: [{ text: { content: input.title } }] },
     status: { select: { name: input.status } },
-    category: { multi_select: [{ name: aiCategory }] },
+    category: { multi_select: [{ name: input.category }] },
     tag: { multi_select: input.tags.map((t) => ({ name: t })) },
     description: { rich_text: [{ text: { content: buildDescription(input.markdown) } }] },
   };
@@ -46,11 +43,7 @@ function extractTitleFromPage(page: unknown): string {
   return title.map((t) => t.plain_text ?? '').join('').trim();
 }
 
-export function createNotionPort(
-  client: NotionClientLike,
-  databaseId: string,
-  aiCategory: string,
-): NotionPort {
+export function createNotionPort(client: NotionClientLike, databaseId: string): NotionPort {
   return {
     async fetchExistingTitles(): Promise<string[]> {
       const titles: string[] = [];
@@ -73,7 +66,7 @@ export function createNotionPort(
       const blocks = markdownToBlocks(input.markdown);
       const res = await client.pages.create({
         parent: { database_id: databaseId },
-        properties: buildNotionProperties(input, aiCategory),
+        properties: buildNotionProperties(input),
         children: blocks,
       });
       return { pageId: res.id, url: res.url };

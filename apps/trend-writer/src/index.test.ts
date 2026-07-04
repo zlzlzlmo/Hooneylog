@@ -4,7 +4,7 @@ import type { Config, Gemini, NotionPort } from './types';
 
 const config: Config = {
   geminiApiKey: 'g', notionApiKey: 'n', notionDatabaseId: 'd',
-  aiCategory: 'AI 트렌드', notifyWebhookUrl: '',
+  notifyWebhookUrl: '',
   modelWrite: 'w', modelUtility: 'u',
 };
 

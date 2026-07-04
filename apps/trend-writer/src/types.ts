@@ -27,6 +27,7 @@ export interface PublishInput {
   title: string;
   markdown: string;
   tags: string[];
+  category: string;
   status: 'published' | 'draft';
 }
 
@@ -46,7 +47,6 @@ export interface Config {
   geminiApiKey: string;
   notionApiKey: string;
   notionDatabaseId: string;
-  aiCategory: string;
   notifyWebhookUrl: string;
   modelWrite: string;
   modelUtility: string;

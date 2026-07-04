@@ -7,6 +7,17 @@ const AREA_TAG: Record<TrendArea, string> = {
   'ai-web': 'AI',
 };
 
+// 분야를 블로그의 실제 카테고리 값(Frontend/Backend/Artificial Intelligence)으로 매핑한다.
+const AREA_CATEGORY: Record<TrendArea, string> = {
+  frontend: 'Frontend',
+  backend: 'Backend',
+  'ai-web': 'Artificial Intelligence',
+};
+
+export function categoryForArea(area: TrendArea): string {
+  return AREA_CATEGORY[area];
+}
+
 // 제목 바로 아래에 결정론적으로 삽입되는 AI 고지(항상 동일). 상단 노출 + 인간 사칭 방지.
 // 인용(>) 블록은 martian 변환 시 내용이 비어버리므로 일반 볼드 문단으로 둔다.
 export const AI_DISCLOSURE =

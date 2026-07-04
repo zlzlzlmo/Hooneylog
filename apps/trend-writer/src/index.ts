@@ -7,7 +7,7 @@ import { createNotionPort } from './publish';
 import { areaForWeekday, runScan } from './scan';
 import { pickFreshTopic } from './dedup';
 import { runResearch } from './research';
-import { appendFooter, insertDisclosure, runWrite } from './write';
+import { appendFooter, categoryForArea, insertDisclosure, runWrite } from './write';
 import { runHumanize } from './humanize';
 import { runVerify } from './verify';
 
@@ -45,6 +45,7 @@ export async function runPipeline(deps: PipelineDeps): Promise<PipelineResult> {
     title: withFooter.title,
     markdown: withFooter.markdown,
     tags: withFooter.tags,
+    category: categoryForArea(topic.area),
     status,
   });
 
@@ -67,7 +68,6 @@ export async function main(): Promise<void> {
   const notion = createNotionPort(
     client as unknown as Parameters<typeof createNotionPort>[0],
     config.notionDatabaseId,
-    config.aiCategory,
   );
   const notify = createNotifier(config.notifyWebhookUrl);
   const targetArea = areaForWeekday(new Date().getDay());

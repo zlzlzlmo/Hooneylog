@@ -11,7 +11,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     geminiApiKey: required(env, 'GEMINI_API_KEY'),
     notionApiKey: required(env, 'NOTION_API_KEY'),
     notionDatabaseId: required(env, 'NOTION_DATABASE_ID'),
-    aiCategory: env.AI_CATEGORY ?? 'AI 트렌드',
     notifyWebhookUrl: env.NOTIFY_WEBHOOK_URL ?? '',
     modelWrite: env.GEMINI_MODEL_WRITE ?? 'gemini-2.5-pro',
     modelUtility: env.GEMINI_MODEL_UTILITY ?? 'gemini-2.5-flash',

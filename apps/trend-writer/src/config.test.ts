@@ -14,7 +14,6 @@ describe('loadConfig', () => {
     });
     expect(c.modelWrite).toBe('gemini-2.5-pro');
     expect(c.modelUtility).toBe('gemini-2.5-flash');
-    expect(c.aiCategory).toBe('AI 트렌드');
     expect(c.notifyWebhookUrl).toBe('');
   });
 });
