@@ -69,6 +69,11 @@ body {
   }
 }
 
+/* TRACE: terminal cursor blink (header brand) */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 /* T5: Ensure sticky header doesn't cover anchor targets */
 :target {
   scroll-margin-top: 72px;
