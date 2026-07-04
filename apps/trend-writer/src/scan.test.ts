@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseScanResult, runScan } from './scan';
+import { areaForWeekday, parseScanResult, runScan } from './scan';
 import type { Gemini } from './types';
 
 describe('parseScanResult', () => {
@@ -23,6 +23,14 @@ describe('parseScanResult', () => {
   });
 });
 
+describe('areaForWeekday', () => {
+  it('월/수/금을 프론트/백엔드/AI로 로테이션한다', () => {
+    expect(areaForWeekday(1)).toBe('frontend'); // 월
+    expect(areaForWeekday(3)).toBe('backend'); // 수
+    expect(areaForWeekday(5)).toBe('ai-web'); // 금
+  });
+});
+
 describe('runScan', () => {
   it('gemini.generateGrounded 결과를 파싱해 반환', async () => {
     const gemini: Gemini = {
@@ -34,5 +42,17 @@ describe('runScan', () => {
     };
     const out = await runScan(gemini, 'm');
     expect(out[0].area).toBe('backend');
+  });
+
+  it('로테이션 분야가 지정되면 후보 area를 그 분야로 고정한다', async () => {
+    const gemini: Gemini = {
+      generateGrounded: async () => ({
+        text: '[{"title":"A","whyNow":"w","sources":[],"area":"backend"}]',
+        sources: [],
+      }),
+      generateText: async () => '',
+    };
+    const out = await runScan(gemini, 'm', 'frontend');
+    expect(out[0].area).toBe('frontend');
   });
 });

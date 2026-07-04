@@ -1,10 +1,10 @@
 import { Client } from '@notionhq/client';
-import type { Config, Gemini, NotionPort, Notifier, PipelineResult } from './types';
+import type { Config, Gemini, NotionPort, Notifier, PipelineResult, TrendArea } from './types';
 import { loadConfig } from './config';
 import { createGemini } from './gemini';
 import { createNotifier } from './notify';
 import { createNotionPort } from './publish';
-import { runScan } from './scan';
+import { areaForWeekday, runScan } from './scan';
 import { pickFreshTopic } from './dedup';
 import { runResearch } from './research';
 import { appendFooter, insertDisclosure, runWrite } from './write';
@@ -16,12 +16,13 @@ export interface PipelineDeps {
   notion: NotionPort;
   notify: Notifier;
   config: Config;
+  targetArea?: TrendArea;
 }
 
 export async function runPipeline(deps: PipelineDeps): Promise<PipelineResult> {
-  const { gemini, notion, notify, config } = deps;
+  const { gemini, notion, notify, config, targetArea } = deps;
 
-  const candidates = await runScan(gemini, config.modelUtility);
+  const candidates = await runScan(gemini, config.modelUtility, targetArea);
   const existing = await notion.fetchExistingTitles();
   const topic = pickFreshTopic(candidates, existing);
 
@@ -69,7 +70,9 @@ export async function main(): Promise<void> {
     config.aiCategory,
   );
   const notify = createNotifier(config.notifyWebhookUrl);
-  const result = await runPipeline({ gemini, notion, notify, config });
+  const targetArea = areaForWeekday(new Date().getDay());
+  const result = await runPipeline({ gemini, notion, notify, config, targetArea });
+  console.log(`[trend-writer] 분야(로테이션): ${targetArea}`);
   console.log('[trend-writer] 결과:', JSON.stringify(result));
 }
 
