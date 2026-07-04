@@ -22,7 +22,7 @@ export function extractGroundingSources(response: unknown): string[] {
 
 export function parseJsonBlock<T>(text: string): T {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = (fenced ? fenced[1] : text).trim();
+  const raw = (fenced?.[1] ?? text).trim();
   const first = raw.search(/[[{]/);
   if (first === -1) throw new Error('No JSON found in response');
   const open = raw[first];
