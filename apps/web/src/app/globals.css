@@ -74,6 +74,12 @@ body {
   50% { opacity: 0; }
 }
 
+/* TRACE: trace-stream entry reveal */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
 /* T5: Ensure sticky header doesn't cover anchor targets */
 :target {
   scroll-margin-top: 72px;

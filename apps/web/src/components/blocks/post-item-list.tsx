@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { NotionPost } from '@hooneylog/shared-types';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +11,17 @@ interface PostItemListProps {
   viewsMap?: Record<string, number>;
   query?: string;
   onReset?: () => void;
+}
+
+// Trace-rail node color, keyed by category. Values are theme-aware CSS vars.
+const CATEGORY_COLOR: Record<string, string> = {
+  Frontend: 'var(--color-cat-fe)',
+  Backend: 'var(--color-cat-be)',
+  'Artificial Intelligence': 'var(--color-cat-ai)',
+};
+
+function categoryColor(category?: string): string {
+  return (category && CATEGORY_COLOR[category]) || 'var(--color-accent)';
 }
 
 export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemListProps) {
@@ -33,23 +45,62 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
     );
   }
 
-  // The official Notion blog uses a CSS grid with 1fr columns, no visible border around the card, 
-  // just the image and text flowing naturally.
+  // TRACE: a vertical "trace rail" with a category-colored node per entry — the blog
+  // read as a developer's log. Boldness lives here; entries stay quiet and scannable.
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12 pb-20 w-full">
+    <div className="relative pl-8 pb-20 w-full">
+      <span
+        aria-hidden="true"
+        className="absolute left-[7px] top-3 bottom-8 w-[2px] bg-notion-border"
+      />
       {posts.map((post, index) => {
         const imageSrc = getCategoryImageSrc(post.category, post.tags);
         const isDefault = imageSrc === '/images/default.png';
+        const style = {
+          '--cat': categoryColor(post.category),
+          animationDelay: `${Math.min(index, 6) * 60}ms`,
+        } as CSSProperties;
 
         return (
-          <article key={post.id} className="group flex flex-col w-full relative">
+          <article
+            key={post.id}
+            style={style}
+            className="group relative border-b border-notion-border last:border-b-0 motion-safe:animate-[rise_0.5s_cubic-bezier(0.2,0.7,0.2,1)_both]"
+          >
+            {/* Rail node (diamond), filled on hover/focus */}
+            <span
+              aria-hidden="true"
+              className="absolute -left-[30px] top-[27px] w-3 h-3 rotate-45 bg-notion-bg border-2 border-[var(--cat)] transition-all duration-200 group-hover:bg-[var(--cat)] group-focus-within:bg-[var(--cat)]"
+            />
             <Link
               href={`/post/${post.id}`}
-              className="flex flex-col flex-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
+              className="flex items-start gap-4 py-5 rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
             >
-              {/* Cover Image */}
-              {/* Notion uses a simple container without borders, and the image spans full width of the grid cell */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-[6px] overflow-hidden mb-4 bg-notion-gray-bg ring-1 ring-inset ring-notion-border">
+              <div className="flex-1 min-w-0">
+                {/* Meta line (mono) */}
+                <div className="flex items-center gap-2 flex-wrap font-mono text-[11.5px] text-notion-secondary mb-1.5">
+                  <span className="uppercase font-semibold text-[var(--cat)] tracking-[0.02em]">
+                    {post.category || '미분류'}
+                  </span>
+                  <span className="opacity-40">·</span>
+                  <span className="tabular-nums">{viewsMap[post.id] ?? 0} views</span>
+                  <span className="opacity-40">·</span>
+                  <span>{formatDate(post.createdAt)}</span>
+                </div>
+
+                {/* Headline */}
+                <h3 className="text-[18px] sm:text-[20px] font-bold leading-[1.3] tracking-[-0.01em] text-notion-text line-clamp-2 mb-1.5 text-balance transition-colors group-hover:text-[var(--cat)] group-focus-within:text-[var(--cat)]">
+                  {post.title}
+                </h3>
+
+                {/* Dek */}
+                <p className="text-[14px] text-notion-secondary line-clamp-2 leading-[1.5]">
+                  {post.description}
+                </p>
+              </div>
+
+              {/* Side thumbnail (tag cover) */}
+              <div className="relative w-[72px] h-[72px] sm:w-[88px] sm:h-[88px] flex-shrink-0 rounded-[4px] overflow-hidden bg-notion-gray-bg ring-1 ring-inset ring-notion-border">
                 {isDefault ? (
                   <CategoryFallbackImage category={post.category} />
                 ) : (
@@ -58,42 +109,10 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
                     alt={post.title || '대표 이미지'}
                     fill
                     priority={index < 2}
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02] group-focus-within:scale-[1.02]"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.03] group-focus-within:scale-[1.03]"
+                    sizes="88px"
                   />
                 )}
-              </div>
-              
-              {/* Content */}
-              <div className="flex flex-col flex-1">
-                {/* Eyebrow / Category */}
-                <div className="mb-2">
-                  <span className="text-[13px] font-medium text-notion-secondary">
-                    {post.category || '미분류'}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-[18px] sm:text-[20px] font-bold text-notion-text leading-[1.3] mb-2 group-hover:text-accent group-focus-within:text-accent transition-colors line-clamp-3">
-                  {post.title}
-                </h3>
-                
-                {/* Description */}
-                <p className="text-[15px] text-notion-secondary line-clamp-2 leading-[1.5] mb-4">
-                  {post.description}
-                </p>
-                
-                {/* Footer (Views & Date) */}
-                <div className="flex items-center justify-between mt-auto pt-4 text-[13px] text-notion-secondary font-mono">
-                  <span className="flex items-center gap-1">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    {viewsMap[post.id] ?? 0}
-                  </span>
-                  <span>{formatDate(post.createdAt)}</span>
-                </div>
               </div>
             </Link>
           </article>
