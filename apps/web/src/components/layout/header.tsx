@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
 
+// Categories are a home-page filter (not tags), so nav points at the home
+// filter via ?category=<real category name>. The home page seeds its active
+// category from this param.
 const NAV = [
-  { href: '/tag/frontend', label: 'frontend', cls: 'hover:text-cat-fe' },
-  { href: '/tag/backend', label: 'backend', cls: 'hover:text-cat-be' },
-  { href: '/tag/ai', label: 'ai', cls: 'hover:text-cat-ai' },
-];
+  { category: 'Frontend', label: 'frontend', cls: 'hover:text-cat-fe' },
+  { category: 'Backend', label: 'backend', cls: 'hover:text-cat-be' },
+  { category: 'Artificial Intelligence', label: 'ai', cls: 'hover:text-cat-ai' },
+].map((n) => ({ ...n, href: `/?category=${encodeURIComponent(n.category)}` }));
 
 export function Header() {
   return (
