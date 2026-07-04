@@ -38,16 +38,26 @@ export default async function TagPage({ params }: { params: Params }): Promise<R
       <div className="mb-8">
         <Link
           href="/"
-          className="inline-flex items-center text-[15px] text-notion-secondary hover:text-notion-text hover:bg-notion-hover px-2 py-1 -ml-2 rounded transition-colors"
+          className="group inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] text-notion-secondary hover:text-notion-text px-2 py-1 -ml-2 rounded-[3px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
           모든 게시글
         </Link>
       </div>
-      <h1 className="text-[28px] sm:text-[32px] font-bold text-notion-text mb-8">
-        <span className="text-accent">#{name}</span>
-        <span className="text-notion-secondary text-[18px] font-medium ml-3">{tagged.length}개</span>
-      </h1>
+      <header className="mb-10 border-b border-notion-border pb-8">
+        {/* Mono path eyebrow — the tag as a filesystem trail */}
+        <p className="font-mono text-[12px] tracking-[0.06em] text-notion-secondary mb-3">
+          <span className="text-accent">tag</span>
+          <span className="opacity-40">/</span>
+          <span className="text-notion-text">{name}</span>
+        </p>
+        <h1 className="text-[30px] sm:text-[38px] font-extrabold tracking-[-0.02em] text-notion-text break-keep leading-[1.15]">
+          #{name}
+        </h1>
+        <p className="mt-3 font-mono text-[12.5px] text-notion-secondary tabular-nums">
+          {tagged.length}개
+        </p>
+      </header>
       <PostItemList posts={tagged} />
     </div>
   );

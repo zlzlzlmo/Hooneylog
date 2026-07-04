@@ -21,9 +21,9 @@ export function CopyButton({ code }: { code: string }) {
       type="button"
       onClick={handleCopy}
       aria-label={copied ? '복사됨' : '코드 복사'}
-      className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 rounded-[4px] text-[12px] bg-white/10 text-white/80 opacity-0 group-hover/code:opacity-100 hover:bg-white/20 transition-opacity"
+      className="flex items-center gap-1.5 px-2 py-1 rounded-[3px] font-mono text-[11px] tracking-[0.06em] text-notion-secondary hover:text-notion-text hover:bg-notion-hover transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-notion-bg"
     >
-      {copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+      {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
       {copied ? '복사됨' : '복사'}
     </button>
   );

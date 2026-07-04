@@ -96,12 +96,12 @@ export function Mermaid({ content }: MermaidProps) {
 
   return (
     <>
-      <div className="group relative flex justify-center my-10 w-full min-h-[200px] bg-white/50 dark:bg-zinc-900/50 rounded-lg p-6 border border-notion-border/40 hover:bg-white/80 dark:hover:bg-zinc-900/80 transition-all duration-200 shadow-sm">
+      <div className="group relative flex justify-center my-10 w-full min-h-[200px] bg-notion-gray-bg/40 rounded-[4px] p-6 border border-notion-border hover:bg-notion-gray-bg/70 transition-colors duration-200">
         {/* 확대 버튼 */}
         <button
           onClick={() => setIsModalOpen(true)}
           aria-label="다이어그램 확대"
-          className="absolute top-4 right-4 p-2 rounded-md bg-white dark:bg-zinc-800 border border-notion-border/40 text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10"
+          className="absolute top-4 right-4 p-2 rounded-[3px] bg-notion-bg border border-notion-border text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
           title="자세히 보기"
         >
           <Maximize2 size={18} aria-hidden="true" />
@@ -120,11 +120,11 @@ export function Mermaid({ content }: MermaidProps) {
           role="dialog"
           aria-modal="true"
           aria-label="다이어그램 확대 보기"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative w-[95vw] h-[90vh] bg-white dark:bg-zinc-900 rounded-xl p-10 flex items-center justify-center overflow-auto shadow-2xl"
+            className="relative w-[95vw] h-[90vh] bg-notion-bg border border-notion-border rounded-[4px] p-10 flex items-center justify-center overflow-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
           >
             {/* 닫기 버튼 */}
@@ -132,7 +132,7 @@ export function Mermaid({ content }: MermaidProps) {
               ref={closeBtnRef}
               onClick={() => setIsModalOpen(false)}
               aria-label="닫기"
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-notion-hover dark:hover:bg-zinc-800 text-notion-secondary hover:text-notion-text transition-colors cursor-pointer"
+              className="absolute top-6 right-6 p-2 rounded-[3px] hover:bg-notion-hover text-notion-secondary hover:text-notion-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
             >
               <X size={24} aria-hidden="true" />
             </button>

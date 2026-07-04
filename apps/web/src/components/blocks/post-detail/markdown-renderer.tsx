@@ -53,7 +53,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             return !inline && match ? (
               <CodeBlock code={String(children).replace(/\n$/, '')} language={language} />
             ) : (
-              <code className="bg-gray-100 dark:bg-[#2C2C2C] text-[#B91C1C] dark:text-[#F0918B] px-1.5 py-0.5 rounded-[3px] text-[0.9em] font-mono break-words" {...props}>
+              <code className="bg-notion-gray-bg text-notion-text border border-notion-border px-1 py-0.5 rounded-[3px] text-[0.85em] font-mono break-words" {...props}>
                 {children as React.ReactNode}
               </code>
             );
@@ -101,22 +101,22 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           a({ children, ...props }: any) {
             return (
-              <a className="text-notion-text underline decoration-notion-border underline-offset-4 hover:opacity-80 transition-opacity break-all" target="_blank" rel="noopener noreferrer" {...props}>
+              <a className="text-accent underline decoration-accent/40 underline-offset-[3px] hover:decoration-accent transition-colors break-all" target="_blank" rel="noopener noreferrer" {...props}>
                 {children as React.ReactNode}
               </a>
             );
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h1({ id, children, ...props }: any) {
-            return <h1 id={id as string} className="text-[30px] font-bold mt-[2em] mb-[0.5em] leading-[1.3] text-notion-text" {...props}>{children as React.ReactNode}</h1>;
+            return <h1 id={id as string} className="text-[30px] font-extrabold tracking-[-0.02em] mt-[2em] mb-[0.5em] leading-[1.2] text-notion-text break-keep" {...props}>{children as React.ReactNode}</h1>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h2({ id, children, ...props }: any) {
             return (
-              <h2 id={id as string} className="group/anchor text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text scroll-mt-[72px]" {...props}>
+              <h2 id={id as string} className="group/anchor text-[24px] font-bold tracking-[-0.01em] mt-[2em] mb-[0.4em] leading-[1.3] text-notion-text scroll-mt-[72px] break-keep" {...props}>
                 {children as React.ReactNode}
                 {id && (
-                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 text-notion-secondary opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
+                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 font-mono text-[0.75em] text-accent opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
                 )}
               </h2>
             );
@@ -124,10 +124,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           h3({ id, children, ...props }: any) {
             return (
-              <h3 id={id as string} className="group/anchor text-[20px] font-semibold mt-[1.2em] mb-[0.3em] leading-[1.3] text-notion-text scroll-mt-[72px]" {...props}>
+              <h3 id={id as string} className="group/anchor text-[20px] font-bold tracking-[-0.01em] mt-[1.6em] mb-[0.3em] leading-[1.3] text-notion-text scroll-mt-[72px] break-keep" {...props}>
                 {children as React.ReactNode}
                 {id && (
-                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 text-notion-secondary opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
+                  <a href={`#${id}`} aria-label="이 섹션 링크" className="ml-2 font-mono text-[0.75em] text-accent opacity-0 group-hover/anchor:opacity-100 transition-opacity no-underline">#</a>
                 )}
               </h3>
             );
@@ -147,7 +147,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           blockquote({ children, ...props }: any) {
             return (
-              <blockquote className="border-l-[3px] border-notion-text pl-[14px] py-[2px] my-[1.2em] text-[16px] leading-[1.5] text-notion-text italic" {...props}>
+              <blockquote className="border-l-2 border-notion-border pl-[16px] py-[2px] my-[1.4em] text-[16px] leading-[1.6] text-notion-secondary italic" {...props}>
                 {children as React.ReactNode}
               </blockquote>
             );
@@ -173,7 +173,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           hr({ ...props }: any) {
-            return <hr className="w-full h-[1px] bg-notion-border border-none my-[1.2em]" {...props} />;
+            return <hr className="w-full h-[1px] bg-notion-border border-none my-[2em]" {...props} />;
           },
           // Notion-style Table Customization
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,12 +188,12 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           thead({ children, ...props }: any) {
-            return <thead className="bg-[#F7F6F3] dark:bg-[#2C2C2C]" {...props}>{children as React.ReactNode}</thead>;
+            return <thead className="bg-notion-gray-bg" {...props}>{children as React.ReactNode}</thead>;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           th({ children, ...props }: any) {
             return (
-              <th className="border border-notion-border px-4 py-2 text-left font-semibold text-notion-secondary uppercase tracking-wider" {...props}>
+              <th className="border border-notion-border px-4 py-2.5 text-left font-mono text-[12px] font-semibold text-notion-secondary uppercase tracking-[0.1em]" {...props}>
                 {children as React.ReactNode}
               </th>
             );
