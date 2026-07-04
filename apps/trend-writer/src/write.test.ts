@@ -18,6 +18,7 @@ describe('assembleFooter', () => {
   it('AI 자동생성 안내와 출처 링크를 담는다', () => {
     const f = assembleFooter(['https://a', 'https://b']);
     expect(f).toContain('자동으로');
+    expect(f).toContain('AI가');
     expect(f).toContain('https://a');
     expect(f).toContain('https://b');
   });
