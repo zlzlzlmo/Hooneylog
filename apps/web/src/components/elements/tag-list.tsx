@@ -10,7 +10,7 @@ export function TagList({ tags, className = '' }: { tags: ITag[]; className?: st
         <li key={tag.id}>
           <Link
             href={`/tag/${encodeURIComponent(tag.name)}`}
-            className="inline-block px-2.5 py-1 rounded-full text-[13px] bg-notion-gray-bg text-notion-secondary hover:bg-notion-hover hover:text-notion-text transition-colors no-underline"
+            className="inline-block px-2 py-0.5 rounded-[3px] border border-notion-border font-mono text-[11px] text-notion-secondary hover:bg-notion-hover hover:text-notion-text transition-colors no-underline"
           >
             #{tag.name}
           </Link>
