@@ -22,6 +22,7 @@ export function parseScanResult(text: string): TopicCandidate[] {
   if (!Array.isArray(raw)) return [];
   const out: TopicCandidate[] = [];
   for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
     const title = typeof item.title === 'string' ? item.title.trim() : '';
     if (!title) continue;
     const area = AREAS.includes(item.area as TrendArea) ? (item.area as TrendArea) : 'ai-web';

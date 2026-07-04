@@ -15,6 +15,12 @@ describe('parseScanResult', () => {
     const out = parseScanResult('[{"title":"A","whyNow":"w","sources":[],"area":"weird"}]');
     expect(out[0].area).toBe('ai-web');
   });
+
+  it('null·비객체 항목을 크래시 없이 걸러낸다', () => {
+    const out = parseScanResult('[{"title":"A","whyNow":"w","sources":[],"area":"frontend"}, null, 42]');
+    expect(out).toHaveLength(1);
+    expect(out[0].title).toBe('A');
+  });
 });
 
 describe('runScan', () => {
