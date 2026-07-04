@@ -9,7 +9,7 @@ const AREA_TAG: Record<TrendArea, string> = {
 
 export function extractTitle(markdown: string): string {
   const m = markdown.match(/^#\s+(.+)$/m);
-  return m ? m[1].trim() : '';
+  return m && m[1] ? m[1].trim() : '';
 }
 
 export function assembleFooter(sources: string[]): string {
