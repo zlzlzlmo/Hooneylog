@@ -9,12 +9,14 @@ describe('Header', () => {
     expect(link).toHaveAttribute('href', '/');
   });
 
-  it('exposes labelled category navigation', () => {
+  it('links category nav to the home category filter (not the tag route)', () => {
     render(<Header />);
     const nav = screen.getByRole('navigation', { name: '카테고리' });
     expect(nav).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'frontend' })).toHaveAttribute('href', '/tag/frontend');
-    expect(screen.getByRole('link', { name: 'backend' })).toHaveAttribute('href', '/tag/backend');
-    expect(screen.getByRole('link', { name: 'ai' })).toHaveAttribute('href', '/tag/ai');
+    // Categories are a home-page filter, not tags. Nav must point at the home
+    // filter via ?category=<real category name>, or it lands on an empty page.
+    expect(screen.getByRole('link', { name: 'frontend' })).toHaveAttribute('href', '/?category=Frontend');
+    expect(screen.getByRole('link', { name: 'backend' })).toHaveAttribute('href', '/?category=Backend');
+    expect(screen.getByRole('link', { name: 'ai' })).toHaveAttribute('href', '/?category=Artificial%20Intelligence');
   });
 });
