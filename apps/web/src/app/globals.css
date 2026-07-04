@@ -3,27 +3,33 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-notion-bg: #FFFFFF;
-  --color-notion-text: #37352F;
-  /* Raised from 0.65 → 0.72 so secondary text clears WCAG AA 4.5:1 on white */
-  --color-notion-text-light: rgba(55, 53, 47, 0.72);
-  --color-notion-border: rgba(55, 53, 47, 0.16);
-  --color-notion-hover: rgba(55, 53, 47, 0.08);
-  --color-notion-gray-bg: #F1F1EF;
-  --color-notion-blue-bg: #E7F3F8;
-  --color-notion-blue-text: #0B6E99;
+  /* TRACE palette (light) — warm paper ground, cool ink text */
+  --color-notion-bg: #FAF9F5;
+  --color-notion-text: #12141A;
+  --color-notion-text-light: #6B6E76;
+  --color-notion-border: rgba(18, 20, 26, 0.12);
+  --color-notion-hover: rgba(18, 20, 26, 0.06);
+  --color-notion-gray-bg: #F1EFEA;
+  --color-notion-blue-bg: #E7F0FB;
+  --color-notion-blue-text: #2D6AE3;
 
   --container-max: 720px;
   --breakpoint-mobile: 768px;
 
   --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
-  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --color-accent: #0F7B6C;
-  --color-accent-bg: #E3F2EF;
+  /* Amber signal — darkened for AA on paper */
+  --color-accent: #C97E12;
+  --color-accent-bg: #F6ECD9;
   /* Foreground placed on top of an accent fill (logo badge, etc.) */
   --color-on-accent: #FFFFFF;
+
+  /* Category hues (trace rail nodes / nav) */
+  --color-cat-fe: #2D6AE3;
+  --color-cat-be: #0B8F6C;
+  --color-cat-ai: #7C5CFC;
 }
 
 :root {
@@ -32,18 +38,21 @@
 }
 
 .dark {
-  --color-notion-bg: #191919;
-  --color-notion-text: #E6E6E5;
-  --color-notion-text-light: rgba(235, 235, 235, 0.55);
-  --color-notion-border: rgba(255, 255, 255, 0.13);
-  --color-notion-hover: rgba(255, 255, 255, 0.055);
-  --color-notion-gray-bg: #2C2C2C;
-  --color-notion-blue-bg: #1D3A4D;
-  --color-notion-blue-text: #5BA8C9;
-  --color-accent: #4FD1C5;
-  --color-accent-bg: #1D3330;
-  /* Dark accent is a light mint → needs a dark glyph for contrast */
-  --color-on-accent: #191919;
+  --color-notion-bg: #0D0E12;
+  --color-notion-text: #E7E7E3;
+  --color-notion-text-light: #8A8D95;
+  --color-notion-border: rgba(255, 255, 255, 0.11);
+  --color-notion-hover: rgba(255, 255, 255, 0.06);
+  --color-notion-gray-bg: #14161C;
+  --color-notion-blue-bg: #17293D;
+  --color-notion-blue-text: #6AA0FF;
+  --color-accent: #F0B33D;
+  --color-accent-bg: #2A2413;
+  /* Dark accent is a light amber → needs a dark glyph for contrast */
+  --color-on-accent: #0D0E12;
+  --color-cat-fe: #6AA0FF;
+  --color-cat-be: #3FD6A6;
+  --color-cat-ai: #A98CFF;
 }
 
 body {
@@ -58,6 +67,17 @@ body {
   .text-notion-secondary {
     color: var(--color-notion-text-light);
   }
+}
+
+/* TRACE: terminal cursor blink (header brand) */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* TRACE: trace-stream entry reveal */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* T5: Ensure sticky header doesn't cover anchor targets */

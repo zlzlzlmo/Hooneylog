@@ -50,7 +50,7 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
   return (
     <aside className="w-full lg:w-[220px] flex-shrink-0 lg:sticky lg:top-[120px] lg:max-h-[calc(100vh-120px)] pb-10">
       {/* Profile Section */}
-      <div className="flex flex-col mb-8 p-4 bg-notion-gray-bg rounded-lg border border-notion-border">
+      <div className="flex flex-col mb-8 p-4 bg-notion-gray-bg rounded-[6px] border border-notion-border">
         <div className="w-[48px] h-[48px] relative rounded-full overflow-hidden mb-3 border border-notion-border bg-notion-bg">
           <Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
         </div>
@@ -74,8 +74,8 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
         )}
       </div>
 
-      <div className="text-[12px] font-semibold text-notion-secondary mb-2 px-2 uppercase tracking-wider">
-        카테고리
+      <div className="font-mono text-[11px] text-notion-secondary mb-2 px-2 uppercase tracking-[0.14em]">
+        category
       </div>
       {/*
         Edge-fade affordance for the horizontally-scrolling mobile row so users know

@@ -40,12 +40,14 @@ describe('Sidebar', () => {
     expect(screen.getByRole('list', { name: '카테고리 필터' })).toBeInTheDocument();
   });
 
-  it('uses Korean labels for the category section heading', () => {
+  it('shows the category section heading (mono eyebrow)', () => {
     render(
       <Sidebar categories={categories} currentActiveCategory="React"
         handleCurrentActiveCategory={vi.fn()} />
     );
-    expect(screen.getByText('카테고리')).toBeInTheDocument();
+    // The category filter list keeps its Korean aria-label ('카테고리 필터');
+    // the visible eyebrow uses the TRACE mono style label.
+    expect(screen.getByText('category')).toBeInTheDocument();
   });
 
   it('uses Korean labels for the blog stats', () => {

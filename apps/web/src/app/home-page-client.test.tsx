@@ -108,7 +108,7 @@ describe('HomePageClient', () => {
 
     const h1 = screen.getByRole('heading', { level: 1 });
     expect(h1).toBeInTheDocument();
-    expect(h1).toHaveTextContent('HooneyLog');
+    expect(h1).toHaveTextContent('기술 기록');
   });
 
   describe('debounced search count announcement', () => {
