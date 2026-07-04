@@ -32,6 +32,21 @@ function notionFor(titles: string[]): NotionPort {
   };
 }
 
+const noSourceScanJson = '[{"title":"새 주제","whyNow":"w","sources":[],"area":"frontend"}]';
+
+function geminiNoSources(): Gemini {
+  const texts = [post, post, '{"pass":true,"reasons":[]}'];
+  let i = 0;
+  return {
+    generateGrounded: vi.fn(async (prompt: string) =>
+      prompt.includes('후보') || prompt.includes('동향')
+        ? { text: noSourceScanJson, sources: [] }
+        : { text: '{"facts":["f"],"sources":[]}', sources: [] },
+    ),
+    generateText: vi.fn(async () => texts[i++] ?? ''),
+  };
+}
+
 describe('runPipeline', () => {
   it('정상 흐름: 통과 시 published', async () => {
     const notify = vi.fn(async () => {});
@@ -62,6 +77,16 @@ describe('runPipeline', () => {
     });
     expect(res.outcome).toBe('draft');
     expect(res.reasons).toContain('근거 부족');
+    expect(notion.createPost).toHaveBeenCalledOnce();
+  });
+
+  it('연구 출처가 전혀 없으면 verify 통과여도 draft로 발행', async () => {
+    const notion = notionFor(['다른 글']);
+    const res = await runPipeline({
+      gemini: geminiNoSources(),
+      notion, notify: async () => {}, config,
+    });
+    expect(res.outcome).toBe('draft');
     expect(notion.createPost).toHaveBeenCalledOnce();
   });
 });

@@ -31,14 +31,14 @@ describe('deriveTags', () => {
 });
 
 describe('runWrite', () => {
-  it('본문에 푸터를 붙이고 제목/태그를 세팅', async () => {
+  it('푸터 없이 본문·제목/태그만 세팅 (푸터는 파이프라인에서 결정론적으로 부착)', async () => {
     const gemini: Gemini = {
       generateGrounded: async () => ({ text: '', sources: [] }),
       generateText: async () => '# React 19 Actions\n\n본문입니다.',
     };
     const draft = await runWrite(gemini, 'm', topic, research);
     expect(draft.title).toBe('React 19 Actions');
-    expect(draft.markdown).toContain('참고 출처');
+    expect(draft.markdown).not.toContain('참고 출처');
     expect(draft.tags).toContain('프론트엔드');
   });
 });

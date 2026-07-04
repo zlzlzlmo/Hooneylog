@@ -11,6 +11,12 @@ describe('buildDescription', () => {
     expect(d).not.toContain('#');
     expect(d.endsWith('...')).toBe(true);
   });
+
+  it('짧은 입력은 말줄임표를 붙이지 않고 HTML 태그도 제거한다', () => {
+    const d = buildDescription('# 제목\n\n짧다 <b>강조</b>');
+    expect(d.endsWith('...')).toBe(false);
+    expect(d).not.toContain('<');
+  });
 });
 
 describe('buildNotionProperties', () => {

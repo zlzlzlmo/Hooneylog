@@ -7,7 +7,7 @@ import { createNotionPort } from './publish';
 import { runScan } from './scan';
 import { pickFreshTopic } from './dedup';
 import { runResearch } from './research';
-import { runWrite } from './write';
+import { appendFooter, runWrite } from './write';
 import { runHumanize } from './humanize';
 import { runVerify } from './verify';
 
@@ -33,24 +33,26 @@ export async function runPipeline(deps: PipelineDeps): Promise<PipelineResult> {
   const research = await runResearch(gemini, config.modelUtility, topic);
   const draft = await runWrite(gemini, config.modelWrite, topic, research);
   const humanized = await runHumanize(gemini, config.modelWrite, draft);
-  const verdict = await runVerify(gemini, config.modelUtility, humanized, existing);
+  const withFooter = { ...humanized, markdown: appendFooter(humanized.markdown, research.sources) };
+  const verdict = await runVerify(gemini, config.modelUtility, withFooter, existing);
 
-  const status = verdict.pass ? 'published' : 'draft';
+  const status = verdict.pass && research.sources.length > 0 ? 'published' : 'draft';
   const result = await notion.createPost({
-    title: humanized.title,
-    markdown: humanized.markdown,
-    tags: humanized.tags,
+    title: withFooter.title,
+    markdown: withFooter.markdown,
+    tags: withFooter.tags,
     status,
   });
 
-  const reasonLine = verdict.pass ? '' : `\n사유: ${verdict.reasons.join('; ')}`;
-  await notify(`[${status}] ${humanized.title}\n${result.url}${reasonLine}`);
+  const reasons = verdict.pass && research.sources.length === 0 ? ['근거 출처 없음'] : verdict.reasons;
+  const reasonLine = status === 'draft' ? `\n사유: ${reasons.join('; ')}` : '';
+  await notify(`[${status}] ${withFooter.title}\n${result.url}${reasonLine}`);
 
   return {
     outcome: status,
-    title: humanized.title,
+    title: withFooter.title,
     url: result.url,
-    reasons: verdict.pass ? undefined : verdict.reasons,
+    reasons: status === 'draft' ? reasons : undefined,
   };
 }
 

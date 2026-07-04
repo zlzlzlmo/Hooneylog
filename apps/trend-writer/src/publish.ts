@@ -16,12 +16,13 @@ interface NotionClientLike {
 
 export function buildDescription(markdown: string): string {
   const clean = markdown
+    .replace(/<[^>]+>/g, '')
     .replace(/[#*>`]/g, '')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .substring(0, 160)
-    .trim()
-    .replace(/\n/g, ' ');
-  return `${clean}...`;
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  const truncated = clean.length > 160;
+  return truncated
+    ? `${clean.slice(0, 160).trim().replace(/\n/g, ' ')}...`
+    : clean.trim().replace(/\n/g, ' ');
 }
 
 export function buildNotionProperties(

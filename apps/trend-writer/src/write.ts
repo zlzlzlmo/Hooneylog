@@ -43,6 +43,5 @@ export async function runWrite(
 ): Promise<DraftPost> {
   const body = await gemini.generateText(buildWritePrompt(topic, research), model);
   const title = extractTitle(body) || topic.title;
-  const markdown = appendFooter(body, research.sources);
-  return { title, markdown, tags: deriveTags(topic) };
+  return { title, markdown: body, tags: deriveTags(topic) };
 }
