@@ -6,6 +6,7 @@ describe('humanize rules', () => {
     expect(HUMANIZE_RULES).toContain('이중 피동');
     expect(HUMANIZE_RULES).toContain('결론적으로');
     expect(HUMANIZE_RULES).toContain('의미 불변');
+    expect(HUMANIZE_RULES).toContain('3인칭 대명사');
   });
 
   it('대상 마크다운을 프롬프트에 주입하고 코드 보존을 지시한다', () => {
