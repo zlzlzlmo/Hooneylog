@@ -11,7 +11,7 @@ export const BLOG_FORMAT_RULES = `너는 최신 웹·AI 기술 동향을 개발�
 ## 구조(엄격히 준수)
 # [명확하고 시선을 끄는 제목]
 
-<div class="notion-callout"><div class="notion-callout-icon">💡</div><div class="notion-callout-content">핵심 내용·해결한 문제·이점을 1~2문장으로 요약</div></div>
+**💡 핵심 요약:** 핵심 내용·해결한 문제·이점을 1~2문장으로 요약 (한 문단, HTML 태그·인용(>) 사용 금지)
 
 ---
 

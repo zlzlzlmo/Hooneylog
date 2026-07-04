@@ -34,7 +34,7 @@ describe('insertDisclosure', () => {
     expect(h1).toBe(0);
   });
   it('H1이 없으면 맨 앞에 붙인다', () => {
-    expect(insertDisclosure('본문만').startsWith('> 🤖')).toBe(true);
+    expect(insertDisclosure('본문만').startsWith('**🤖')).toBe(true);
   });
 });
 

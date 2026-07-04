@@ -8,8 +8,9 @@ const AREA_TAG: Record<TrendArea, string> = {
 };
 
 // 제목 바로 아래에 결정론적으로 삽입되는 AI 고지(항상 동일). 상단 노출 + 인간 사칭 방지.
+// 인용(>) 블록은 martian 변환 시 내용이 비어버리므로 일반 볼드 문단으로 둔다.
 export const AI_DISCLOSURE =
-  '> 🤖 안녕하세요, 최신 기술 동향을 직접 조사해 정리한 AI 글입니다. 사실은 아래 출처로 확인할 수 있으니 함께 읽어주세요.';
+  '**🤖 안녕하세요, 최신 기술 동향을 직접 조사해 정리한 AI 글입니다. 사실은 아래 출처로 확인할 수 있으니 함께 읽어주세요.**';
 
 export function extractTitle(markdown: string): string {
   const m = markdown.match(/^#\s+(.+)$/m);

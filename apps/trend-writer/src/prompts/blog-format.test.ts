@@ -8,7 +8,7 @@ describe('buildWritePrompt', () => {
   it('6단 헤딩과 콜아웃 규칙을 포함한다', () => {
     expect(BLOG_FORMAT_RULES).toContain('## 1. 문제의 배경');
     expect(BLOG_FORMAT_RULES).toContain('## 6. 마치며');
-    expect(BLOG_FORMAT_RULES).toContain('notion-callout');
+    expect(BLOG_FORMAT_RULES).toContain('💡 핵심 요약');
   });
 
   it('주제와 근거 사실을 프롬프트에 주입한다', () => {
