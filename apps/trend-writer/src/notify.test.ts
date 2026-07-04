@@ -20,4 +20,10 @@ describe('createNotifier', () => {
     expect(body.content).toBe('메시지');
     expect(body.text).toBe('메시지');
   });
+
+  it('webhook 응답이 실패(ok:false)여도 던지지 않는다', async () => {
+    const fetchSpy = vi.fn(async () => ({ ok: false, status: 500 }) as Response);
+    const notify = createNotifier('https://hook', fetchSpy as unknown as typeof fetch);
+    await expect(notify('메시지')).resolves.not.toThrow();
+  });
 });
