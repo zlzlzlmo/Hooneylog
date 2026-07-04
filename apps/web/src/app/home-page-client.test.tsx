@@ -5,6 +5,12 @@ import { viewsService } from '@/services/views';
 import { ALL } from '@/utils/category';
 import React from 'react';
 
+// Router mock — category clicks push the active filter into the URL.
+const { replace } = vi.hoisted(() => ({ replace: vi.fn() }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace, push: vi.fn(), prefetch: vi.fn() }),
+}));
+
 // Mock the dependencies
 vi.mock('@/services/views', () => ({
   viewsService: {
@@ -197,5 +203,50 @@ describe('HomePageClient', () => {
 
   it('exports ALL as 전체 (contract sanity)', () => {
     expect(ALL).toBe('전체');
+  });
+
+  describe('category filter ↔ URL sync', () => {
+    const syncPosts = [
+      { id: '1', title: 'FE post', description: '', category: 'Frontend', createdAt: '', updatedAt: '', tags: [] },
+      { id: '2', title: 'BE post', description: '', category: 'Backend', createdAt: '', updatedAt: '', tags: [] },
+    ];
+
+    it('writes the chosen category into the URL when a sidebar chip is clicked', () => {
+      render(
+        <HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />
+      );
+      fireEvent.click(screen.getByRole('button', { name: /Frontend/ }));
+      expect(replace).toHaveBeenCalledWith('/?category=Frontend', { scroll: false });
+    });
+
+    it('drops the query param back to "/" when returning to 전체', () => {
+      render(
+        <HomePageClient
+          initialPosts={syncPosts}
+          stats={initialStats}
+          viewsMap={{}}
+          initialCategory="Frontend"
+        />
+      );
+      fireEvent.click(screen.getByRole('button', { name: /전체/ }));
+      expect(replace).toHaveBeenCalledWith('/', { scroll: false });
+    });
+
+    it('re-seeds the active category when navigation delivers a new initialCategory', () => {
+      // Header <Link> navigation re-renders the page with a new prop but does NOT
+      // remount the client component — the active chip must still follow.
+      const { rerender } = render(
+        <HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />
+      );
+      rerender(
+        <HomePageClient
+          initialPosts={syncPosts}
+          stats={initialStats}
+          viewsMap={{}}
+          initialCategory="Backend"
+        />
+      );
+      expect(screen.getByRole('button', { name: /Backend/ })).toHaveAttribute('aria-pressed', 'true');
+    });
   });
 });

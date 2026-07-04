@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const PAGE_SIZE = 12;
 import { NotionPost } from '@hooneylog/shared-types';
@@ -26,6 +27,7 @@ export function HomePageClient({
   initialCategory?: string,
   initialSearch?: string
 }) {
+  const router = useRouter();
   const [stats, setStats] = useState(initialStats);
   const [viewsMap, setViewsMap] = useState(initialViewsMap);
 
@@ -36,6 +38,22 @@ export function HomePageClient({
     setCurrentActiveCategory,
     filteredPosts
   } = useFilterPost(initialPosts, initialCategory, initialSearch);
+
+  // The URL is the source of truth for the category. Header <Link>s and the
+  // sidebar both write `?category=`; the client component isn't remounted on a
+  // soft navigation, so re-seed the active category whenever the server hands us
+  // a fresh `initialCategory` prop (otherwise the sticky useState goes stale).
+  useEffect(() => {
+    setCurrentActiveCategory(initialCategory ?? ALL);
+  }, [initialCategory, setCurrentActiveCategory]);
+
+  // Sidebar clicks: filter instantly (optimistic) AND reflect the choice in the
+  // URL so it's shareable, survives refresh/back, and stays in sync with the
+  // header nav. 전체 clears the param back to a clean "/".
+  const handleCategoryChange = useCallback((name: string) => {
+    setCurrentActiveCategory(name);
+    router.replace(name === ALL ? '/' : `/?category=${encodeURIComponent(name)}`, { scroll: false });
+  }, [router, setCurrentActiveCategory]);
 
   // initialPosts is stable for the page, so build the category index once.
   const categoryCount = useMemo(() => new CategoryCount(initialPosts), [initialPosts]);
@@ -74,7 +92,7 @@ export function HomePageClient({
 
   const handleReset = () => {
     setSearchValue('');
-    setCurrentActiveCategory(ALL);
+    handleCategoryChange(ALL);
   };
 
   // 💡 실시간 데이터 동기화 (ISR 캐시 우회)
@@ -150,7 +168,7 @@ export function HomePageClient({
         <Sidebar
           categories={categoryCount.orderedListByDescendingCount}
           currentActiveCategory={currentActiveCategory}
-          handleCurrentActiveCategory={setCurrentActiveCategory}
+          handleCurrentActiveCategory={handleCategoryChange}
           stats={stats}
         />
 
