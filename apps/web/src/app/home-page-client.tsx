@@ -9,7 +9,7 @@ import { ALL, CategoryCount } from '@/utils/category';
 import { Search } from '@/components/features/search';
 import { Sidebar } from '@/components/layout/sidebar';
 import { PostItemList } from '@/components/blocks/post-item-list';
-import { AUTHOR } from '@/lib/author';
+import { AUTHOR, AUTHOR_SOCIALS } from '@/lib/author';
 
 import { viewsService } from '@/services/views';
 
@@ -110,6 +110,39 @@ export function HomePageClient({
         <h1 className="mt-2 text-2xl sm:text-[2rem] font-extrabold tracking-[-0.03em] leading-[1.1] text-notion-text text-balance">
           막힌 지점부터 <span className="text-accent">되짚는</span> 기술 기록.
         </h1>
+
+        {/* Author profile — recruiter appeal */}
+        <div className="mt-5 flex flex-col gap-3 border-t border-notion-border pt-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="font-mono text-[12.5px] leading-relaxed text-notion-secondary">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="font-semibold text-notion-text">
+                {AUTHOR.koreanName} {AUTHOR.name}
+              </span>
+              {AUTHOR.openToWork && (
+                <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent px-1.5 py-0.5 text-[11px] text-accent">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+                  구직 중 · Open to work
+                </span>
+              )}
+            </div>
+            <p className="mt-1">{AUTHOR.role}</p>
+          </div>
+          <nav aria-label="프로필 링크" className="flex flex-wrap items-center gap-1.5">
+            {AUTHOR_SOCIALS.map(({ label, href }) => {
+              const external = href.startsWith('http');
+              return (
+                <a
+                  key={label}
+                  href={href}
+                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="rounded-[3px] border border-notion-border px-2.5 py-1 font-mono text-[12px] text-notion-secondary no-underline transition-colors hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
+                >
+                  {label}
+                </a>
+              );
+            })}
+          </nav>
+        </div>
       </header>
 
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
