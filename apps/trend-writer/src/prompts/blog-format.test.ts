@@ -15,6 +15,6 @@ describe('buildWritePrompt', () => {
     const p = buildWritePrompt(topic, research);
     expect(p).toContain('React 19 Actions 완전정복');
     expect(p).toContain('useActionState는 폼 상태를 관리한다');
-    expect(p).toContain('평어체');
+    expect(p).toContain('존댓말');
   });
 });
