@@ -25,7 +25,7 @@ export function BackToTop() {
       type="button"
       onClick={scrollToTop}
       aria-label="맨 위로"
-      className="fixed bottom-6 right-6 z-[60] w-11 h-11 rounded-full border border-notion-border bg-notion-bg text-notion-text shadow-sm hover:bg-notion-hover transition-colors flex items-center justify-center cursor-pointer"
+      className="fixed bottom-6 right-6 z-[60] w-11 h-11 rounded-[4px] border border-notion-border bg-notion-bg text-notion-secondary shadow-sm hover:border-accent hover:text-accent transition-colors flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
     >
       <ArrowUp size={18} aria-hidden="true" />
     </button>
