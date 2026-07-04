@@ -100,12 +100,12 @@ export function HomePageClient({
     <div className="w-full mx-auto px-2 mt-8">
       {/* Intro band */}
       <header className="mb-8 lg:mb-10">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-notion-text">
-          HooneyLog
+        <span className="font-mono text-[12.5px] text-notion-secondary tracking-[0.02em]">
+          ~/hooneylog — {AUTHOR.tagline}의 개발 로그
+        </span>
+        <h1 className="mt-2 text-2xl sm:text-[2rem] font-extrabold tracking-[-0.03em] leading-[1.1] text-notion-text text-balance">
+          막힌 지점부터 <span className="text-accent">되짚는</span> 기술 기록.
         </h1>
-        <p className="mt-1.5 text-[14px] sm:text-[15px] text-notion-secondary">
-          {AUTHOR.tagline}의 개발 기록
-        </p>
       </header>
 
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
