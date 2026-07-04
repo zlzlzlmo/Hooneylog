@@ -31,15 +31,19 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return { title: 'Post Not Found' };
   }
 
+  // Notion descriptions are optional, so fall back to a title-derived line
+  // rather than shipping an empty <meta description> / og:description.
+  const description = post.description?.trim() || `${post.title} — HooneyLog 기술 블로그`;
+
   return {
     title: post.title, // layout.tsx의 template에 의해 제목 | HooneyLog로 표시됨
-    description: post.description,
+    description,
     alternates: {
       canonical: `/post/${post.id}`,
     },
     openGraph: {
       title: post.title,
-      description: post.description,
+      description,
       url: `https://hooneylog.com/post/${post.id}`,
       type: 'article',
       publishedTime: post.createdAt,
@@ -49,7 +53,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.description,
+      description,
     }
   };
 }
@@ -85,12 +89,14 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
   const readingMinutes = readingTime(md);
   const relatedPosts = getRelatedPosts(allPosts, post);
 
+  const description = post.description?.trim() || `${post.title} — HooneyLog 기술 블로그`;
+
   // JSON-LD for Search Engine Optimization
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.description,
+    description,
     // Structured-data image must be an absolute URL (metadataBase does not apply
     // to hand-written JSON-LD).
     image: new URL(getCategoryImageSrc(post.category, post.tags), 'https://hooneylog.com').toString(),
@@ -108,6 +114,30 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     keywords: post.tags.map((t) => t.name).join(', '),
   };
 
+  // Breadcrumb trail: 홈 → (카테고리 필터) → 글. The category step links to the
+  // home category filter (a real, indexable URL) so the path fully resolves.
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://hooneylog.com' },
+      ...(post.category
+        ? [{
+            '@type': 'ListItem',
+            position: 2,
+            name: post.category,
+            item: `https://hooneylog.com/?category=${encodeURIComponent(post.category)}`,
+          }]
+        : []),
+      {
+        '@type': 'ListItem',
+        position: post.category ? 3 : 2,
+        name: post.title,
+        item: `https://hooneylog.com/post/${post.id}`,
+      },
+    ],
+  };
+
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
       <ReadingProgress />
@@ -117,8 +147,12 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       
-      <div className="w-full max-w-[980px] px-4 sm:px-6 mx-auto">
+      <div className="w-full max-w-[1040px] px-4 sm:px-6 mx-auto">
         {/* Top: header spans the reading column width */}
         <div className="max-w-[720px] mx-auto xl:mx-0">
           <section className="w-full mb-12">
@@ -134,7 +168,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
           </section>
         </div>
 
-        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10">
+        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-12">
           {/* Reading column */}
           <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
             <TableOfContents items={toc} variant="inline" />
