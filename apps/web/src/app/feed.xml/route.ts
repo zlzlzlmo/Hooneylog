@@ -19,11 +19,12 @@ export async function GET(): Promise<Response> {
   const items = posts
     .map((post) => {
       const url = `${SITE}/post/${post.id}`;
+      const description = post.description?.trim() || post.title;
       return `    <item>
       <title>${escapeXml(post.title)}</title>
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
-      <description>${escapeXml(post.description)}</description>
+      <description>${escapeXml(description)}</description>
       <category>${escapeXml(post.category)}</category>
       <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
     </item>`;

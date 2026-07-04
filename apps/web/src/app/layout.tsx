@@ -30,6 +30,40 @@ export const metadata: Metadata = {
   }
 };
 
+// Site-wide entity graph: identifies the site (WebSite) and its author (Person)
+// for Google's knowledge panel, and reconciles the "Hooney" pen name with the
+// legal name via `alternateName`.
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://hooneylog.com/#website',
+      url: 'https://hooneylog.com',
+      name: 'HooneyLog',
+      description: 'HooneyLog — 프론트엔드·백엔드·AI/RAG 기술 블로그',
+      inLanguage: 'ko-KR',
+      publisher: { '@id': 'https://hooneylog.com/#person' },
+      // Sitelinks searchbox: the home page reads `?q=` and seeds its search.
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://hooneylog.com/?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+    {
+      '@type': 'Person',
+      '@id': 'https://hooneylog.com/#person',
+      name: 'Seunghoon Shin',
+      alternateName: 'Hooney',
+      url: 'https://hooneylog.com',
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,6 +72,10 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning className={jetbrainsMono.variable}>
       <body className="min-h-full flex flex-col m-0 p-0 text-notion-text bg-notion-bg">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,

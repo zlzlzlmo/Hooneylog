@@ -17,12 +17,14 @@ export function HomePageClient({
   initialPosts,
   stats: initialStats,
   viewsMap: initialViewsMap,
-  initialCategory
+  initialCategory,
+  initialSearch
 }: {
   initialPosts: NotionPost[],
   stats: { total: number, today: number },
   viewsMap: Record<string, number>,
-  initialCategory?: string
+  initialCategory?: string,
+  initialSearch?: string
 }) {
   const [stats, setStats] = useState(initialStats);
   const [viewsMap, setViewsMap] = useState(initialViewsMap);
@@ -33,7 +35,7 @@ export function HomePageClient({
     setSearchValue,
     setCurrentActiveCategory,
     filteredPosts
-  } = useFilterPost(initialPosts, initialCategory);
+  } = useFilterPost(initialPosts, initialCategory, initialSearch);
 
   // initialPosts is stable for the page, so build the category index once.
   const categoryCount = useMemo(() => new CategoryCount(initialPosts), [initialPosts]);

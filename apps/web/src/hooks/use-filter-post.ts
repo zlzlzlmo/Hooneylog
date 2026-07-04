@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { NotionPost } from '@hooneylog/shared-types';
 import { ALL } from '@/utils/category';
 
-export function useFilterPost(posts: NotionPost[], initialCategory: string = ALL) {
-  const [searchValue, setSearchValue] = useState('');
+export function useFilterPost(posts: NotionPost[], initialCategory: string = ALL, initialSearch: string = '') {
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [currentActiveCategory, setCurrentActiveCategory] = useState(initialCategory);
 
   const filteredPosts = useMemo(() => {
