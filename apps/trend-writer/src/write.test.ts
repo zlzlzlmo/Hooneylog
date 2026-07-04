@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { extractTitle, assembleFooter, appendFooter, deriveTags, runWrite } from './write';
+import {
+  extractTitle,
+  insertDisclosure,
+  assembleFooter,
+  appendFooter,
+  deriveTags,
+  runWrite,
+} from './write';
 import type { Gemini } from './types';
 
 const topic = { title: 'React 19 Actions', whyNow: 'w', sources: [], area: 'frontend' as const };
@@ -14,13 +21,30 @@ describe('extractTitle', () => {
   });
 });
 
+describe('insertDisclosure', () => {
+  it('제목(H1) 바로 다음에 AI 고지를 삽입한다', () => {
+    const out = insertDisclosure('# 제목\n\n본문');
+    const lines = out.split('\n');
+    const h1 = lines.findIndex((l) => l.startsWith('# '));
+    expect(out).toContain('AI 글입니다');
+    expect(out).toContain('🤖');
+    // 고지는 제목 뒤, 본문 앞에 위치
+    expect(out.indexOf('🤖')).toBeGreaterThan(out.indexOf('# 제목'));
+    expect(out.indexOf('🤖')).toBeLessThan(out.indexOf('본문'));
+    expect(h1).toBe(0);
+  });
+  it('H1이 없으면 맨 앞에 붙인다', () => {
+    expect(insertDisclosure('본문만').startsWith('> 🤖')).toBe(true);
+  });
+});
+
 describe('assembleFooter', () => {
-  it('AI 자동생성 안내와 출처 링크를 담는다', () => {
+  it('참고 출처 링크만 담고 AI 문구는 넣지 않는다', () => {
     const f = assembleFooter(['https://a', 'https://b']);
-    expect(f).toContain('자동으로');
-    expect(f).toContain('AI가');
+    expect(f).toContain('참고 출처');
     expect(f).toContain('https://a');
     expect(f).toContain('https://b');
+    expect(f).not.toContain('🤖');
   });
 });
 

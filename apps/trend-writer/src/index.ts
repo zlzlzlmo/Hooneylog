@@ -7,7 +7,7 @@ import { createNotionPort } from './publish';
 import { runScan } from './scan';
 import { pickFreshTopic } from './dedup';
 import { runResearch } from './research';
-import { appendFooter, runWrite } from './write';
+import { appendFooter, insertDisclosure, runWrite } from './write';
 import { runHumanize } from './humanize';
 import { runVerify } from './verify';
 
@@ -33,7 +33,10 @@ export async function runPipeline(deps: PipelineDeps): Promise<PipelineResult> {
   const research = await runResearch(gemini, config.modelUtility, topic);
   const draft = await runWrite(gemini, config.modelWrite, topic, research);
   const humanized = await runHumanize(gemini, config.modelWrite, draft);
-  const withFooter = { ...humanized, markdown: appendFooter(humanized.markdown, research.sources) };
+  const withFooter = {
+    ...humanized,
+    markdown: appendFooter(insertDisclosure(humanized.markdown), research.sources),
+  };
   const verdict = await runVerify(gemini, config.modelUtility, withFooter, existing);
 
   const status = verdict.pass && research.sources.length > 0 ? 'published' : 'draft';

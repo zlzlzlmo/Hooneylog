@@ -16,6 +16,7 @@ interface NotionClientLike {
 
 export function buildDescription(markdown: string): string {
   const clean = markdown
+    .replace(/^.*🤖.*$/gm, '') // AI 고지 줄은 요약(SEO description)에서 제외
     .replace(/<[^>]+>/g, '')
     .replace(/[#*>`]/g, '')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
