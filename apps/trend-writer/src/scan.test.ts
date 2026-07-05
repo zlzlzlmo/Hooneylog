@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { areaForWeekday, parseScanResult, runScan } from './scan';
+import { areaForWeekday, resolveArea, parseScanResult, runScan } from './scan';
 import type { Gemini } from './types';
 
 describe('parseScanResult', () => {
@@ -28,6 +28,16 @@ describe('areaForWeekday', () => {
     expect(areaForWeekday(1)).toBe('frontend'); // 월
     expect(areaForWeekday(3)).toBe('backend'); // 수
     expect(areaForWeekday(5)).toBe('ai-web'); // 금
+  });
+});
+
+describe('resolveArea', () => {
+  it('유효한 override는 그 분야를 쓴다', () => {
+    expect(resolveArea('ai-web', 1)).toBe('ai-web');
+  });
+  it('override가 없거나 이상하면 요일 로테이션으로 폴백', () => {
+    expect(resolveArea(undefined, 1)).toBe('frontend');
+    expect(resolveArea('bogus', 3)).toBe('backend');
   });
 });
 

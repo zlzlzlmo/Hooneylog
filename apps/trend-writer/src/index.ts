@@ -4,7 +4,7 @@ import { loadConfig } from './config';
 import { createGemini } from './gemini';
 import { createNotifier } from './notify';
 import { createNotionPort } from './publish';
-import { areaForWeekday, runScan } from './scan';
+import { resolveArea, runScan } from './scan';
 import { pickFreshTopic } from './dedup';
 import { runResearch } from './research';
 import { appendFooter, categoryForArea, insertDisclosure, runWrite } from './write';
@@ -70,7 +70,7 @@ export async function main(): Promise<void> {
     config.notionDatabaseId,
   );
   const notify = createNotifier(config.notifyWebhookUrl);
-  const targetArea = areaForWeekday(new Date().getDay());
+  const targetArea = resolveArea(process.env.TARGET_AREA, new Date().getDay());
   const result = await runPipeline({ gemini, notion, notify, config, targetArea });
   console.log(`[trend-writer] 분야(로테이션): ${targetArea}`);
   console.log('[trend-writer] 결과:', JSON.stringify(result));

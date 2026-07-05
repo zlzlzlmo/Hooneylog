@@ -14,6 +14,11 @@ export function areaForWeekday(day: number): TrendArea {
   return AREAS[Math.floor(day / 2) % 3] ?? 'ai-web';
 }
 
+// TARGET_AREA 환경변수로 분야를 수동 지정할 수 있고, 없으면 요일 로테이션을 쓴다.
+export function resolveArea(override: string | undefined, day: number): TrendArea {
+  return AREAS.includes(override as TrendArea) ? (override as TrendArea) : areaForWeekday(day);
+}
+
 export function buildScanPrompt(area?: TrendArea): string {
   const scope = area
     ? `Google Search로 최근 2~4주 안의 '${AREA_LABEL[area]}'(${area}) 분야 동향만 집중 조사해라. 다른 분야 주제는 제외한다.`
