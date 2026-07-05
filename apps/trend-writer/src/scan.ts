@@ -21,8 +21,8 @@ export function resolveArea(override: string | undefined, day: number): TrendAre
 
 export function buildScanPrompt(area?: TrendArea): string {
   const scope = area
-    ? `Google Search로 최근 2~4주 안의 '${AREA_LABEL[area]}'(${area}) 분야 동향만 집중 조사해라. 다른 분야 주제는 제외한다.`
-    : `Google Search로 최근 2~4주 안의 프론트엔드·백엔드·AI 드리븐 웹개발 동향을 조사해라.`;
+    ? `Google Search로 최근 4주 안의 '${AREA_LABEL[area]}'(${area}) 분야 동향만 집중 조사해라. 다른 분야 주제는 제외한다.`
+    : `Google Search로 최근 4주 안의 프론트엔드·백엔드·AI 드리븐 웹개발 동향을 조사해라.`;
   const areaRule = area ? `\n모든 후보의 "area"는 "${area}"로 설정한다.` : '';
   return `너는 기술 블로그 편집자다. ${scope}
 실무 개발자가 지금 배우면 유익한, 구체적이고 검증 가능한 주제 후보 6개를 뽑아라.
