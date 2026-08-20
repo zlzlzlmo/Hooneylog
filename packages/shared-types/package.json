@@ -11,6 +11,6 @@
   },
   "devDependencies": {
     "@hooneylog/typescript-config": "workspace:^",
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.2"
   }
 }
