@@ -33,9 +33,14 @@ jobs:
       - name: Package boundaries
         run: pnpm exec turbo boundaries
 
-      - name: Lint, typecheck, test, build
-        run: pnpm run check
+      - name: Lint, typecheck, test
+        run: pnpm run lint && pnpm run typecheck && pnpm run test
+
+      # The web build prerenders every post from Notion, so it can only run where
+      # the credentials exist. Forks and secret-less setups still get the gate above.
+      - name: Build
+        if: ${{ secrets.NOTION_API_KEY != '' }}
+        run: pnpm run build
         env:
-          # Notion is only read during the web build; a missing key must fail loudly.
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
