@@ -6,6 +6,19 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      # 2026-08 기준으로 생태계가 아직 못 따라오는 메이저들. 조건이 풀리면 이 항목을 지운다.
+      - dependency-name: eslint # eslint-plugin-react / jsx-a11y peer 가 아직 ^9
+        update-types: [version-update:semver-major]
+      - dependency-name: '@eslint/js'
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript # typescript-eslint peer 가 typescript <6.1.0
+        update-types: [version-update:semver-major]
+      - dependency-name: '@types/node' # 런타임이 Node 24 LTS 라 타입도 24 를 따른다
+        update-types: [version-update:semver-major]
+      - dependency-name: katex # rehype-katex 가 katex ^0.16 을 의존해 버전이 갈라진다
+        versions: ['>=0.17']
+
     groups:
       # One PR per risk class instead of ~30 individual PRs.
       patch-and-minor:
