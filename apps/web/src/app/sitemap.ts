@@ -12,13 +12,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Tag hubs are statically generated and indexable, so surface them too.
-  const tagNames = new Set<string>();
+  // lastModified comes from the newest post carrying the tag rather than "now":
+  // it is the honest value, and it keeps this route prerenderable.
+  const tagUpdatedAt = new Map<string, string>();
   for (const post of posts) {
-    for (const tag of post.tags) tagNames.add(tag.name);
+    for (const tag of post.tags) {
+      const current = tagUpdatedAt.get(tag.name);
+      if (!current || post.updatedAt > current) tagUpdatedAt.set(tag.name, post.updatedAt);
+    }
   }
-  const tagPages = Array.from(tagNames).map((name) => ({
+  const tagPages = Array.from(tagUpdatedAt.entries()).map(([name, updatedAt]) => ({
     url: `https://hooneylog.com/tag/${encodeURIComponent(name)}`,
-    lastModified: new Date(),
+    lastModified: new Date(updatedAt),
     changeFrequency: 'weekly' as const,
     priority: 0.5,
   }));
@@ -26,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: 'https://hooneylog.com',
-      lastModified: new Date(),
+      lastModified: new Date(posts[0]?.updatedAt ?? blogPosts[0]?.lastModified ?? 0),
       changeFrequency: 'daily',
       priority: 1,
     },

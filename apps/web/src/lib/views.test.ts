@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
+// View counters are request-time by design; `connection()` is what tells the
+// prerenderer that, and it needs a Next request scope that vitest has no use for.
+vi.mock('next/server', () => ({ connection: vi.fn().mockResolvedValue(undefined) }));
+
 import {
   incrementView,
   getGlobalStats,

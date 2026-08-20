@@ -1,4 +1,5 @@
 import 'server-only';
+import { connection } from 'next/server';
 import { Redis } from '@upstash/redis';
 
 // @vercel/kv 는 deprecated. 동일한 Upstash REST API 를 직접 사용한다.
@@ -29,6 +30,8 @@ export async function markViewedOnce(
   ipHash: string,
   ttlSec = 60 * 60 * 24,
 ): Promise<boolean> {
+  await connection();
+
   const seenKey = `views:seen:${slug}:${ipHash}`;
   try {
     const result = await kv().set(seenKey, 1, { nx: true, ex: ttlSec });
@@ -40,6 +43,8 @@ export async function markViewedOnce(
 }
 
 export async function incrementView(slug: string): Promise<number> {
+  await connection();
+
   const postKey = `views:post:${slug}`;
   const totalKey = 'views:total';
 
@@ -71,6 +76,8 @@ export async function incrementView(slug: string): Promise<number> {
  * 사이드바용 글로벌 통계 데이터 가져오기
  */
 export async function getGlobalStats(): Promise<{ total: number; today: number }> {
+  await connection();
+
   const totalKey = 'views:total';
   const today = new Date().toISOString().split('T')[0];
   const todayKey = `views:today:${today}`;
@@ -88,6 +95,8 @@ export async function getGlobalStats(): Promise<{ total: number; today: number }
 }
 
 export async function getViewCount(slug: string): Promise<number> {
+  await connection();
+
   const key = `views:post:${slug}`;
   try {
     const count = await kv().get<number>(key);
@@ -99,6 +108,8 @@ export async function getViewCount(slug: string): Promise<number> {
 }
 
 export async function getViewCounts(slugs: string[]): Promise<Record<string, number>> {
+  await connection();
+
   if (slugs.length === 0) return {};
 
   const keys = slugs.map((slug) => `views:post:${slug}`);

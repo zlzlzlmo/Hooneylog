@@ -24,11 +24,12 @@ vi.mock('notion-to-md', () => ({
 }));
 
 vi.mock('next/cache', () => ({
-  unstable_cache: vi.fn((fn: (...args: unknown[]) => unknown) => fn),
+  cacheTag: vi.fn(),
+  cacheLife: vi.fn(),
   revalidateTag: vi.fn(),
 }));
 
-import { unstable_cache } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 
 function loadNotion() {
   return import('./notion');
@@ -42,25 +43,25 @@ describe('lib/notion caching', () => {
     process.env.NOTION_DATABASE_ID = 'db-123';
   });
 
-  it('registers getAllPosts in the Data Cache tagged for posts with hourly revalidation', async () => {
-    await loadNotion();
+  it('tags getAllPosts for posts with hourly revalidation', async () => {
+    queryMock.mockResolvedValue({ results: [] });
 
-    const call = (unstable_cache as Mock).mock.calls.find((c) => c[2]?.tags?.includes(POSTS_TAG));
+    const { getAllPosts } = await loadNotion();
+    await getAllPosts();
 
-    expect(call).toBeTruthy();
-    expect(call![2].revalidate).toBe(3600);
+    expect(cacheTag as Mock).toHaveBeenCalledWith(POSTS_TAG);
+    expect((cacheLife as Mock).mock.calls[0]?.[0]).toMatchObject({ revalidate: 3600 });
   });
 
-  it('registers the markdown accessor tagged for post blocks', async () => {
-    await loadNotion();
+  it('tags the markdown accessor for post blocks', async () => {
+    pageToMarkdownMock.mockResolvedValue([]);
+    toMarkdownStringMock.mockReturnValue({ parent: '' });
 
-    const calls = (unstable_cache as Mock).mock.calls.filter((c) =>
-      c[2]?.tags?.includes(POST_BLOCKS_TAG),
-    );
+    const { getNotionPageMarkdown } = await loadNotion();
+    await getNotionPageMarkdown('page-1');
 
-    // getNotionPageMarkdown
-    expect(calls.length).toBeGreaterThanOrEqual(1);
-    for (const c of calls) expect(c[2].revalidate).toBe(3600);
+    expect(cacheTag as Mock).toHaveBeenCalledWith(POST_BLOCKS_TAG);
+    expect((cacheLife as Mock).mock.calls[0]?.[0]).toMatchObject({ revalidate: 3600 });
   });
 
   it('maps published Notion rows to NotionPost objects', async () => {

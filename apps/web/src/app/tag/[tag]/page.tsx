@@ -4,8 +4,6 @@ import { ArrowLeft } from 'lucide-react';
 import { getAllPosts } from '@/lib/notion';
 import { PostItemList } from '@/components/blocks/post-item-list';
 
-export const revalidate = 60;
-
 type Params = Promise<{ tag: string }>;
 
 export async function generateStaticParams() {

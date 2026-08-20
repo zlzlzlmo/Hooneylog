@@ -1,6 +1,14 @@
+import { cacheLife } from 'next/cache';
 import { AUTHOR, AUTHOR_SOCIALS } from '@/lib/author';
 
-export function Footer() {
+export async function Footer() {
+  // Cache Components: reading the clock during prerender is a build error unless
+  // the value is cached. The copyright year only has to be right within a day.
+  'use cache';
+  cacheLife('days');
+
+  const year = new Date().getFullYear();
+
   return (
     <footer className="w-full border-t border-notion-border mt-20 py-10 px-4 sm:px-6 font-mono text-[12px] text-notion-secondary flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
       <span>
@@ -22,7 +30,7 @@ export function Footer() {
         })}
       </nav>
       <span>
-        © {new Date().getFullYear()} {AUTHOR.name} ·{' '}
+        © {year} {AUTHOR.name} ·{' '}
         <a href="/feed.xml" className="hover:text-notion-text transition-colors">
           RSS
         </a>

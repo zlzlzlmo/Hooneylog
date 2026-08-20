@@ -3,8 +3,6 @@ import { getAllPosts } from '@/lib/notion';
 // Speculative, low-cost AI-discovery convention (llmstxt.org). Generated from
 // Notion like feed.xml/sitemap so it never goes stale. No major AI vendor has
 // confirmed they read it as of 2026 — treat as a bonus, not a ranking factor.
-export const revalidate = 3600;
-
 const SITE = 'https://hooneylog.com';
 
 export async function GET(): Promise<Response> {

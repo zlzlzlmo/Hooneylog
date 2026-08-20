@@ -1,13 +1,10 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { getAllPosts } from '@/lib/notion';
 import { getGlobalStats, getViewCounts } from '@/lib/views';
 import { ALL } from '@/utils/category';
 import { HomePageClient } from './home-page-client';
-
-// Hourly ISR; Notion data is Data-Cached for the same window and invalidated
-// on-demand via /api/revalidate, so a tighter interval would only add render
-// churn without surfacing fresher content.
-export const revalidate = 3600;
+import HomeLoading from './loading';
 
 // The home page reads a `?category=` filter param. Self-canonicalize to "/" so
 // the filtered variants (?category=React, …) consolidate onto one indexable URL
@@ -29,11 +26,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string; q?: string }>;
-}) {
+type HomeSearchParams = Promise<{ category?: string; q?: string }>;
+
+/**
+ * Cache Components: the shell (layout, nav, footer) prerenders; everything that
+ * depends on request-time data — the `?category=`/`?q=` params and the Redis-backed
+ * view counts — streams in below this Suspense boundary.
+ */
+export default function Home({ searchParams }: { searchParams: HomeSearchParams }) {
+  return (
+    <Suspense fallback={<HomeLoading />}>
+      <HomeContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function HomeContent({ searchParams }: { searchParams: HomeSearchParams }) {
   const posts = await getAllPosts();
 
   const [stats, viewsMap, { category, q }] = await Promise.all([

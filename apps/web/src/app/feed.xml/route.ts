@@ -1,7 +1,5 @@
 import { getAllPosts } from '@/lib/notion';
 
-export const revalidate = 3600;
-
 const SITE = 'https://hooneylog.com';
 
 function escapeXml(s: string): string {

@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # One PR per risk class instead of ~30 individual PRs.
+      patch-and-minor:
+        update-types: [minor, patch]
+      react:
+        patterns: ['react', 'react-dom', '@types/react', '@types/react-dom']
+      eslint:
+        patterns: ['eslint', 'eslint-*', '@eslint/*', 'typescript-eslint', 'globals']
+      testing:
+        patterns: ['vitest', '@vitest/*', '@testing-library/*', 'jsdom']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directory: /apps/trend-writer
+    schedule:
+      interval: monthly

@@ -1,15 +1,19 @@
 import 'server-only';
 import { Client } from '@notionhq/client';
-import { unstable_cache } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { INotionProperties, NotionPost, IRawNotionPost } from '@hooneylog/shared-types';
 import { NotionToMarkdown } from 'notion-to-md';
 import { POSTS_TAG, POST_BLOCKS_TAG } from './cache-tags';
 
-// Notion content changes rarely, so serve it from the Next.js Data Cache for an
-// hour. Because these use the Notion SDK (not fetch), they would otherwise bypass
-// the Data Cache entirely and hit the API on every render. Immediate updates are
-// handled out-of-band by the tag-based /api/revalidate webhook.
-const CACHE_REVALIDATE_SECONDS = 3600;
+// Notion content changes rarely, so serve it from the cache for an hour. These use
+// the Notion SDK (not fetch), so without an explicit `use cache` they would hit the
+// API on every render. Immediate updates are handled out-of-band by the tag-based
+// /api/revalidate webhook.
+const CACHE_PROFILE = {
+  stale: 300, // 5m of client-side reuse before revisiting the server
+  revalidate: 3600, // 1h background refresh
+  expire: 86400, // hard ceiling: never serve Notion content older than a day
+} as const;
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -118,20 +122,20 @@ export function fixMarkdown(md: string): string {
   return result;
 }
 
-export const getNotionPageMarkdown = unstable_cache(
-  async (pageId: string) => {
-    const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
-    const mdString = n2m.toMarkdownString(mdblocks);
+export async function getNotionPageMarkdown(pageId: string) {
+  'use cache';
+  cacheTag(POST_BLOCKS_TAG);
+  cacheLife(CACHE_PROFILE);
 
-    if (mdString.parent) {
-      mdString.parent = fixMarkdown(mdString.parent);
-    }
+  const mdblocks = await withRetry(() => n2m.pageToMarkdown(pageId));
+  const mdString = n2m.toMarkdownString(mdblocks);
 
-    return mdString;
-  },
-  ['notion-page-markdown'],
-  { tags: [POST_BLOCKS_TAG], revalidate: CACHE_REVALIDATE_SECONDS },
-);
+  if (mdString.parent) {
+    mdString.parent = fixMarkdown(mdString.parent);
+  }
+
+  return mdString;
+}
 
 class NotionBlockMapper {
   private readonly properties: INotionProperties;
@@ -161,58 +165,58 @@ class NotionBlockMapper {
   }
 }
 
-export const getAllPosts = unstable_cache(
-  async (): Promise<NotionPost[]> => {
-    if (!databaseId) return [];
+export async function getAllPosts(): Promise<NotionPost[]> {
+  'use cache';
+  cacheTag(POSTS_TAG);
+  cacheLife(CACHE_PROFILE);
 
-    // Notion returns at most 100 rows per query, so loop over start_cursor until
-    // has_more is false — otherwise the blog silently caps at 100 published posts.
-    const rawPosts: IRawNotionPost[] = [];
-    let cursor: string | undefined = undefined;
+  if (!databaseId) return [];
 
-    do {
-      const response = await withRetry(() =>
-        notion.databases.query({
-          database_id: databaseId,
-          start_cursor: cursor,
-          filter: {
-            property: 'status',
-            select: {
-              equals: 'published',
-            },
+  // Notion returns at most 100 rows per query, so loop over start_cursor until
+  // has_more is false — otherwise the blog silently caps at 100 published posts.
+  const rawPosts: IRawNotionPost[] = [];
+  let cursor: string | undefined = undefined;
+
+  do {
+    const response = await withRetry(() =>
+      notion.databases.query({
+        database_id: databaseId,
+        start_cursor: cursor,
+        filter: {
+          property: 'status',
+          select: {
+            equals: 'published',
           },
-          sorts: [
-            {
-              timestamp: 'created_time',
-              direction: 'descending',
-            },
-          ],
-        }),
-      );
+        },
+        sorts: [
+          {
+            timestamp: 'created_time',
+            direction: 'descending',
+          },
+        ],
+      }),
+    );
 
-      rawPosts.push(...(response.results as unknown as IRawNotionPost[]));
-      cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
-    } while (cursor);
+    rawPosts.push(...(response.results as unknown as IRawNotionPost[]));
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
+  } while (cursor);
 
-    return rawPosts.map(({ id, properties, last_edited_time }) => {
-      const block = new NotionBlockMapper(properties);
-      return {
-        id,
-        title: block.title,
-        tags: block.tags,
-        createdAt: block.createdAt,
-        updatedAt: last_edited_time ?? block.createdAt,
-        category: block.category,
-        description: block.description,
-      };
-    });
-  },
-  ['notion-all-posts'],
-  { tags: [POSTS_TAG], revalidate: CACHE_REVALIDATE_SECONDS },
-);
+  return rawPosts.map(({ id, properties, last_edited_time }) => {
+    const block = new NotionBlockMapper(properties);
+    return {
+      id,
+      title: block.title,
+      tags: block.tags,
+      createdAt: block.createdAt,
+      updatedAt: last_edited_time ?? block.createdAt,
+      category: block.category,
+      description: block.description,
+    };
+  });
+}
 
 export const getPostById = async (postId: string): Promise<NotionPost | undefined> => {
-  // getAllPosts is already Data-Cached, so this stays cheap without its own entry.
+  // getAllPosts is already cached, so this stays cheap without its own entry.
   const posts = await getAllPosts();
   return posts.find(({ id }) => id === postId);
 };
