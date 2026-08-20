@@ -14,6 +14,27 @@ const nextConfig: NextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+
+  // Baseline security headers. No CSP yet: the theme bootstrap in the root layout
+  // is an inline script, so a real policy needs nonce plumbing first.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // The blog embeds iframes (giscus); nothing needs to embed the blog.
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
