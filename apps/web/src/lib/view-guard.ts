@@ -26,7 +26,7 @@ function resolveSalt(): string {
   if (salt) return salt;
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
-      'VIEW_HASH_SALT is required in production for view-dedup IP hashing (no committed fallback).'
+      'VIEW_HASH_SALT is required in production for view-dedup IP hashing (no committed fallback).',
     );
   }
   return 'hooneylog-view-salt-dev';
@@ -37,5 +37,8 @@ function resolveSalt(): string {
  * 원본 IP를 KV에 남기지 않기 위함입니다.
  */
 export function hashIp(ip: string): string {
-  return createHash('sha256').update(resolveSalt() + ip).digest('hex').slice(0, 16);
+  return createHash('sha256')
+    .update(resolveSalt() + ip)
+    .digest('hex')
+    .slice(0, 16);
 }

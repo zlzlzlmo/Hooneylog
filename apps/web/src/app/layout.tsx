@@ -1,25 +1,25 @@
-import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import "./globals.css";
-import { AppLayout } from "@/components/layout/app-layout";
+import type { Metadata } from 'next';
+import { JetBrains_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import './globals.css';
+import { AppLayout } from '@/components/layout/app-layout';
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hooneylog.com'),
   title: {
-    default: "HooneyLog",
-    template: "%s | HooneyLog"
+    default: 'HooneyLog',
+    template: '%s | HooneyLog',
   },
-  description: "HooneyLog Blog based on Notion API",
+  description: 'HooneyLog Blog based on Notion API',
   verification: {
-    google: "uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE",
+    google: 'uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE',
   },
   alternates: {
     // No root-level canonical: it would be inherited by any route that doesn't
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     types: {
       'application/rss+xml': [{ url: '/feed.xml', title: 'HooneyLog RSS' }],
     },
-  }
+  },
 };
 
 // Site-wide entity graph: identifies the site (WebSite) and its author (Person)

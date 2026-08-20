@@ -16,7 +16,7 @@ export function ThemeToggle() {
   const isDark = useSyncExternalStore(
     subscribeToTheme,
     () => document.documentElement.classList.contains('dark'),
-    () => false
+    () => false,
   );
 
   const toggle = () => {

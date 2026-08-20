@@ -3,9 +3,13 @@ import assert from 'node:assert/strict';
 import { parseInput } from '../lib/input.js';
 
 test('parseInput accepts a valid payload and fills defaults', () => {
-  const out = parseInput(JSON.stringify({
-    title: '제목', category: 'Frontend', markdown: '# 제목',
-  }));
+  const out = parseInput(
+    JSON.stringify({
+      title: '제목',
+      category: 'Frontend',
+      markdown: '# 제목',
+    }),
+  );
   assert.equal(out.title, '제목');
   assert.equal(out.category, 'Frontend');
   assert.equal(out.status, 'published');

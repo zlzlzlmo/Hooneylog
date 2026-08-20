@@ -20,7 +20,7 @@ export default function HomeLoading() {
         {/* Main Content Skeleton */}
         <div className="flex-1 w-full min-w-0">
           <div className="w-full h-10 bg-notion-gray-bg rounded mb-8"></div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="flex flex-col">

@@ -28,7 +28,15 @@ function categoryColor(category?: string): string {
   return (category && CATEGORY_COLOR[category]) || 'var(--color-accent)';
 }
 
-export function PostHeader({ title, category, createdAt, tags, slug, initialViews, readingMinutes }: PostHeaderProps) {
+export function PostHeader({
+  title,
+  category,
+  createdAt,
+  tags,
+  slug,
+  initialViews,
+  readingMinutes,
+}: PostHeaderProps) {
   const catStyle = { '--cat': categoryColor(category) } as CSSProperties;
 
   return (

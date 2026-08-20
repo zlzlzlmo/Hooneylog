@@ -32,12 +32,14 @@ UI를 "완전 개성 있게" 재설계한다. 데이터/표현층이 이미 깨�
 ### 색 (globals.css `@theme` 토큰 리매핑, `.dark` 구조 유지)
 
 라이트:
+
 - `--ink #12141A` · `--paper #FAF9F5` · `--ash #6B6E76`
 - 시그널 amber: 종이 위 텍스트용 `#C97E12`(AA), ink 그라운드 위 `#E8A317`
 - 카테고리: fe `#2D6AE3` · be `#0B8F6C` · ai `#7C5CFC`
 - hairline `rgba(18,20,26,0.12)`
 
 다크:
+
 - `--ink(bg) #0D0E12` · card `#14161C` · text `#E7E7E3` · `--ash #8A8D95`
 - amber `#F0B33D` · fe `#6AA0FF` · be `#3FD6A6` · ai `#A98CFF`
 - hairline `rgba(255,255,255,0.11)`
@@ -65,14 +67,17 @@ UI를 "완전 개성 있게" 재설계한다. 데이터/표현층이 이미 깨�
 ## 영역별 처리 & 단계(PR) 매핑
 
 **PR 1 — 기반 + 전역 크롬 + 홈**
+
 - `globals.css` 토큰 교체, `layout.tsx`에 JetBrains Mono 주입.
 - `layout/header`→상태바(모노 브랜드+커서, 카테고리 nav hover 색, search/theme 툴버튼), `footer`, `theme-toggle`, `app-layout`, `sidebar`, `features/search`.
 - `home-page-client`, `post-item-list`→트레이스 엔트리, `tag-list`, `author-badge`, `category-fallback-image`.
 
 **PR 2 — 포스트 상세**
+
 - `post-header`, `table-of-contents`→트레이스 레일, `markdown-renderer`(프로즈 스타일: 타이포·코드·인용·표·KaTeX), `code-block`/`copy-button`, `reading-progress`, `related-posts`, `share-buttons`, `view-counter`, `back-to-top`.
 
 **PR 3 — 태그 페이지 + 롱테일**
+
 - `app/tag/[tag]/page.tsx`, `giscus-comment`/`facebook-comment`(테마 토큰 연동), `mermaid`(테마), `move-to-another-post`.
 
 ## 불변 제약 (Global Constraints)

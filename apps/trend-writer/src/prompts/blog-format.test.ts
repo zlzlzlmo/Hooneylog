@@ -1,8 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { BLOG_FORMAT_RULES, buildWritePrompt } from './blog-format';
 
-const topic = { title: 'React 19 Actions 완전정복', whyNow: '19 GA', sources: ['https://react.dev'], area: 'frontend' as const };
-const research = { facts: ['useActionState는 폼 상태를 관리한다'], sources: ['https://react.dev/actions'] };
+const topic = {
+  title: 'React 19 Actions 완전정복',
+  whyNow: '19 GA',
+  sources: ['https://react.dev'],
+  area: 'frontend' as const,
+};
+const research = {
+  facts: ['useActionState는 폼 상태를 관리한다'],
+  sources: ['https://react.dev/actions'],
+};
 
 describe('buildWritePrompt', () => {
   it('6단 헤딩과 콜아웃 규칙을 포함한다', () => {

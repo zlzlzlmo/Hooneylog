@@ -2,7 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { buildResearchPrompt, parseResearchFacts, runResearch } from './research';
 import type { Gemini } from './types';
 
-const topic = { title: 'RSC 스트리밍', whyNow: 'w', sources: ['https://a'], area: 'frontend' as const };
+const topic = {
+  title: 'RSC 스트리밍',
+  whyNow: 'w',
+  sources: ['https://a'],
+  area: 'frontend' as const,
+};
 
 describe('buildResearchPrompt', () => {
   it('주제 제목을 담고 근거 기반 조사를 지시한다', () => {
@@ -24,7 +29,10 @@ describe('parseResearchFacts', () => {
 describe('runResearch', () => {
   it('facts와 그라운딩 sources를 합쳐 반환', async () => {
     const gemini: Gemini = {
-      generateGrounded: async () => ({ text: '{"facts":["f1"],"sources":["https://x"]}', sources: ['https://g'] }),
+      generateGrounded: async () => ({
+        text: '{"facts":["f1"],"sources":["https://x"]}',
+        sources: ['https://g'],
+      }),
       generateText: async () => '',
     };
     const out = await runResearch(gemini, 'm', topic);

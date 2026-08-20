@@ -21,9 +21,9 @@ vi.mock('@/services/views', () => ({
 
 vi.mock('next/image', () => ({
   __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  default: ({ alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
     /* eslint-disable-next-line @next/next/no-img-element */
-    <img {...props} />
+    <img alt={alt ?? ''} {...props} />
   ), // Simple mock for next/image
 }));
 
@@ -67,7 +67,7 @@ describe('HomePageClient', () => {
         initialPosts={mockInitialPosts}
         stats={initialStats}
         viewsMap={initialViewsMap}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -92,7 +92,7 @@ describe('HomePageClient', () => {
         initialPosts={mockInitialPosts}
         stats={initialStats}
         viewsMap={initialViewsMap}
-      />
+      />,
     );
 
     // The hero heading should still render (component did not crash).
@@ -109,7 +109,7 @@ describe('HomePageClient', () => {
         initialPosts={mockInitialPosts}
         stats={initialStats}
         viewsMap={initialViewsMap}
-      />
+      />,
     );
 
     const h1 = screen.getByRole('heading', { level: 1 });
@@ -132,7 +132,7 @@ describe('HomePageClient', () => {
           initialPosts={mockInitialPosts}
           stats={initialStats}
           viewsMap={initialViewsMap}
-        />
+        />,
       );
 
       const input = screen.getByRole('searchbox');
@@ -170,9 +170,7 @@ describe('HomePageClient', () => {
     }));
 
     it('검색어가 바뀌면 더 보기로 늘린 목록이 첫 페이지로 돌아간다', () => {
-      render(
-        <HomePageClient initialPosts={manyPosts} stats={initialStats} viewsMap={{}} />
-      );
+      render(<HomePageClient initialPosts={manyPosts} stats={initialStats} viewsMap={{}} />);
 
       // 첫 페이지 12개 + 남은 8개 안내
       expect(screen.getByRole('button', { name: /더 보기 \(8개 남음\)/ })).toBeInTheDocument();
@@ -210,11 +208,7 @@ describe('HomePageClient', () => {
       ];
 
       render(
-        <HomePageClient
-          initialPosts={posts}
-          stats={initialStats}
-          viewsMap={initialViewsMap}
-        />
+        <HomePageClient initialPosts={posts} stats={initialStats} viewsMap={initialViewsMap} />,
       );
 
       const input = screen.getByRole('searchbox') as HTMLInputElement;
@@ -243,14 +237,28 @@ describe('HomePageClient', () => {
 
   describe('category filter ↔ URL sync', () => {
     const syncPosts = [
-      { id: '1', title: 'FE post', description: '', category: 'Frontend', createdAt: '', updatedAt: '', tags: [] },
-      { id: '2', title: 'BE post', description: '', category: 'Backend', createdAt: '', updatedAt: '', tags: [] },
+      {
+        id: '1',
+        title: 'FE post',
+        description: '',
+        category: 'Frontend',
+        createdAt: '',
+        updatedAt: '',
+        tags: [],
+      },
+      {
+        id: '2',
+        title: 'BE post',
+        description: '',
+        category: 'Backend',
+        createdAt: '',
+        updatedAt: '',
+        tags: [],
+      },
     ];
 
     it('writes the chosen category into the URL when a sidebar chip is clicked', () => {
-      render(
-        <HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />
-      );
+      render(<HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />);
       fireEvent.click(screen.getByRole('button', { name: /Frontend/ }));
       expect(replace).toHaveBeenCalledWith('/?category=Frontend', { scroll: false });
     });
@@ -262,7 +270,7 @@ describe('HomePageClient', () => {
           stats={initialStats}
           viewsMap={{}}
           initialCategory="Frontend"
-        />
+        />,
       );
       fireEvent.click(screen.getByRole('button', { name: /전체/ }));
       expect(replace).toHaveBeenCalledWith('/', { scroll: false });
@@ -272,7 +280,7 @@ describe('HomePageClient', () => {
       // Header <Link> navigation re-renders the page with a new prop but does NOT
       // remount the client component — the active chip must still follow.
       const { rerender } = render(
-        <HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />
+        <HomePageClient initialPosts={syncPosts} stats={initialStats} viewsMap={{}} />,
       );
       rerender(
         <HomePageClient
@@ -280,9 +288,12 @@ describe('HomePageClient', () => {
           stats={initialStats}
           viewsMap={{}}
           initialCategory="Backend"
-        />
+        />,
       );
-      expect(screen.getByRole('button', { name: /Backend/ })).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByRole('button', { name: /Backend/ })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
     });
   });
 });

@@ -11,11 +11,11 @@ async function listPosts() {
     page_size: 10,
   });
 
-  const posts = response.results.map(page => ({
+  const posts = response.results.map((page) => ({
     id: page.id,
     title: page.properties['이름']?.title[0]?.plain_text || 'Untitled',
     category: page.properties['category']?.multi_select[0]?.name || 'Uncategorized',
-    tags: page.properties['tag']?.multi_select.map(t => t.name) || [],
+    tags: page.properties['tag']?.multi_select.map((t) => t.name) || [],
   }));
 
   console.log(JSON.stringify(posts, null, 2));

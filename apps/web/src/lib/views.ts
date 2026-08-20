@@ -27,7 +27,7 @@ function kv(): Redis {
 export async function markViewedOnce(
   slug: string,
   ipHash: string,
-  ttlSec = 60 * 60 * 24
+  ttlSec = 60 * 60 * 24,
 ): Promise<boolean> {
   const seenKey = `views:seen:${slug}:${ipHash}`;
   try {
@@ -42,23 +42,23 @@ export async function markViewedOnce(
 export async function incrementView(slug: string): Promise<number> {
   const postKey = `views:post:${slug}`;
   const totalKey = 'views:total';
-  
+
   // 오늘 날짜 키 생성 (예: views:today:2024-03-28)
   const today = new Date().toISOString().split('T')[0];
   const todayKey = `views:today:${today}`;
-  
+
   try {
     // 💡 Redis Pipeline: 한 번의 네트워크 요청으로 3가지 작업을 동시에 처리
     const pipeline = kv().pipeline();
-    pipeline.incr(postKey);  // 포스트 개별 조회수
+    pipeline.incr(postKey); // 포스트 개별 조회수
     pipeline.incr(totalKey); // 블로그 전체 누적 조회수
     pipeline.incr(todayKey); // 오늘 하루 전체 조회수
-    
+
     // 오늘 키는 48시간 뒤 자동 삭제 (메모리 절약)
     pipeline.expire(todayKey, 60 * 60 * 48);
-    
+
     const results = await pipeline.exec();
-    
+
     // 첫 번째 결과(포스트 조회수) 반환
     return (results[0] as number) ?? 0;
   } catch (error) {
@@ -74,12 +74,12 @@ export async function getGlobalStats(): Promise<{ total: number; today: number }
   const totalKey = 'views:total';
   const today = new Date().toISOString().split('T')[0];
   const todayKey = `views:today:${today}`;
-  
+
   try {
     const [total, todayCount] = await kv().mget<number[]>(totalKey, todayKey);
     return {
       total: total ?? 0,
-      today: todayCount ?? 0
+      today: todayCount ?? 0,
     };
   } catch (error) {
     console.error('❌ [KV] Failed to get global stats:', error);
@@ -100,15 +100,18 @@ export async function getViewCount(slug: string): Promise<number> {
 
 export async function getViewCounts(slugs: string[]): Promise<Record<string, number>> {
   if (slugs.length === 0) return {};
-  
-  const keys = slugs.map(slug => `views:post:${slug}`);
+
+  const keys = slugs.map((slug) => `views:post:${slug}`);
   try {
     const counts = await kv().mget<number[]>(...keys);
-    
-    return slugs.reduce((acc, slug, index) => {
-      acc[slug] = counts[index] ?? 0;
-      return acc;
-    }, {} as Record<string, number>);
+
+    return slugs.reduce(
+      (acc, slug, index) => {
+        acc[slug] = counts[index] ?? 0;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   } catch (error) {
     console.error('❌ [KV] Failed to get multiple view counts:', error);
     return {};

@@ -26,7 +26,9 @@ async function main() {
   const apiKey = process.env.NOTION_API_KEY;
   const databaseId = process.env.NOTION_DATABASE_ID;
   if (!apiKey || !databaseId) {
-    console.error('NOTION_API_KEY / NOTION_DATABASE_ID not found (checked apps/web/.env.local and process.env).');
+    console.error(
+      'NOTION_API_KEY / NOTION_DATABASE_ID not found (checked apps/web/.env.local and process.env).',
+    );
     process.exit(1);
   }
 
@@ -38,7 +40,9 @@ async function main() {
     console.log(JSON.stringify(result));
   } catch (err) {
     if (err.pageUrl) {
-      console.error(`Publish partially failed: page created at ${err.pageUrl} but ${err.message}. Fix or delete it in Notion.`);
+      console.error(
+        `Publish partially failed: page created at ${err.pageUrl} but ${err.message}. Fix or delete it in Notion.`,
+      );
     } else {
       console.error(`Publish failed: ${err.message}`);
     }

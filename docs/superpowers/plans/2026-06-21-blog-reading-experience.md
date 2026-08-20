@@ -22,9 +22,11 @@
 ### Task 1: Add dependencies
 
 **Files:**
+
 - Modify: `apps/web/package.json` (deps) + `pnpm-lock.yaml`
 
 **Interfaces:**
+
 - Produces: `rehype-slug` and `github-slugger` available for import.
 
 - [ ] **Step 1: Install**
@@ -49,10 +51,12 @@ git commit -m "chore(web): add rehype-slug and github-slugger for TOC/anchors"
 ### Task 2: TOC extraction + reading time (pure utils)
 
 **Files:**
+
 - Create: `apps/web/src/utils/toc.ts`
 - Create: `apps/web/src/utils/toc.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `type TocItem = { depth: 2 | 3; text: string; slug: string }`
   - `extractToc(markdown: string): TocItem[]` — h2/h3 only; slugs via `github-slugger` (one slugger instance per call, in document order, so duplicate headings dedupe identically to rehype-slug); headings inside fenced code blocks are ignored.
@@ -62,7 +66,7 @@ git commit -m "chore(web): add rehype-slug and github-slugger for TOC/anchors"
 
 Create `apps/web/src/utils/toc.test.ts`:
 
-```ts
+````ts
 import { describe, it, expect } from 'vitest';
 import GithubSlugger from 'github-slugger';
 import { extractToc, readingTime } from './toc';
@@ -101,7 +105,7 @@ describe('readingTime', () => {
     expect(readingTime(prose + code)).toBe(2);
   });
 });
-```
+````
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -112,7 +116,7 @@ Expected: FAIL — `Cannot find module './toc'`.
 
 Create `apps/web/src/utils/toc.ts`:
 
-```ts
+````ts
 import GithubSlugger from 'github-slugger';
 
 export type TocItem = { depth: 2 | 3; text: string; slug: string };
@@ -142,7 +146,7 @@ export function readingTime(markdown: string): number {
   const chars = text.replace(/\s/g, '').length;
   return Math.max(1, Math.ceil(chars / 500));
 }
-```
+````
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -161,9 +165,11 @@ git commit -m "feat(post): add TOC extraction and reading-time utils"
 ### Task 3: Heading anchors in the markdown renderer
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/markdown-renderer.tsx`
 
 **Interfaces:**
+
 - Consumes: `rehype-slug` (Task 1).
 - Produces: rendered h1/h2/h3 carry `id`; h2/h3 show a hover `#` anchor link to `#${id}`.
 
@@ -231,10 +237,12 @@ git commit -m "feat(post): heading ids via rehype-slug with hover anchor links"
 ### Task 4: Code-block copy button
 
 **Files:**
+
 - Create: `apps/web/src/components/blocks/post-detail/code-block.tsx`
 - Modify: `apps/web/src/components/blocks/post-detail/markdown-renderer.tsx`
 
 **Interfaces:**
+
 - Produces: `CodeBlock({ code: string; language: string })` — client component rendering the highlighted code with a top-right copy button ("복사" → "복사됨" for ~2s).
 
 - [ ] **Step 1: Create the CodeBlock client component**
@@ -321,9 +329,11 @@ git commit -m "feat(post): code-block copy button"
 ### Task 5: TableOfContents component (scroll-spy)
 
 **Files:**
+
 - Create: `apps/web/src/components/blocks/post-detail/table-of-contents.tsx`
 
 **Interfaces:**
+
 - Consumes: `TocItem` from `@/utils/toc`.
 - Produces: `TableOfContents({ items: TocItem[]; variant: 'inline' | 'rail' })` — `inline` renders the mobile `<details>` (visible below xl), `rail` renders the desktop sticky nav (visible at xl+). Rendering one of each in different containers avoids the on-screen duplication that a single both-markup component would cause. IntersectionObserver highlights the active heading; renders nothing if `items` is empty.
 
@@ -353,7 +363,7 @@ function useActiveSlug(items: TocItem[]): string {
           setActiveSlug(visible[0].target.id);
         }
       },
-      { rootMargin: '-80px 0px -70% 0px', threshold: 0 }
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0 },
     );
 
     headings.forEach((h) => observer.observe(h));
@@ -385,7 +395,13 @@ function TocLinks({ items, activeSlug }: { items: TocItem[]; activeSlug: string 
   );
 }
 
-export function TableOfContents({ items, variant }: { items: TocItem[]; variant: 'inline' | 'rail' }) {
+export function TableOfContents({
+  items,
+  variant,
+}: {
+  items: TocItem[];
+  variant: 'inline' | 'rail';
+}) {
   const activeSlug = useActiveSlug(items);
 
   if (items.length === 0) return null;
@@ -394,7 +410,9 @@ export function TableOfContents({ items, variant }: { items: TocItem[]; variant:
     // Mobile: collapsible at top of the reading column (hidden at xl+)
     return (
       <details className="xl:hidden mb-8 rounded-[6px] border border-notion-border bg-notion-gray-bg/40 px-4 py-3">
-        <summary className="cursor-pointer text-[14px] font-medium text-notion-text select-none">목차</summary>
+        <summary className="cursor-pointer text-[14px] font-medium text-notion-text select-none">
+          목차
+        </summary>
         <nav aria-label="목차" className="mt-3">
           <TocLinks items={items} activeSlug={activeSlug} />
         </nav>
@@ -405,7 +423,9 @@ export function TableOfContents({ items, variant }: { items: TocItem[]; variant:
   // Desktop: sticky rail in the side column (hidden below xl)
   return (
     <nav aria-label="목차" className="sticky top-[88px] max-h-[calc(100vh-120px)] overflow-y-auto">
-      <p className="text-[12px] font-semibold text-notion-secondary uppercase tracking-wider mb-2">목차</p>
+      <p className="text-[12px] font-semibold text-notion-secondary uppercase tracking-wider mb-2">
+        목차
+      </p>
       <TocLinks items={items} activeSlug={activeSlug} />
     </nav>
   );
@@ -429,9 +449,11 @@ git commit -m "feat(post): table of contents with scroll-spy"
 ### Task 6: Reading time in the post header
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/post-header.tsx`
 
 **Interfaces:**
+
 - Consumes: a new `readingMinutes: number` prop.
 - Produces: `PostHeader` displays `약 N분` next to date/views.
 
@@ -479,9 +501,11 @@ git commit -m "feat(post): show reading time in post header"
 ### Task 7: Wire TOC + reading time into the post page (layout)
 
 **Files:**
+
 - Modify: `apps/web/src/app/post/[slug]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `extractToc`, `readingTime` (`@/utils/toc`); `TableOfContents`; `PostHeader.readingMinutes`.
 
 - [ ] **Step 1: Import and compute**
@@ -496,9 +520,9 @@ import { extractToc, readingTime } from '@/utils/toc';
 After `const markdown = ...` is available (inside the component, after the `notFound()` guard), compute:
 
 ```tsx
-  const md = markdown.parent ?? '';
-  const toc = extractToc(md);
-  const readingMinutes = readingTime(md);
+const md = markdown.parent ?? '';
+const toc = extractToc(md);
+const readingMinutes = readingTime(md);
 ```
 
 - [ ] **Step 2: Pass readingMinutes to PostHeader**
@@ -506,7 +530,7 @@ After `const markdown = ...` is available (inside the component, after the `notF
 Update the `<PostHeader ... />` usage to add:
 
 ```tsx
-            readingMinutes={readingMinutes}
+readingMinutes = { readingMinutes };
 ```
 
 - [ ] **Step 3: Restructure the body into a grid with the TOC rail**
@@ -514,41 +538,41 @@ Update the `<PostHeader ... />` usage to add:
 Replace the inner container (the `<div className="w-full max-w-[720px] ...">` block, lines ~115-139) with a layout that keeps the 720px reading column and adds an xl TOC rail. Use `md` in the renderer instead of re-reading:
 
 ```tsx
-      <div className="w-full max-w-[980px] px-4 sm:px-6 mx-auto">
-        {/* Top: header spans the reading column width */}
-        <div className="max-w-[720px] mx-auto xl:mx-0">
-          <section className="w-full mb-12">
-            <PostHeader
-              title={post.title}
-              category={post.category}
-              createdAt={post.createdAt}
-              tags={post.tags}
-              slug={slug}
-              initialViews={views}
-              readingMinutes={readingMinutes}
-            />
-          </section>
-        </div>
+<div className="w-full max-w-[980px] px-4 sm:px-6 mx-auto">
+  {/* Top: header spans the reading column width */}
+  <div className="max-w-[720px] mx-auto xl:mx-0">
+    <section className="w-full mb-12">
+      <PostHeader
+        title={post.title}
+        category={post.category}
+        createdAt={post.createdAt}
+        tags={post.tags}
+        slug={slug}
+        initialViews={views}
+        readingMinutes={readingMinutes}
+      />
+    </section>
+  </div>
 
-        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 items-start">
-          {/* Reading column */}
-          <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
-            <TableOfContents items={toc} variant="inline" />
-            <section className="w-full">
-              <MarkdownRenderer content={md} />
-              <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
-              <CommentProvider>
-                <GiscusComment />
-              </CommentProvider>
-            </section>
-          </div>
+  <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 items-start">
+    {/* Reading column */}
+    <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
+      <TableOfContents items={toc} variant="inline" />
+      <section className="w-full">
+        <MarkdownRenderer content={md} />
+        <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
+        <CommentProvider>
+          <GiscusComment />
+        </CommentProvider>
+      </section>
+    </div>
 
-          {/* TOC rail (desktop only) */}
-          <aside className="hidden xl:block">
-            <TableOfContents items={toc} variant="rail" />
-          </aside>
-        </div>
-      </div>
+    {/* TOC rail (desktop only) */}
+    <aside className="hidden xl:block">
+      <TableOfContents items={toc} variant="rail" />
+    </aside>
+  </div>
+</div>
 ```
 
 Note: the `inline` variant (mobile `<details>`, `xl:hidden`) sits in the reading column; the `rail` variant lives in the `<aside>` which is itself `hidden xl:block`. Each shows only at its breakpoint, so there is no on-screen duplication.
@@ -580,11 +604,11 @@ Expected: all PASS.
 
 ## Spec Coverage Map
 
-| Spec item (#1) | Task |
-|---|---|
-| Heading anchors (rehype-slug + `#`) | Task 3 |
-| TOC extraction (slug matches) | Task 2 |
+| Spec item (#1)                              | Task       |
+| ------------------------------------------- | ---------- |
+| Heading anchors (rehype-slug + `#`)         | Task 3     |
+| TOC extraction (slug matches)               | Task 2     |
 | TableOfContents (rail + mobile, scroll-spy) | Tasks 5, 7 |
-| Reading time (Korean char-based) | Tasks 2, 6 |
-| Code copy button | Task 4 |
-| Layout (720 column + xl rail) | Task 7 |
+| Reading time (Korean char-based)            | Tasks 2, 6 |
+| Code copy button                            | Task 4     |
+| Layout (720 column + xl rail)               | Task 7     |

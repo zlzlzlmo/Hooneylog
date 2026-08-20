@@ -6,6 +6,7 @@
 ## 5. AI 개발 — RAG
 
 ### 핵심 트렌드
+
 - **Contextual Retrieval가 인덱싱 표준으로 정착** `mainstream` ✅
   (Anthropic 2024-09) 청크 임베딩 전 LLM으로 50~100토큰 문서 맥락 요약을 prepend. top-20 검색 실패율 Contextual Embeddings로 35%↓, +BM25 49%↓, +리랭킹 67%↓. 프롬프트 캐싱으로 전처리 비용 절감.
 - **하이브리드 검색(Dense+BM25) + 리랭킹 2단계 파이프라인** `mainstream` ✅
@@ -17,7 +18,7 @@
 - **임베딩 모델 세대 교체** `mainstream` ⚠️
   Cohere embed-v4(MTEB 65.2), Gemini Embedding 2(2026-03, 멀티모달 5모달리티·MRL·3072차원), BGE-M3. ⚠️ **누락 정정: 2026 실질 MTEB 1위는 Qwen3-Embedding-8B(70.6, 오픈웨이트)** — 리서처가 미언급. 'MTEB 점수만 보지 말고 자체 데이터로 테스트' 원칙.
 - **벡터DB 하이브리드 검색 내장 보편화 + pgvector 약진** `mainstream` ✅
-  Weaviate·Milvus 2.5+·Qdrant·LanceDB·Pinecone 모두 네이티브 하이브리드. 손익분기: ~50~100M 벡터.
+  Weaviate·Milvus 2.5+·Qdrant·LanceDB·Pinecone 모두 네이티브 하이브리드. 손익분기: ~~50~~100M 벡터.
 - **RAG 평가 표준화 — RAGAS, LLM-as-judge, 골든 데이터셋** `mainstream` ✅
   RAGAS(faithfulness, context precision/recall, answer relevancy). LLM 심판은 길이/위치/자기선호 편향 → 사람 검증 골든셋으로 보정. retriever/generator 지표 분리.
 - **Late chunking & ColBERT식 late-interaction** `emerging` ⚠️
@@ -28,15 +29,18 @@
 - ➕ **Self-RAG / Corrective RAG**(자기 교정·반성형) · ➕ **RAFT**(Retrieval-Augmented Fine-Tuning).
 
 ### 업계 표준·베스트프랙티스
+
 - 인덱싱: Contextual Retrieval 적용. 검색: 하이브리드 + RRF + 리랭킹 2단계.
 - 청킹은 도메인별 선택(구조 인식/recursive 기본), 자체 데이터로 검증. 개선은 한 번에 하나씩, 리랭킹·하이브리드부터.
 - Agentic RAG는 ReAct부터, 필요 입증 시에만 라우터/검증자/멀티에이전트. GraphRAG는 글로벌 질의 한정(비용 민감 시 LazyGraphRAG).
-- 임베딩은 자체 코퍼스 벤치마크. 벡터DB는 규모(~50~100M)·비용 기준. 평가는 RAGAS로 retriever/generator 분리 + 골든셋 보정.
+- 임베딩은 자체 코퍼스 벤치마크. 벡터DB는 규모(~~50~~100M)·비용 기준. 평가는 RAGAS로 retriever/generator 분리 + 골든셋 보정.
 
 ### 핵심 용어
+
 RAG=검색 증강 생성 · Contextual Retrieval · Hybrid Search=하이브리드 검색 · BM25 · RRF=상호 순위 융합 · Reranking/Cross-encoder=리랭킹 · Chunking=청킹 · Late chunking · Late interaction/ColBERT · GraphRAG/LazyGraphRAG · Agentic RAG=에이전틱 RAG · ReAct · Self-RAG · RAPTOR · Multi-hop=멀티홉 · Multimodal RAG=멀티모달 RAG · MTEB · MRL(Matryoshka) · RAGAS · Faithfulness=충실성 · Context precision/recall · LLM-as-a-judge=LLM 심판 · Golden dataset=골든 데이터셋 · Context engineering · Provenance=출처 추적성
 
 ### 추천 출처
+
 - Contextual Retrieval(Anthropic) — https://www.anthropic.com/news/contextual-retrieval
 - LazyGraphRAG(Microsoft) — https://www.microsoft.com/en-us/research/blog/lazygraphrag-setting-a-new-standard-for-quality-and-cost/
 - Agentic RAG 서베이 — https://arxiv.org/abs/2501.09136
@@ -49,12 +53,13 @@ RAG=검색 증강 생성 · Contextual Retrieval · Hybrid Search=하이브리�
 ## 6. AI 개발 — LLM 앱 / 에이전트
 
 ### 핵심 트렌드
+
 - **MCP가 에이전트 도구 연결의 사실상 표준** `mainstream` ✅
   (Anthropic 2024-11 오픈소스) OpenAI·Google·Microsoft 채택. 2025-12-09 Linux Foundation 산하 Agentic AI Foundation(AAIF)에 기증, OpenAI·Block 공동창립. 월 9700만 SDK 다운로드, 5800+ 공개 서버(전체 13,000+ 추정). ⚠️ 플래티넘 멤버에 GitHub 포함(AWS·Google·MS·Cloudflare·GitHub·Bloomberg).
 - **프롬프트 → 컨텍스트 엔지니어링 패러다임 전환** `growing` ✅
   '최소한의 고신호 토큰 집합' 설계. 'context rot'(장문 성능 저하). "대부분의 에이전트 실패는 모델 실패가 아니라 컨텍스트 실패."
 - **멀티에이전트 논쟁 수렴: 격리 컨텍스트 서브에이전트 오케스트레이션** `growing` ✅
-  Cognition 'Don't Build Multi-Agents'(단일 스레드) vs Anthropic 병렬 서브에이전트(90.2% 향상, ~15배 토큰) 대립 → 2026-03 Cognition 'Managed Devins'로 수렴. 리드 에이전트가 계획, 3~5개 서브에이전트를 깨끗한 컨텍스트로 띄워 요약 반환.
+  Cognition 'Don't Build Multi-Agents'(단일 스레드) vs Anthropic 병렬 서브에이전트(90.2% 향상, ~~15배 토큰) 대립 → 2026-03 Cognition 'Managed Devins'로 수렴. 리드 에이전트가 계획, 3~~5개 서브에이전트를 깨끗한 컨텍스트로 띄워 요약 반환.
 - **Eval 주도 개발 + LLMOps 관측가능성** `growing` ✅
   LangChain 2025 조사: 프로덕션 운영 57%, 관측가능성 89% vs eval 52%(오프라인). 전체 트레이스 휴리스틱 + 10~20% 샘플 LLM-judge + 주기적 인간 주석 골든셋 + CI 게이트. 역량/회귀 eval 구분(에이전트판 TDD).
 - **구조화 출력 보장: 제약 디코딩 보편화** `mainstream` ⚠️
@@ -70,6 +75,7 @@ RAG=검색 증강 생성 · Contextual Retrieval · Hybrid Search=하이브리�
 - ➕ **장시간 자율 실행**(long-horizon agents) — Claude Sonnet 4.5 30시간+ 자율 코딩, 백그라운드/ambient 에이전트.
 
 ### 업계 표준·베스트프랙티스
+
 - 도구 연결=MCP 1차, 에이전트 협업=A2A. 컨텍스트 엔지니어링(컴팩션·구조화 노트·just-in-time 검색)으로 컨텍스트 예산 설계.
 - 시스템 프롬프트는 XML/마크다운 헤더로 구획, 최소에서 시작해 실패 보며 보강. 도구는 자기완결·오류내성·용도 명확.
 - 구조화 출력은 제약 디코딩으로 스키마 보장(정규식 파싱 금지). 관측가능성 기본 + eval CI 게이트.
@@ -77,9 +83,11 @@ RAG=검색 증강 생성 · Contextual Retrieval · Hybrid Search=하이브리�
 - 비용 최우선 레버는 프롬프트 캐싱(정적 콘텐츠 앞, 가변 뒤). 추론 모델엔 명시 CoT 강제 말고 적응형.
 
 ### 핵심 용어
+
 MCP=모델 컨텍스트 프로토콜 · A2A=에이전트 간 통신 · tool use/function calling=도구 사용 · context engineering=컨텍스트 엔지니어링 · context rot=컨텍스트 로트 · compaction=컴팩션 · just-in-time retrieval=적시 검색 · subagent=서브에이전트 · structured outputs=구조화 출력 · constrained decoding=제약 디코딩 · CFG=문맥자유문법 · LLM-as-a-judge · eval-driven development=평가 주도 개발 · capability/regression eval · observability/tracing=관측가능성 · LLMOps · agent memory=에이전트 메모리 · prompt caching=프롬프트 캐싱 · extended thinking=확장 사고 · compounding failure=복합 실패 · Agent Skills(SKILL.md)
 
 ### 추천 출처
+
 - Effective Context Engineering(Anthropic) — https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 - 멀티에이전트 시스템(Anthropic) — https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them
 - State of Agent Engineering(LangChain) — https://www.langchain.com/state-of-agent-engineering

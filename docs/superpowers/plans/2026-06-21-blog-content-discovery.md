@@ -22,10 +22,12 @@
 ### Task 1: Related-posts scoring util
 
 **Files:**
+
 - Create: `apps/web/src/utils/related-posts.ts`
 - Create: `apps/web/src/utils/related-posts.test.ts`
 
 **Interfaces:**
+
 - Produces: `getRelatedPosts(all, current, limit = 3)` — excludes `current` by id; score `+2` same category, `+1` per shared tag id; keep only score > 0; sort by score desc then `createdAt` desc; return up to `limit`.
 
 - [ ] **Step 1: Write the failing test**
@@ -37,7 +39,12 @@ import { describe, it, expect } from 'vitest';
 import { getRelatedPosts } from './related-posts';
 import { NotionPost } from '@hooneylog/shared-types';
 
-const mk = (id: string, category: string, tagNames: string[], createdAt = '2026-01-01'): NotionPost => ({
+const mk = (
+  id: string,
+  category: string,
+  tagNames: string[],
+  createdAt = '2026-01-01',
+): NotionPost => ({
   id,
   category,
   createdAt,
@@ -55,9 +62,9 @@ describe('getRelatedPosts', () => {
 
   it('ranks same-category and shared-tag posts higher', () => {
     const cur = mk('a', 'React', ['hooks', 'rsc']);
-    const sameCatSharedTag = mk('b', 'React', ['hooks']);   // +2 +1 = 3
+    const sameCatSharedTag = mk('b', 'React', ['hooks']); // +2 +1 = 3
     const sharedTwoTags = mk('c', 'CSS', ['hooks', 'rsc']); // +2 = 2
-    const unrelated = mk('d', 'Go', ['cli']);               // 0
+    const unrelated = mk('d', 'Go', ['cli']); // 0
     const out = getRelatedPosts([cur, unrelated, sharedTwoTags, sameCatSharedTag], cur);
     expect(out.map((p) => p.id)).toEqual(['b', 'c']);
   });
@@ -119,9 +126,11 @@ git commit -m "feat(discovery): related-posts scoring util"
 ### Task 2: TagList component
 
 **Files:**
+
 - Create: `apps/web/src/components/elements/tag-list.tsx`
 
 **Interfaces:**
+
 - Produces: `TagList({ tags, className }: { tags: ITag[]; className?: string })` — renders each tag as a chip linking to `/tag/${encodeURIComponent(tag.name)}`; renders nothing if `tags` is empty.
 
 - [ ] **Step 1: Create the component**
@@ -169,9 +178,11 @@ git commit -m "feat(discovery): TagList chip component"
 ### Task 3: Render tags in the post header
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/post-header.tsx`
 
 **Interfaces:**
+
 - Consumes: `TagList` (Task 2). `tags` is already a `PostHeader` prop.
 
 - [ ] **Step 1: Render TagList under the author badge**
@@ -191,7 +202,7 @@ export function PostHeader({ title, category, createdAt, tags, slug, initialView
 After `<AuthorBadge />`:
 
 ```tsx
-        <TagList tags={tags} className="mt-6" />
+<TagList tags={tags} className="mt-6" />
 ```
 
 - [ ] **Step 2: Verify lint/typecheck**
@@ -211,10 +222,12 @@ git commit -m "feat(discovery): show tags in post header"
 ### Task 4: Related posts on the detail page (+ fix keywords bug)
 
 **Files:**
+
 - Create: `apps/web/src/components/blocks/post-detail/related-posts.tsx`
 - Modify: `apps/web/src/app/post/[slug]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `getRelatedPosts` (Task 1).
 - Produces: `RelatedPosts({ posts }: { posts: NotionPost[] })` — section listing related posts; renders nothing if empty.
 
@@ -242,11 +255,15 @@ export function RelatedPosts({ posts }: { posts: NotionPost[] }) {
               href={`/post/${post.id}`}
               className="group flex flex-col h-full p-4 rounded-[6px] border border-notion-border hover:bg-notion-hover transition-colors no-underline"
             >
-              <span className="text-[12px] font-medium text-notion-secondary mb-1">{post.category || '미분류'}</span>
+              <span className="text-[12px] font-medium text-notion-secondary mb-1">
+                {post.category || '미분류'}
+              </span>
               <span className="text-[15px] font-semibold text-notion-text leading-snug line-clamp-2 group-hover:text-accent transition-colors">
                 {post.title}
               </span>
-              <span className="mt-auto pt-3 text-[12px] text-notion-secondary font-mono">{formatDate(post.createdAt)}</span>
+              <span className="mt-auto pt-3 text-[12px] text-notion-secondary font-mono">
+                {formatDate(post.createdAt)}
+              </span>
             </Link>
           </li>
         ))}
@@ -282,7 +299,7 @@ to:
 Compute related posts next to the toc/readingMinutes computation:
 
 ```tsx
-  const relatedPosts = getRelatedPosts(allPosts, post);
+const relatedPosts = getRelatedPosts(allPosts, post);
 ```
 
 Render `<RelatedPosts posts={relatedPosts} />` inside the reading column, between `<MoveToAnotherPost ... />` and the `<CommentProvider>`:
@@ -312,9 +329,11 @@ git commit -m "feat(discovery): related posts on detail page; fix JSON-LD keywor
 ### Task 5: Tag listing page
 
 **Files:**
+
 - Create: `apps/web/src/app/tag/[tag]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `getAllPosts`, `PostItemList`.
 
 - [ ] **Step 1: Create the tag page**
@@ -370,7 +389,9 @@ export default async function TagPage({ params }: { params: Params }): Promise<R
       </div>
       <h1 className="text-[28px] sm:text-[32px] font-bold text-notion-text mb-8">
         <span className="text-accent">#{name}</span>
-        <span className="text-notion-secondary text-[18px] font-medium ml-3">{tagged.length}개</span>
+        <span className="text-notion-secondary text-[18px] font-medium ml-3">
+          {tagged.length}개
+        </span>
       </h1>
       <PostItemList posts={tagged} />
     </div>
@@ -395,9 +416,11 @@ git commit -m "feat(discovery): tag listing pages"
 ### Task 6: Load-more on the home list
 
 **Files:**
+
 - Modify: `apps/web/src/app/home-page-client.tsx`
 
 **Interfaces:**
+
 - Consumes: existing `filteredPosts`, `searchValue`, `currentActiveCategory` from `useFilterPost`.
 
 - [ ] **Step 1: Add load-more state and control**
@@ -413,14 +436,14 @@ const PAGE_SIZE = 12;
 Inside the component, after the `useFilterPost(...)` destructure, add visible-count state that resets when the filter/search changes:
 
 ```tsx
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [searchValue, currentActiveCategory]);
+useEffect(() => {
+  setVisibleCount(PAGE_SIZE);
+}, [searchValue, currentActiveCategory]);
 
-  const visiblePosts = filteredPosts.slice(0, visibleCount);
-  const hasMore = filteredPosts.length > visibleCount;
+const visiblePosts = filteredPosts.slice(0, visibleCount);
+const hasMore = filteredPosts.length > visibleCount;
 ```
 
 (`useState` is already imported in this file.)
@@ -428,20 +451,25 @@ Inside the component, after the `useFilterPost(...)` destructure, add visible-co
 Change the `PostItemList` usage to render `visiblePosts`, and add a "더 보기" button below it:
 
 ```tsx
-          <div className="mt-8">
-            <PostItemList posts={visiblePosts} viewsMap={viewsMap} query={searchValue} onReset={() => setSearchValue('')} />
-            {hasMore && (
-              <div className="flex justify-center mt-10">
-                <button
-                  type="button"
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="px-5 py-2.5 text-[14px] rounded-[6px] border border-notion-border text-notion-text hover:bg-notion-hover transition-colors cursor-pointer"
-                >
-                  더 보기 ({filteredPosts.length - visibleCount}개 남음)
-                </button>
-              </div>
-            )}
-          </div>
+<div className="mt-8">
+  <PostItemList
+    posts={visiblePosts}
+    viewsMap={viewsMap}
+    query={searchValue}
+    onReset={() => setSearchValue('')}
+  />
+  {hasMore && (
+    <div className="flex justify-center mt-10">
+      <button
+        type="button"
+        onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+        className="px-5 py-2.5 text-[14px] rounded-[6px] border border-notion-border text-notion-text hover:bg-notion-hover transition-colors cursor-pointer"
+      >
+        더 보기 ({filteredPosts.length - visibleCount}개 남음)
+      </button>
+    </div>
+  )}
+</div>
 ```
 
 (The empty-state still works: when `filteredPosts` is empty, `visiblePosts` is empty and `PostItemList` shows the query-aware empty state.)
@@ -471,10 +499,10 @@ Expected: all PASS.
 
 ## Spec Coverage Map (#2)
 
-| Spec item | Task |
-|---|---|
-| Tag chips | Tasks 2, 3 |
-| Tag pages (`/tag/[tag]`) | Task 5 |
-| Related posts (category+tag scoring) | Tasks 1, 4 |
-| Load-more (PAGE_SIZE=12, resets on filter) | Task 6 |
-| Fix JSON-LD keywords bug | Task 4 |
+| Spec item                                  | Task       |
+| ------------------------------------------ | ---------- |
+| Tag chips                                  | Tasks 2, 3 |
+| Tag pages (`/tag/[tag]`)                   | Task 5     |
+| Related posts (category+tag scoring)       | Tasks 1, 4 |
+| Load-more (PAGE_SIZE=12, resets on filter) | Task 6     |
+| Fix JSON-LD keywords bug                   | Task 4     |

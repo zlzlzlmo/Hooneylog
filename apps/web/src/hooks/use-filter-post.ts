@@ -2,18 +2,24 @@ import { useState, useMemo } from 'react';
 import { NotionPost } from '@hooneylog/shared-types';
 import { ALL } from '@/utils/category';
 
-export function useFilterPost(posts: NotionPost[], initialCategory: string = ALL, initialSearch: string = '') {
+export function useFilterPost(
+  posts: NotionPost[],
+  initialCategory: string = ALL,
+  initialSearch: string = '',
+) {
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [currentActiveCategory, setCurrentActiveCategory] = useState(initialCategory);
 
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
+    return posts.filter((post) => {
       // 카테고리 필터
-      const matchCategory = currentActiveCategory === ALL || post.category === currentActiveCategory;
+      const matchCategory =
+        currentActiveCategory === ALL || post.category === currentActiveCategory;
       // 검색 필터 (제목 또는 설명)
-      const matchSearch = post.title.toLowerCase().includes(searchValue.toLowerCase()) || 
-                          post.description.toLowerCase().includes(searchValue.toLowerCase());
-      
+      const matchSearch =
+        post.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchValue.toLowerCase());
+
       return matchCategory && matchSearch;
     });
   }, [posts, searchValue, currentActiveCategory]);

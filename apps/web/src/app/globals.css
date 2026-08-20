@@ -1,35 +1,38 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* TRACE palette (light) — warm paper ground, cool ink text */
-  --color-notion-bg: #FAF9F5;
-  --color-notion-text: #12141A;
-  --color-notion-text-light: #6B6E76;
+  --color-notion-bg: #faf9f5;
+  --color-notion-text: #12141a;
+  --color-notion-text-light: #6b6e76;
   --color-notion-border: rgba(18, 20, 26, 0.12);
   --color-notion-hover: rgba(18, 20, 26, 0.06);
-  --color-notion-gray-bg: #F1EFEA;
-  --color-notion-blue-bg: #E7F0FB;
-  --color-notion-blue-text: #2D6AE3;
+  --color-notion-gray-bg: #f1efea;
+  --color-notion-blue-bg: #e7f0fb;
+  --color-notion-blue-text: #2d6ae3;
 
   --container-max: 720px;
   --breakpoint-mobile: 768px;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto,
+    'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   /* Amber signal — darkened for AA on paper */
-  --color-accent: #C97E12;
-  --color-accent-bg: #F6ECD9;
+  --color-accent: #c97e12;
+  --color-accent-bg: #f6ecd9;
   /* Foreground placed on top of an accent fill (logo badge, etc.) */
-  --color-on-accent: #FFFFFF;
+  --color-on-accent: #ffffff;
 
   /* Category hues (trace rail nodes / nav) */
-  --color-cat-fe: #2D6AE3;
-  --color-cat-be: #0B8F6C;
-  --color-cat-ai: #7C5CFC;
+  --color-cat-fe: #2d6ae3;
+  --color-cat-be: #0b8f6c;
+  --color-cat-ai: #7c5cfc;
 }
 
 :root {
@@ -38,21 +41,21 @@
 }
 
 .dark {
-  --color-notion-bg: #0D0E12;
-  --color-notion-text: #E7E7E3;
-  --color-notion-text-light: #8A8D95;
+  --color-notion-bg: #0d0e12;
+  --color-notion-text: #e7e7e3;
+  --color-notion-text-light: #8a8d95;
   --color-notion-border: rgba(255, 255, 255, 0.11);
   --color-notion-hover: rgba(255, 255, 255, 0.06);
-  --color-notion-gray-bg: #14161C;
-  --color-notion-blue-bg: #17293D;
-  --color-notion-blue-text: #6AA0FF;
-  --color-accent: #F0B33D;
-  --color-accent-bg: #2A2413;
+  --color-notion-gray-bg: #14161c;
+  --color-notion-blue-bg: #17293d;
+  --color-notion-blue-text: #6aa0ff;
+  --color-accent: #f0b33d;
+  --color-accent-bg: #2a2413;
   /* Dark accent is a light amber → needs a dark glyph for contrast */
-  --color-on-accent: #0D0E12;
-  --color-cat-fe: #6AA0FF;
-  --color-cat-be: #3FD6A6;
-  --color-cat-ai: #A98CFF;
+  --color-on-accent: #0d0e12;
+  --color-cat-fe: #6aa0ff;
+  --color-cat-be: #3fd6a6;
+  --color-cat-ai: #a98cff;
 }
 
 body {
@@ -71,13 +74,21 @@ body {
 
 /* TRACE: terminal cursor blink (header brand) */
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* TRACE: trace-stream entry reveal */
 @keyframes rise {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* T5: Ensure sticky header doesn't cover anchor targets */

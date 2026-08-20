@@ -29,7 +29,9 @@ describe('pickFreshTopic', () => {
     expect(picked?.title).toBe('Bun 1.2 워크스페이스');
   });
   it('전부 중복이면 null', () => {
-    const cands = [{ title: 'React 19 Actions', whyNow: '', sources: [], area: 'frontend' as const }];
+    const cands = [
+      { title: 'React 19 Actions', whyNow: '', sources: [], area: 'frontend' as const },
+    ];
     expect(pickFreshTopic(cands, ['React 19 Actions'])).toBeNull();
   });
 });

@@ -2,9 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('next/image', () => ({
-  default: ({ alt, ...props }: { alt?: string } & Record<string, unknown>) =>
+  default: ({ alt, ...props }: { alt?: string } & Record<string, unknown>) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img alt={alt ?? ''} {...props} />,
+    <img alt={alt ?? ''} {...props} />
+  ),
 }));
 
 import NotFound from './not-found';

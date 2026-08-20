@@ -45,15 +45,15 @@ Vercel KV. 클라이언트 `sessionStorage` 로직은 보완재로 유지한다.
 
 ```ts
 const ipHash = hashIp(getClientIp(request.headers));
-const first  = await markViewedOnce(slug, ipHash);
-const views  = first ? await incrementView(slug) : await getViewCount(slug);
+const first = await markViewedOnce(slug, ipHash);
+const views = first ? await incrementView(slug) : await getViewCount(slug);
 return NextResponse.json({ views, counted: first });
 ```
 
 ## 데이터 / KV 키
 
-| 키 | 값 | TTL |
-|---|---|---|
+| 키                           | 값  | TTL             |
+| ---------------------------- | --- | --------------- |
 | `views:seen:<slug>:<ipHash>` | `1` | 24h (자동 만료) |
 
 기존 키(`views:post:*`, `views:total`, `views:today:*`)는 변경 없음.

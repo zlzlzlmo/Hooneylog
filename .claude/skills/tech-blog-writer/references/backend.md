@@ -6,6 +6,7 @@
 ## 3. 백엔드 — 아키텍처 / API
 
 ### 핵심 트렌드
+
 - **모듈러 모놀리스 표준화 — '마이크로서비스부터 시작하지 마라'** `mainstream` ✅
   담론이 '진영 싸움'에서 '맥락에 맞게 고른다'로 이동. 모듈러 모놀리스(단일 배포 + 명확한 내부 모듈 경계)가 기본 출발점, 필요 시 경계 따라 서비스 분리(점진 진화). ⚠️ Amazon Prime Video 사례는 2023년 건이라 '2025~2026 증거'로는 낡음 — 재탕 사례임을 명시.
 - **이벤트드리븐 핵심 패턴: Outbox + 멱등 컨슈머 + DLQ** `mainstream` ✅
@@ -29,14 +30,17 @@
 - ➕ **Diskless 스트리밍**(WarpStream·AutoMQ) — S3 등 오브젝트 스토리지 직접 쓰기로 비용·운영 재정의.
 
 ### 업계 표준·베스트프랙티스
+
 - 모듈러 모놀리스로 시작, 모듈 경계 따라 필요 시 분리. EDA는 단순 Pub/Sub부터, Outbox+멱등+DLQ 3종 세트.
 - API는 용도별 분담(위 참고). 신규 인증은 RFC 9700 기준선(PKCE 필수), 패스키 1순위 검토.
 - 캐싱은 레이어 분리(앱 데이터=Redis/Valkey, HTTP/풀페이지=CDN/엣지) + TTL + 명시적 무효화.
 
 ### 핵심 용어
+
 Modular Monolith=모듈러 모놀리스 · Microservices consolidation=마이크로서비스 통합/회귀 · EDA=이벤트 기반 아키텍처 · Outbox pattern=아웃박스 패턴 · Idempotent consumer=멱등 컨슈머 · DLQ=데드레터 큐 · CQRS · Event Sourcing=이벤트 소싱 · Saga(choreography/orchestration) · KRaft · tRPC · Connect RPC · GraphQL Federation v2 · AsyncAPI · OAuth 2.1(draft) · PKCE · Refresh token rotation · Passkey/WebAuthn · Fluid Compute · Durable Objects · WASI · Valkey=밸키
 
 ### 추천 출처
+
 - Event-Driven Architecture(Encore) — https://encore.dev/resources/event-driven-architecture
 - Vercel Fluid Compute — https://vercel.com/blog/introducing-fluid-compute
 - Cloudflare Durable Objects — https://www.cloudflare.com/products/durable-objects/
@@ -49,6 +53,7 @@ Modular Monolith=모듈러 모놀리스 · Microservices consolidation=마이크
 ## 4. 백엔드 — 런타임 / 데이터 / 인프라
 
 ### 핵심 트렌드
+
 - **Node.js 네이티브 TypeScript 실행(타입 스트리핑)** `growing` ⚠️
   Node 24부터 .ts 타입 스트리핑(amaro) 기본 활성화 → 빌드 단계 없이 TS 직접 실행. ⚠️ Node 26은 2026-06 현재 Current(LTS는 2026-10 예정), 권한 모델은 experimental → maturity는 'mainstream'보다 'growing'이 정확.
 - **JS 런타임 3파전: Node 우세, Bun 실전 채택 가속** `growing` ⚠️
@@ -56,7 +61,7 @@ Modular Monolith=모듈러 모놀리스 · Microservices consolidation=마이크
 - **PostgreSQL 18: 비동기 I/O(AIO) + UUIDv7** `mainstream` ✅
   2025-09-25. io_uring 기반 AIO(특정 시나리오 최대 3배), `uuidv7()`, 가상 생성 컬럼, OAuth 2.0 인증, B-tree 스킵 스캔. UUIDv7이 분산 PK 표준화.
 - **pgvector가 RAG 벡터 검색 기본값** `mainstream` ✅
-  pgvectorscale과 함께 ~50M 벡터까지 안정 처리, 메타데이터 필터링을 SQL 한 쿼리·한 트랜잭션으로 결합. 5천만~1억 벡터·<10ms·고급 하이브리드 필요 시에만 전용 엔진(Qdrant 등).
+  pgvectorscale과 함께 ~~50M 벡터까지 안정 처리, 메타데이터 필터링을 SQL 한 쿼리·한 트랜잭션으로 결합. 5천만~~1억 벡터·<10ms·고급 하이브리드 필요 시에만 전용 엔진(Qdrant 등).
 - **TypeScript ORM: Prisma 우세 + Drizzle 이동 가속** `growing` ✅
   Drizzle(~33KB, 쿼리엔진 부재)이 엣지/서버리스 기본 추천. Prisma 7(2025-11)은 Rust→TS/WASM 엔진으로 번들 ~14MB→~1.6MB, 엣지 지원하며 격차 좁힘.
 - **OpenTelemetry, 4번째 시그널 Profiles 추가** `growing` ✅
@@ -73,6 +78,7 @@ Modular Monolith=모듈러 모놀리스 · Microservices consolidation=마이크
 - ➕ **Durable Execution 엔진**(DBOS=Postgres in-process, Restate, Inngest, Hatchet) — 'Postgres is enough' 흐름.
 
 ### 업계 표준·베스트프랙티스
+
 - 신규 Node 백엔드는 Node 24 LTS, 네이티브 TS 실행 검토. 런타임은 합성 RPS 아닌 실제 부하·생태계로 결정.
 - Postgres 기본 DB, 분산 PK는 UUIDv7, 고I/O는 PG18 AIO. RAG는 pgvector로 시작.
 - ORM은 엣지/서버리스=Drizzle 또는 Prisma 7(WASM), 스키마 우선=Prisma.
@@ -80,9 +86,11 @@ Modular Monolith=모듈러 모놀리스 · Microservices consolidation=마이크
 - K8s 직접 노출 대신 IDP/골든 패스(Backstage)로 추상화. IaC는 OpenTofu 마이그레이션 평가.
 
 ### 핵심 용어
+
 Type stripping=타입 스트리핑 · Permission Model · AIO/io_uring=비동기 I/O · UUIDv7 · pgvector/pgvectorscale · HNSW · OpenTelemetry/OTLP · Four signals(traces·metrics·logs·profiles)=4대 시그널 · GenAI observability · Platform engineering=플랫폼 엔지니어링 · IDP=내부 개발자 플랫폼 · Golden path=골든 패스 · Backstage · Diskless Kafka=디스크리스 카프카 · KIP-1150 · OpenTofu=오픈토푸 · Container-aware GOMAXPROCS · Green Tea GC · Tokio/Axum · Durable Execution=지속 실행
 
 ### 추천 출처
+
 - PostgreSQL 18 — https://www.postgresql.org/about/news/postgresql-18-released-3142/
 - OTel Profiles — https://opentelemetry.io/blog/2026/profiles-alpha/
 - Go container-aware GOMAXPROCS — https://go.dev/blog/container-aware-gomaxprocs

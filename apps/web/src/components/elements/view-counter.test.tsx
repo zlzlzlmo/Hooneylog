@@ -23,7 +23,7 @@ describe('ViewCounter Component', () => {
 
   it('optimistically increments UI immediately (no blinking) if post is unread', async () => {
     (viewsService.incrementPostView as Mock).mockResolvedValueOnce(11);
-    
+
     // Mount the component
     render(<ViewCounter slug="test-post" initialViews={10} />);
 
@@ -49,7 +49,7 @@ describe('ViewCounter Component', () => {
     await waitFor(() => {
       expect(screen.getByText('15')).toBeInTheDocument();
     });
-    
+
     expect(viewsService.incrementPostView).not.toHaveBeenCalled();
   });
 

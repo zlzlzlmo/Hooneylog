@@ -22,29 +22,30 @@
 
 ## 파일 구조 (`apps/trend-writer/`)
 
-| 파일 | 책임 |
-|---|---|
-| `package.json`, `tsconfig.json`, `vitest.config.ts`, `.env.example`, `.dockerignore`, `Dockerfile` | 스캐폴드/빌드/배포 설정 |
-| `src/types.ts` | 공용 타입·포트 인터페이스 |
-| `src/config.ts` | env 로드 |
-| `src/gemini.ts` | Gemini 클라이언트 래퍼 + 그라운딩 출처 추출 + JSON 파서 |
-| `src/prompts/blog-format.ts` | 6단 양식·톤 프롬프트 |
-| `src/prompts/humanize-rules.ts` | humanize-korean/ai-slop 룰북 이식 프롬프트 |
-| `src/scan.ts` | 트렌드 후보 수집 |
-| `src/dedup.ts` | 제목 정규화·중복 판정·주제 선택 |
-| `src/research.ts` | 선택 주제 심층 조사 |
-| `src/write.ts` | 6단 집필 + 하단 출처/안내 |
-| `src/humanize.ts` | 윤문 패스 |
-| `src/verify.ts` | 자가검증 게이트 |
-| `src/publish.ts` | Notion 발행 포트 |
-| `src/notify.ts` | 결과 통지 |
-| `src/index.ts` | 파이프라인 오케스트레이션 + `main()` |
+| 파일                                                                                               | 책임                                                    |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `package.json`, `tsconfig.json`, `vitest.config.ts`, `.env.example`, `.dockerignore`, `Dockerfile` | 스캐폴드/빌드/배포 설정                                 |
+| `src/types.ts`                                                                                     | 공용 타입·포트 인터페이스                               |
+| `src/config.ts`                                                                                    | env 로드                                                |
+| `src/gemini.ts`                                                                                    | Gemini 클라이언트 래퍼 + 그라운딩 출처 추출 + JSON 파서 |
+| `src/prompts/blog-format.ts`                                                                       | 6단 양식·톤 프롬프트                                    |
+| `src/prompts/humanize-rules.ts`                                                                    | humanize-korean/ai-slop 룰북 이식 프롬프트              |
+| `src/scan.ts`                                                                                      | 트렌드 후보 수집                                        |
+| `src/dedup.ts`                                                                                     | 제목 정규화·중복 판정·주제 선택                         |
+| `src/research.ts`                                                                                  | 선택 주제 심층 조사                                     |
+| `src/write.ts`                                                                                     | 6단 집필 + 하단 출처/안내                               |
+| `src/humanize.ts`                                                                                  | 윤문 패스                                               |
+| `src/verify.ts`                                                                                    | 자가검증 게이트                                         |
+| `src/publish.ts`                                                                                   | Notion 발행 포트                                        |
+| `src/notify.ts`                                                                                    | 결과 통지                                               |
+| `src/index.ts`                                                                                     | 파이프라인 오케스트레이션 + `main()`                    |
 
 ---
 
 ### Task 1: 패키지 스캐폴드 + 공용 타입
 
 **Files:**
+
 - Create: `apps/trend-writer/package.json`
 - Create: `apps/trend-writer/tsconfig.json`
 - Create: `apps/trend-writer/vitest.config.ts`
@@ -53,6 +54,7 @@
 - Test: `apps/trend-writer/src/types.test.ts`
 
 **Interfaces:**
+
 - Produces: 타입 `TopicCandidate`, `ResearchResult`, `DraftPost`, `VerifyResult`, `PublishInput`, `PublishResult`, `PipelineResult`, `Config`; 포트 인터페이스 `Gemini`, `GroundedResponse`, `NotionPort`, `Notifier`.
 
 - [ ] **Step 1: package.json 작성**
@@ -245,16 +247,18 @@ git commit -m "feat(trend-writer): 패키지 스캐폴드 + 공용 타입"
 ### Task 2: Gemini 클라이언트 래퍼
 
 **Files:**
+
 - Create: `apps/trend-writer/src/gemini.ts`
 - Test: `apps/trend-writer/src/gemini.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `GroundedResponse` (Task 1).
 - Produces: `createGemini(apiKey: string): Gemini`; `extractGroundingSources(response: unknown): string[]`; `parseJsonBlock<T>(text: string): T`.
 
 - [ ] **Step 1: 실패 테스트 작성 (src/gemini.test.ts)**
 
-```ts
+````ts
 import { describe, it, expect } from 'vitest';
 import { extractGroundingSources, parseJsonBlock } from './gemini';
 
@@ -295,7 +299,7 @@ describe('parseJsonBlock', () => {
     expect(() => parseJsonBlock('no json here')).toThrow();
   });
 });
-```
+````
 
 - [ ] **Step 2: 실패 확인**
 
@@ -304,7 +308,7 @@ Expected: FAIL ("Cannot find module './gemini'").
 
 - [ ] **Step 3: 구현 (src/gemini.ts)**
 
-```ts
+````ts
 import { GoogleGenAI } from '@google/genai';
 import type { Gemini, GroundedResponse } from './types';
 
@@ -356,7 +360,7 @@ export function createGemini(apiKey: string): Gemini {
     },
   };
 }
-```
+````
 
 - [ ] **Step 4: 통과 확인**
 
@@ -375,10 +379,12 @@ git commit -m "feat(trend-writer): Gemini 래퍼 + 그라운딩 출처/JSON 파�
 ### Task 3: 6단 양식 프롬프트
 
 **Files:**
+
 - Create: `apps/trend-writer/src/prompts/blog-format.ts`
 - Test: `apps/trend-writer/src/prompts/blog-format.test.ts`
 
 **Interfaces:**
+
 - Consumes: `TopicCandidate`, `ResearchResult` (Task 1).
 - Produces: `BLOG_FORMAT_RULES: string`; `buildWritePrompt(topic: TopicCandidate, research: ResearchResult): string`.
 
@@ -388,8 +394,16 @@ git commit -m "feat(trend-writer): Gemini 래퍼 + 그라운딩 출처/JSON 파�
 import { describe, it, expect } from 'vitest';
 import { BLOG_FORMAT_RULES, buildWritePrompt } from './blog-format';
 
-const topic = { title: 'React 19 Actions 완전정복', whyNow: '19 GA', sources: ['https://react.dev'], area: 'frontend' as const };
-const research = { facts: ['useActionState는 폼 상태를 관리한다'], sources: ['https://react.dev/actions'] };
+const topic = {
+  title: 'React 19 Actions 완전정복',
+  whyNow: '19 GA',
+  sources: ['https://react.dev'],
+  area: 'frontend' as const,
+};
+const research = {
+  facts: ['useActionState는 폼 상태를 관리한다'],
+  sources: ['https://react.dev/actions'],
+};
 
 describe('buildWritePrompt', () => {
   it('6단 헤딩과 콜아웃 규칙을 포함한다', () => {
@@ -476,10 +490,12 @@ git commit -m "feat(trend-writer): 6단 양식 집필 프롬프트"
 ### Task 4: 윤문 룰북 프롬프트 (humanize-korean 이식)
 
 **Files:**
+
 - Create: `apps/trend-writer/src/prompts/humanize-rules.ts`
 - Test: `apps/trend-writer/src/prompts/humanize-rules.test.ts`
 
 **Interfaces:**
+
 - Produces: `HUMANIZE_RULES: string`; `buildHumanizePrompt(markdown: string): string`.
 
 - [ ] **Step 1: 실패 테스트 작성 (src/prompts/humanize-rules.test.ts)**
@@ -577,23 +593,26 @@ git commit -m "feat(trend-writer): humanize-korean 룰북 이식 프롬프트"
 ### Task 5: 스캔 모듈
 
 **Files:**
+
 - Create: `apps/trend-writer/src/scan.ts`
 - Test: `apps/trend-writer/src/scan.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `TopicCandidate` (Task 1); `parseJsonBlock` (Task 2).
 - Produces: `SCAN_PROMPT: string`; `parseScanResult(text: string): TopicCandidate[]`; `runScan(gemini: Gemini, model: string): Promise<TopicCandidate[]>`.
 
 - [ ] **Step 1: 실패 테스트 작성 (src/scan.test.ts)**
 
-```ts
+````ts
 import { describe, it, expect } from 'vitest';
 import { parseScanResult, runScan } from './scan';
 import type { Gemini } from './types';
 
 describe('parseScanResult', () => {
   it('JSON 배열을 TopicCandidate[]로 파싱하고 잘못된 항목을 거른다', () => {
-    const text = '```json\n[{"title":"A","whyNow":"w","sources":["https://a"],"area":"frontend"},{"title":""}]\n```';
+    const text =
+      '```json\n[{"title":"A","whyNow":"w","sources":["https://a"],"area":"frontend"},{"title":""}]\n```';
     const out = parseScanResult(text);
     expect(out).toHaveLength(1);
     expect(out[0].title).toBe('A');
@@ -619,7 +638,7 @@ describe('runScan', () => {
     expect(out[0].area).toBe('backend');
   });
 });
-```
+````
 
 - [ ] **Step 2: 실패 확인**
 
@@ -692,10 +711,12 @@ git commit -m "feat(trend-writer): 트렌드 스캔 모듈"
 ### Task 6: 중복 제거 모듈 (핵심 로직)
 
 **Files:**
+
 - Create: `apps/trend-writer/src/dedup.ts`
 - Test: `apps/trend-writer/src/dedup.test.ts`
 
 **Interfaces:**
+
 - Consumes: `TopicCandidate` (Task 1).
 - Produces: `normalizeTitle(title: string): string`; `isDuplicate(candidate: string, existing: string[]): boolean`; `pickFreshTopic(candidates: TopicCandidate[], existingTitles: string[]): TopicCandidate | null`.
 
@@ -733,7 +754,9 @@ describe('pickFreshTopic', () => {
     expect(picked?.title).toBe('Bun 1.2 워크스페이스');
   });
   it('전부 중복이면 null', () => {
-    const cands = [{ title: 'React 19 Actions', whyNow: '', sources: [], area: 'frontend' as const }];
+    const cands = [
+      { title: 'React 19 Actions', whyNow: '', sources: [], area: 'frontend' as const },
+    ];
     expect(pickFreshTopic(cands, ['React 19 Actions'])).toBeNull();
   });
 });
@@ -791,10 +814,12 @@ git commit -m "feat(trend-writer): 제목 정규화·중복 판정·주제 선�
 ### Task 7: 리서치 모듈
 
 **Files:**
+
 - Create: `apps/trend-writer/src/research.ts`
 - Test: `apps/trend-writer/src/research.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `TopicCandidate`, `ResearchResult` (Task 1); `parseJsonBlock` (Task 2).
 - Produces: `buildResearchPrompt(topic: TopicCandidate): string`; `parseResearchFacts(text: string): string[]`; `runResearch(gemini: Gemini, model: string, topic: TopicCandidate): Promise<ResearchResult>`.
 
@@ -805,7 +830,12 @@ import { describe, it, expect } from 'vitest';
 import { buildResearchPrompt, parseResearchFacts, runResearch } from './research';
 import type { Gemini } from './types';
 
-const topic = { title: 'RSC 스트리밍', whyNow: 'w', sources: ['https://a'], area: 'frontend' as const };
+const topic = {
+  title: 'RSC 스트리밍',
+  whyNow: 'w',
+  sources: ['https://a'],
+  area: 'frontend' as const,
+};
 
 describe('buildResearchPrompt', () => {
   it('주제 제목을 담고 근거 기반 조사를 지시한다', () => {
@@ -827,7 +857,10 @@ describe('parseResearchFacts', () => {
 describe('runResearch', () => {
   it('facts와 그라운딩 sources를 합쳐 반환', async () => {
     const gemini: Gemini = {
-      generateGrounded: async () => ({ text: '{"facts":["f1"],"sources":["https://x"]}', sources: ['https://g'] }),
+      generateGrounded: async () => ({
+        text: '{"facts":["f1"],"sources":["https://x"]}',
+        sources: ['https://g'],
+      }),
       generateText: async () => '',
     };
     const out = await runResearch(gemini, 'm', topic);
@@ -899,10 +932,12 @@ git commit -m "feat(trend-writer): 심층 리서치 모듈"
 ### Task 8: 집필 모듈 + 하단 출처/안내
 
 **Files:**
+
 - Create: `apps/trend-writer/src/write.ts`
 - Test: `apps/trend-writer/src/write.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `TopicCandidate`, `ResearchResult`, `DraftPost` (Task 1); `buildWritePrompt` (Task 3).
 - Produces: `extractTitle(markdown: string): string`; `assembleFooter(sources: string[]): string`; `appendFooter(markdown: string, sources: string[]): string`; `deriveTags(topic: TopicCandidate): string[]`; `runWrite(gemini, model, topic, research): Promise<DraftPost>`.
 
@@ -1029,10 +1064,12 @@ git commit -m "feat(trend-writer): 집필 모듈 + 출처/AI안내 푸터"
 ### Task 9: 윤문 모듈
 
 **Files:**
+
 - Create: `apps/trend-writer/src/humanize.ts`
 - Test: `apps/trend-writer/src/humanize.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `DraftPost` (Task 1); `buildHumanizePrompt` (Task 4); `extractTitle` (Task 8).
 - Produces: `runHumanize(gemini: Gemini, model: string, draft: DraftPost): Promise<DraftPost>`.
 
@@ -1114,10 +1151,12 @@ git commit -m "feat(trend-writer): 윤문 패스 모듈"
 ### Task 10: 자가검증 게이트
 
 **Files:**
+
 - Create: `apps/trend-writer/src/verify.ts`
 - Test: `apps/trend-writer/src/verify.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Gemini`, `DraftPost`, `VerifyResult` (Task 1); `parseJsonBlock` (Task 2).
 - Produces: `buildVerifyPrompt(draft: DraftPost, existingTitles: string[]): string`; `parseVerdict(text: string): VerifyResult`; `runVerify(gemini, model, draft, existingTitles): Promise<VerifyResult>`.
 
@@ -1128,7 +1167,11 @@ import { describe, it, expect } from 'vitest';
 import { buildVerifyPrompt, parseVerdict, runVerify } from './verify';
 import type { DraftPost, Gemini } from './types';
 
-const draft: DraftPost = { title: 'T', markdown: '# T\n\n본문\n\n참고 출처\n- https://a', tags: ['AI'] };
+const draft: DraftPost = {
+  title: 'T',
+  markdown: '# T\n\n본문\n\n참고 출처\n- https://a',
+  tags: ['AI'],
+};
 
 describe('buildVerifyPrompt', () => {
   it('4개 검증 기준과 기존 제목을 담는다', () => {
@@ -1245,10 +1288,12 @@ git commit -m "feat(trend-writer): 자가검증 게이트"
 ### Task 11: Notion 발행 포트
 
 **Files:**
+
 - Create: `apps/trend-writer/src/publish.ts`
 - Test: `apps/trend-writer/src/publish.test.ts`
 
 **Interfaces:**
+
 - Consumes: `PublishInput`, `PublishResult`, `NotionPort` (Task 1).
 - Produces: `buildDescription(markdown: string): string`; `buildNotionProperties(input: PublishInput, aiCategory: string): Record<string, unknown>`; `createNotionPort(client, databaseId, aiCategory): NotionPort`. (`client`는 `@notionhq/client`의 `Client` 최소 인터페이스 `{ pages: { create }, databases: { query } }`.)
 
@@ -1259,7 +1304,12 @@ import { describe, it, expect } from 'vitest';
 import { buildDescription, buildNotionProperties, createNotionPort } from './publish';
 import type { PublishInput } from './types';
 
-const input: PublishInput = { title: '제목', markdown: '# 제목\n\n**본문** 내용', tags: ['AI', 'RSC'], status: 'published' };
+const input: PublishInput = {
+  title: '제목',
+  markdown: '# 제목\n\n**본문** 내용',
+  tags: ['AI', 'RSC'],
+  status: 'published',
+};
 
 describe('buildDescription', () => {
   it('마크다운 마커를 제거하고 160자로 자른다', () => {
@@ -1352,7 +1402,10 @@ function extractTitleFromPage(page: unknown): string {
   const title = (page as { properties?: { 이름?: { title?: Array<{ plain_text?: string }> } } })
     ?.properties?.이름?.title;
   if (!Array.isArray(title)) return '';
-  return title.map((t) => t.plain_text ?? '').join('').trim();
+  return title
+    .map((t) => t.plain_text ?? '')
+    .join('')
+    .trim();
 }
 
 export function createNotionPort(
@@ -1408,10 +1461,12 @@ git commit -m "feat(trend-writer): Notion 발행 포트 + 제목 조회"
 ### Task 12: 알림 모듈
 
 **Files:**
+
 - Create: `apps/trend-writer/src/notify.ts`
 - Test: `apps/trend-writer/src/notify.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Notifier` (Task 1).
 - Produces: `createNotifier(webhookUrl: string, fetchImpl?: typeof fetch): Notifier`.
 
@@ -1489,12 +1544,14 @@ git commit -m "feat(trend-writer): 알림 모듈(webhook/로깅)"
 ### Task 13: config 로더 + 파이프라인 오케스트레이션
 
 **Files:**
+
 - Create: `apps/trend-writer/src/config.ts`
 - Create: `apps/trend-writer/src/index.ts`
 - Test: `apps/trend-writer/src/config.test.ts`
 - Test: `apps/trend-writer/src/index.test.ts`
 
 **Interfaces:**
+
 - Consumes: 모든 러너(`runScan`, `pickFreshTopic`, `runResearch`, `runWrite`, `runHumanize`, `runVerify`), 포트(`Gemini`, `NotionPort`, `Notifier`), `Config`, `PipelineResult` (Task 1).
 - Produces: `loadConfig(env?: NodeJS.ProcessEnv): Config`; `runPipeline(deps: PipelineDeps): Promise<PipelineResult>` where `PipelineDeps = { gemini: Gemini; notion: NotionPort; notify: Notifier; config: Config }`; `main(): Promise<void>`.
 
@@ -1565,12 +1622,22 @@ import { runPipeline } from './index';
 import type { Config, Gemini, NotionPort } from './types';
 
 const config: Config = {
-  geminiApiKey: 'g', notionApiKey: 'n', notionDatabaseId: 'd',
-  aiCategory: 'AI 트렌드', notifyWebhookUrl: '',
-  modelWrite: 'w', modelUtility: 'u',
+  geminiApiKey: 'g',
+  notionApiKey: 'n',
+  notionDatabaseId: 'd',
+  aiCategory: 'AI 트렌드',
+  notifyWebhookUrl: '',
+  modelWrite: 'w',
+  modelUtility: 'u',
 };
 
-function geminiFor(opts: { scan: string; research: string; write: string; humanize: string; verify: string }): Gemini {
+function geminiFor(opts: {
+  scan: string;
+  research: string;
+  write: string;
+  humanize: string;
+  verify: string;
+}): Gemini {
   const texts = [opts.write, opts.humanize, opts.verify];
   let i = 0;
   return {
@@ -1598,9 +1665,16 @@ describe('runPipeline', () => {
   it('정상 흐름: 통과 시 published', async () => {
     const notify = vi.fn(async () => {});
     const res = await runPipeline({
-      gemini: geminiFor({ scan: scanJson, research: researchJson, write: post, humanize: post, verify: '{"pass":true,"reasons":[]}' }),
+      gemini: geminiFor({
+        scan: scanJson,
+        research: researchJson,
+        write: post,
+        humanize: post,
+        verify: '{"pass":true,"reasons":[]}',
+      }),
       notion: notionFor(['다른 글']),
-      notify, config,
+      notify,
+      config,
     });
     expect(res.outcome).toBe('published');
     expect(res.url).toBe('https://notion/p');
@@ -1609,8 +1683,16 @@ describe('runPipeline', () => {
   it('전부 중복이면 skipped, 발행 안 함', async () => {
     const notion = notionFor(['새 주제']);
     const res = await runPipeline({
-      gemini: geminiFor({ scan: scanJson, research: researchJson, write: post, humanize: post, verify: '{"pass":true}' }),
-      notion, notify: async () => {}, config,
+      gemini: geminiFor({
+        scan: scanJson,
+        research: researchJson,
+        write: post,
+        humanize: post,
+        verify: '{"pass":true}',
+      }),
+      notion,
+      notify: async () => {},
+      config,
     });
     expect(res.outcome).toBe('skipped');
     expect(notion.createPost).not.toHaveBeenCalled();
@@ -1619,8 +1701,16 @@ describe('runPipeline', () => {
   it('검증 실패 시 draft로 발행', async () => {
     const notion = notionFor(['다른 글']);
     const res = await runPipeline({
-      gemini: geminiFor({ scan: scanJson, research: researchJson, write: post, humanize: post, verify: '{"pass":false,"reasons":["근거 부족"]}' }),
-      notion, notify: async () => {}, config,
+      gemini: geminiFor({
+        scan: scanJson,
+        research: researchJson,
+        write: post,
+        humanize: post,
+        verify: '{"pass":false,"reasons":["근거 부족"]}',
+      }),
+      notion,
+      notify: async () => {},
+      config,
     });
     expect(res.outcome).toBe('draft');
     expect(res.reasons).toContain('근거 부족');
@@ -1732,10 +1822,12 @@ git commit -m "feat(trend-writer): config 로더 + 8단계 파이프라인 오�
 ### Task 14: Docker 이미지 + 로컬 빌드 검증
 
 **Files:**
+
 - Create: `apps/trend-writer/Dockerfile`
 - Create: `apps/trend-writer/.dockerignore`
 
 **Interfaces:**
+
 - Consumes: `main()` 엔트리(Task 13).
 - Produces: `node dist/index.js`로 실행되는 자립 컨테이너 이미지.
 
@@ -1776,17 +1868,21 @@ CMD ["node", "dist/index.js"]
 - [ ] **Step 3: 로컬 빌드 검증**
 
 Run (모노레포 루트에서):
+
 ```bash
 docker build -f apps/trend-writer/Dockerfile -t trend-writer:local .
 ```
+
 Expected: 빌드 성공. 실패 시(주로 `pnpm deploy` 경로 이슈) 대안: build 스테이지에서 `pnpm --filter trend-writer build` 후 `dist`·루트 `node_modules`를 직접 COPY 하도록 조정.
 
 - [ ] **Step 4: 컨테이너가 env 없이 즉시 실패하는지 확인(설정 검증 동작)**
 
 Run:
+
 ```bash
 docker run --rm trend-writer:local || echo "예상된 실패(GEMINI_API_KEY 없음)"
 ```
+
 Expected: `환경변수 GEMINI_API_KEY가 설정되지 않았습니다.` 로그 후 종료 코드 1.
 
 - [ ] **Step 5: 커밋**
@@ -1810,6 +1906,7 @@ git commit -m "feat(trend-writer): Cloud Run Job용 Docker 이미지"
 run gcloud command: config set project PROJECT_ID
 run gcloud command: services enable run.googleapis.com cloudscheduler.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com
 ```
+
 Expected: API 활성화 완료.
 
 - [ ] **Step 2: Artifact Registry 저장소 생성**
@@ -1821,10 +1918,12 @@ run gcloud command: artifacts repositories create hooneylog --repository-format=
 - [ ] **Step 3: 시크릿 생성 (값은 사용자 제공)**
 
 각 시크릿을 생성하고 값을 넣는다(GEMINI_API_KEY, NOTION_API_KEY, NOTION_DATABASE_ID, 선택적으로 NOTIFY_WEBHOOK_URL). 예:
+
 ```
 run gcloud command: secrets create GEMINI_API_KEY --replication-policy=automatic
 run gcloud command: secrets versions add GEMINI_API_KEY --data-file=- <<< "실제값"
 ```
+
 NOTION_API_KEY, NOTION_DATABASE_ID도 동일 반복. Expected: 각 시크릿 버전 1 생성.
 
 - [ ] **Step 4: 이미지 빌드·푸시 (Cloud Build)**
@@ -1832,6 +1931,7 @@ NOTION_API_KEY, NOTION_DATABASE_ID도 동일 반복. Expected: 각 시크릿 버
 ```
 run gcloud command: builds submit --tag REGION-docker.pkg.dev/PROJECT_ID/hooneylog/trend-writer:v1 --file apps/trend-writer/Dockerfile .
 ```
+
 (루트에서 실행. `--file`로 Dockerfile 지정, 컨텍스트는 모노레포 루트.)
 Expected: 이미지 푸시 성공.
 
@@ -1840,6 +1940,7 @@ Expected: 이미지 푸시 성공.
 ```
 run gcloud command: run jobs create trend-writer --image REGION-docker.pkg.dev/PROJECT_ID/hooneylog/trend-writer:v1 --region REGION --task-timeout=600 --max-retries=1 --set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest,NOTION_API_KEY=NOTION_API_KEY:latest,NOTION_DATABASE_ID=NOTION_DATABASE_ID:latest --set-env-vars=AI_CATEGORY=AI 트렌드,GEMINI_MODEL_WRITE=gemini-2.5-pro,GEMINI_MODEL_UTILITY=gemini-2.5-flash
 ```
+
 Expected: Job 생성 완료.
 
 - [ ] **Step 6: 수동 실행으로 엔드투엔드 검증**
@@ -1847,18 +1948,23 @@ Expected: Job 생성 완료.
 ```
 run gcloud command: run jobs execute trend-writer --region REGION --wait
 ```
+
 그 후 로그 확인:
+
 ```
 run gcloud command: logging read "resource.type=cloud_run_job AND resource.labels.job_name=trend-writer" --limit=50 --freshness=10m
 ```
+
 Expected: 파이프라인 로그와 `[trend-writer] 결과: {"outcome":...}` 출력. Notion에 새 글(published 또는 draft) 생성 및 웹 렌더 확인. 문제 시 이 태스크 안에서 프롬프트·모델 조정 후 이미지 재빌드(`:v2`)·Job 업데이트.
 
 - [ ] **Step 7: Cloud Scheduler cron 연결 (주 2–3회)**
 
 Cloud Run Jobs를 트리거하려면 Run Admin API 엔드포인트를 OAuth로 호출한다.
+
 ```
 run gcloud command: scheduler jobs create http trend-writer-cron --location REGION --schedule="0 9 * * 1,3,5" --time-zone="Asia/Seoul" --uri="https://REGION-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/PROJECT_ID/jobs/trend-writer:run" --http-method=POST --oauth-service-account-email=PROJECT_NUMBER-compute@developer.gserviceaccount.com
 ```
+
 Expected: 월·수·금 09:00 KST 스케줄 생성.
 
 - [ ] **Step 8: 스케줄 강제 실행으로 트리거 검증**
@@ -1866,11 +1972,13 @@ Expected: 월·수·금 09:00 KST 스케줄 생성.
 ```
 run gcloud command: scheduler jobs run trend-writer-cron --location REGION
 ```
+
 Expected: Job이 트리거되어 새 실행 생성(로그로 확인).
 
 - [ ] **Step 9: 배포 문서화 + 커밋**
 
 `apps/trend-writer/README.md`에 배포 파라미터(PROJECT_ID/REGION/이미지 태그/스케줄/시크릿 목록)와 재배포 절차(이미지 재빌드→`run jobs update`)를 기록하고 커밋.
+
 ```bash
 git add apps/trend-writer/README.md
 git commit -m "docs(trend-writer): GCP 배포 절차 기록"
@@ -1881,6 +1989,7 @@ git commit -m "docs(trend-writer): GCP 배포 절차 기록"
 ## Self-Review
 
 **1. Spec coverage:**
+
 - §2 결정(Gemini 단독/자율 스캔/주 2–3회/전용 카테고리+출처/자가검증 게이트/humanize 이식) → Task 2·5·6·8·10·11(카테고리)·4·9(윤문)·15(cron 주2–3회). ✅
 - §3 GCP 스택(Cloud Run Job/Scheduler/Secret Manager/Artifact Registry/MCP) → Task 14·15. ✅
 - §4 파이프라인 8단계 → Task 5(①)·6(②)·7(③)·8(④)·9(⑤)·10(⑥)·11(⑦)·12(⑧), 오케스트레이션 Task 13. ✅

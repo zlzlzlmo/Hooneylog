@@ -2,7 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { buildDescription, buildNotionProperties, createNotionPort } from './publish';
 import type { PublishInput } from './types';
 
-const input: PublishInput = { title: '제목', markdown: '# 제목\n\n**본문** 내용', tags: ['AI', 'RSC'], category: 'Frontend', status: 'published' };
+const input: PublishInput = {
+  title: '제목',
+  markdown: '# 제목\n\n**본문** 내용',
+  tags: ['AI', 'RSC'],
+  category: 'Frontend',
+  status: 'published',
+};
 
 describe('buildDescription', () => {
   it('마크다운 마커를 제거하고 160자로 자른다', () => {

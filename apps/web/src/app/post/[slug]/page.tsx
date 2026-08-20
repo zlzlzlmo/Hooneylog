@@ -26,7 +26,7 @@ type Params = Promise<{ slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostById(slug);
-  
+
   if (!post) {
     return { title: 'Post Not Found' };
   }
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       card: 'summary_large_image',
       title: post.title,
       description,
-    }
+    },
   };
 }
 
@@ -66,13 +66,17 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PostDetailPage({ params }: { params: Params }): Promise<React.JSX.Element> {
+export default async function PostDetailPage({
+  params,
+}: {
+  params: Params;
+}): Promise<React.JSX.Element> {
   const { slug } = await params;
 
   const [allPosts, post, markdown] = await Promise.all([
     getAllPosts(),
     getPostById(slug),
-    getNotionPageMarkdown(slug)
+    getNotionPageMarkdown(slug),
   ]);
 
   if (!post) {
@@ -99,7 +103,10 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     description,
     // Structured-data image must be an absolute URL (metadataBase does not apply
     // to hand-written JSON-LD).
-    image: new URL(getCategoryImageSrc(post.category, post.tags), 'https://hooneylog.com').toString(),
+    image: new URL(
+      getCategoryImageSrc(post.category, post.tags),
+      'https://hooneylog.com',
+    ).toString(),
     datePublished: post.createdAt,
     dateModified: post.updatedAt,
     author: {
@@ -122,12 +129,14 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: '홈', item: 'https://hooneylog.com' },
       ...(post.category
-        ? [{
-            '@type': 'ListItem',
-            position: 2,
-            name: post.category,
-            item: `https://hooneylog.com/?category=${encodeURIComponent(post.category)}`,
-          }]
+        ? [
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: post.category,
+              item: `https://hooneylog.com/?category=${encodeURIComponent(post.category)}`,
+            },
+          ]
         : []),
       {
         '@type': 'ListItem',
@@ -151,7 +160,7 @@ export default async function PostDetailPage({ params }: { params: Params }): Pr
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      
+
       <div className="w-full max-w-[1040px] px-4 sm:px-6 mx-auto">
         {/* Top: header spans the reading column width */}
         <div className="max-w-[720px] mx-auto xl:mx-0">

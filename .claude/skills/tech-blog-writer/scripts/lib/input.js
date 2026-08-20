@@ -7,7 +7,8 @@ export function parseInput(jsonText) {
   }
   if (!data.title || !String(data.title).trim()) throw new Error('input.title is required');
   if (!data.category) throw new Error('input.category is required');
-  if (!data.markdown || !String(data.markdown).trim()) throw new Error('input.markdown is required');
+  if (!data.markdown || !String(data.markdown).trim())
+    throw new Error('input.markdown is required');
 
   return {
     title: data.title,

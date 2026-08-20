@@ -4,9 +4,7 @@ import { GET } from './route';
 import { getViewCounts } from '@/lib/views';
 
 vi.mock('@/lib/views', () => ({
-  getViewCounts: vi.fn(async (slugs: string[]) =>
-    Object.fromEntries(slugs.map((s) => [s, 1]))
-  ),
+  getViewCounts: vi.fn(async (slugs: string[]) => Object.fromEntries(slugs.map((s) => [s, 1]))),
 }));
 
 function req(query: string): NextRequest {

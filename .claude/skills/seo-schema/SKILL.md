@@ -5,11 +5,11 @@ description: >
   preferred. Use when user says "schema", "structured data", "rich results",
   "JSON-LD", or "markup".
 user-invocable: true
-argument-hint: "[url]"
+argument-hint: '[url]'
 license: MIT
 metadata:
   author: AgriciDaniel
-  version: "2.2.0"
+  version: '2.2.0'
   category: seo
 ---
 
@@ -40,9 +40,11 @@ metadata:
 See `references/deprecated-types-2024-2026.md` for deprecated types. Key rules:
 
 ### ACTIVE (recommend freely):
+
 Organization, LocalBusiness, SoftwareApplication, WebApplication, Product (with Certification markup as of April 2025), ProductGroup, Offer, Service, Article, BlogPosting, NewsArticle, Review, AggregateRating, BreadcrumbList, WebSite, WebPage, Person, ProfilePage, ContactPage, VideoObject, ImageObject, Event, JobPosting, Course, DiscussionForumPosting
 
 ### VIDEO & SPECIALIZED (recommend freely):
+
 BroadcastEvent, Clip, SeekToAction, SoftwareSourceCode
 
 See `schema/templates.json` for ready-to-use JSON-LD templates for these types.
@@ -50,9 +52,11 @@ See `schema/templates.json` for ready-to-use JSON-LD templates for these types.
 > **JSON-LD and JavaScript rendering:** Per Google's December 2025 JS SEO guidance, structured data injected via JavaScript may face delayed processing. For time-sensitive markup (especially Product, Offer), include JSON-LD in the initial server-rendered HTML.
 
 ### NO RICH RESULTS — KEEP FOR AI:
+
 - **FAQPage**: Google retired FAQ rich results for ALL sites on May 7, 2026 (supersedes the Aug 2023 gov/health restriction). No SERP feature anymore — but flag existing FAQPage at Info (not Critical), since the markup still aids AI Mode / AI Overviews entity resolution. For genuine user Q&A pages, use **QAPage**.
 
 ### DEPRECATED (never recommend):
+
 - **HowTo**: Rich results removed September 2023
 - **SpecialAnnouncement**: Deprecated July 31, 2025
 - **CourseInfo, EstimatedSalary, LearningVideo**: Retired June 2025
@@ -65,6 +69,7 @@ See `schema/templates.json` for ready-to-use JSON-LD templates for these types.
 ## Generation
 
 When generating schema for a page:
+
 1. Identify page type from content analysis
 2. Select appropriate schema type(s)
 3. Generate valid JSON-LD with all required + recommended properties
@@ -74,6 +79,7 @@ When generating schema for a page:
 ## Common Schema Templates
 
 ### Organization
+
 ```json
 {
   "@context": "https://schema.org",
@@ -86,15 +92,12 @@ When generating schema for a page:
     "telephone": "[Phone]",
     "contactType": "customer service"
   },
-  "sameAs": [
-    "[Facebook URL]",
-    "[LinkedIn URL]",
-    "[Twitter URL]"
-  ]
+  "sameAs": ["[Facebook URL]", "[LinkedIn URL]", "[Twitter URL]"]
 }
 ```
 
 ### LocalBusiness
+
 ```json
 {
   "@context": "https://schema.org",
@@ -119,6 +122,7 @@ When generating schema for a page:
 ```
 
 ### Article/BlogPosting
+
 ```json
 {
   "@context": "https://schema.org",
@@ -148,20 +152,22 @@ When generating schema for a page:
 - `generated-schema.json`: ready-to-use JSON-LD snippets
 
 ### Validation Results
-| Schema | Type | Status | Issues |
-|--------|------|--------|--------|
-| ... | ... | ✅/⚠️/❌ | ... |
+
+| Schema | Type | Status   | Issues |
+| ------ | ---- | -------- | ------ |
+| ...    | ...  | ✅/⚠️/❌ | ...    |
 
 ### Recommendations
+
 - Missing schema opportunities
 - Validation fixes needed
 - Generated code for implementation
 
 ## Error Handling
 
-| Scenario | Action |
-|----------|--------|
-| URL unreachable | Report connection error with status code. Suggest verifying URL and checking if the page requires authentication. |
-| No schema markup found | Report that no JSON-LD, Microdata, or RDFa was detected. Recommend appropriate schema types based on page content analysis. |
-| Invalid JSON-LD syntax | Parse and report specific syntax errors (missing brackets, trailing commas, unquoted keys). Provide corrected JSON-LD output. |
+| Scenario                        | Action                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| URL unreachable                 | Report connection error with status code. Suggest verifying URL and checking if the page requires authentication.                     |
+| No schema markup found          | Report that no JSON-LD, Microdata, or RDFa was detected. Recommend appropriate schema types based on page content analysis.           |
+| Invalid JSON-LD syntax          | Parse and report specific syntax errors (missing brackets, trailing commas, unquoted keys). Provide corrected JSON-LD output.         |
 | Deprecated schema type detected | Flag the deprecated type with its retirement date. Recommend the current replacement type or advise removal if no replacement exists. |

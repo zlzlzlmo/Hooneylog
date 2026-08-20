@@ -28,9 +28,11 @@
 ### Task 0: Install deps, add test script, confirm green baseline
 
 **Files:**
+
 - Modify: `apps/web/package.json` (add `test` script)
 
 **Interfaces:**
+
 - Produces: a working `pnpm --filter web test` command used by every TDD task below.
 
 - [ ] **Step 1: Install workspace dependencies**
@@ -76,12 +78,14 @@ git commit -m "chore(web): add vitest test script"
 **Skill:** `frontend-design` (structure encodes information), `accessibility` (WCAG 1.3.1 list semantics).
 
 **Files:**
+
 - Create: `apps/web/src/components/elements/post-block/group-blocks.ts`
 - Create: `apps/web/src/components/elements/post-block/group-blocks.test.ts`
 - Modify: `apps/web/src/components/elements/post-block/post-block.tsx:58-64` (numbered case → `list-decimal`)
 - Modify: `apps/web/src/components/blocks/post-detail/post-blocks.tsx` (render grouped lists)
 
 **Interfaces:**
+
 - Produces: `groupBlocks(blocks: BlockObjectResponse[]): BlockGroup[]` where
   `type BlockGroup = { kind: 'ul'; items: BlockObjectResponse[] } | { kind: 'ol'; items: BlockObjectResponse[] } | { kind: 'single'; block: BlockObjectResponse }`.
   Consecutive `bulleted_list_item` blocks group into one `ul`; consecutive `numbered_list_item` blocks group into one `ol`; everything else is a `single`.
@@ -94,7 +98,7 @@ Create `apps/web/src/components/elements/post-block/group-blocks.test.ts`:
 import { describe, it, expect } from 'vitest';
 import { groupBlocks } from './group-blocks';
 
-const b = (id: string, type: string) => ({ id, type } as any);
+const b = (id: string, type: string) => ({ id, type }) as any;
 
 describe('groupBlocks', () => {
   it('groups consecutive bulleted items into one ul group', () => {
@@ -260,10 +264,12 @@ git commit -m "fix(post): render numbered lists as <ol> with list-decimal and re
 **Skill:** `accessibility` (dialog pattern, icon buttons), `core-web-vitals` (CLS).
 
 **Files:**
+
 - Modify: `apps/web/src/components/elements/mermaid.tsx`
 - Create: `apps/web/src/components/elements/mermaid.test.tsx`
 
 **Interfaces:**
+
 - Consumes: existing `Mermaid({ content }: { content: string })`.
 - Produces: same public API; adds accessible names + dialog semantics + min-height.
 
@@ -316,14 +322,14 @@ In `apps/web/src/components/elements/mermaid.tsx`:
 (b) Give the expand button an accessible name and hide its icon (lines ~84-90):
 
 ```tsx
-        <button
-          onClick={() => setIsModalOpen(true)}
-          aria-label="다이어그램 확대"
-          className="absolute top-4 right-4 p-2 rounded-md bg-white dark:bg-zinc-800 border border-notion-border/40 text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10"
-          title="자세히 보기"
-        >
-          <Maximize2 size={18} aria-hidden="true" />
-        </button>
+<button
+  onClick={() => setIsModalOpen(true)}
+  aria-label="다이어그램 확대"
+  className="absolute top-4 right-4 p-2 rounded-md bg-white dark:bg-zinc-800 border border-notion-border/40 text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10"
+  title="자세히 보기"
+>
+  <Maximize2 size={18} aria-hidden="true" />
+</button>
 ```
 
 (c) Make the modal a real dialog and label the close button (lines ~100-115):
@@ -341,38 +347,38 @@ In `apps/web/src/components/elements/mermaid.tsx`:
 and the close button:
 
 ```tsx
-            <button
-              onClick={() => setIsModalOpen(false)}
-              aria-label="닫기"
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-notion-hover dark:hover:bg-zinc-800 text-notion-secondary hover:text-notion-text transition-colors cursor-pointer"
-            >
-              <X size={24} aria-hidden="true" />
-            </button>
+<button
+  onClick={() => setIsModalOpen(false)}
+  aria-label="닫기"
+  className="absolute top-6 right-6 p-2 rounded-full hover:bg-notion-hover dark:hover:bg-zinc-800 text-notion-secondary hover:text-notion-text transition-colors cursor-pointer"
+>
+  <X size={24} aria-hidden="true" />
+</button>
 ```
 
 (d) Move focus to the close button on open. Add a ref and effect. Add `useRef` is already imported. Add near the other refs:
 
 ```tsx
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+const closeBtnRef = useRef<HTMLButtonElement>(null);
 ```
 
 extend the existing modal `useEffect` (the one keyed on `isModalOpen`) to focus the close button when open:
 
 ```tsx
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsModalOpen(false);
-    };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden';
-      closeBtnRef.current?.focus();
-    }
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
+useEffect(() => {
+  const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') setIsModalOpen(false);
+  };
+  if (isModalOpen) {
+    window.addEventListener('keydown', handleEsc);
+    document.body.style.overflow = 'hidden';
+    closeBtnRef.current?.focus();
+  }
+  return () => {
+    window.removeEventListener('keydown', handleEsc);
+    document.body.style.overflow = 'unset';
+  };
+}, [isModalOpen]);
 ```
 
 and wire the ref onto the close button: add `ref={closeBtnRef}` to the close `<button>` from step (c).
@@ -403,10 +409,12 @@ git commit -m "fix(a11y): mermaid icon-button labels, dialog semantics, focus, a
 **Skill:** `accessibility` (state + color-not-alone), `ux-designer` (scent of information / counts).
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/sidebar.tsx`
 - Create: `apps/web/src/components/layout/sidebar.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `categories: [string, number][]` (the number is the post count, currently discarded).
 
 - [ ] **Step 1: Write the failing test**
@@ -421,13 +429,19 @@ vi.mock('next/image', () => ({ default: (props: any) => <img {...props} alt={pro
 
 import { Sidebar } from './sidebar';
 
-const categories: [string, number][] = [['React', 12], ['CSS', 3]];
+const categories: [string, number][] = [
+  ['React', 12],
+  ['CSS', 3],
+];
 
 describe('Sidebar', () => {
   it('marks the active category with aria-pressed=true', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     const active = screen.getByRole('button', { name: /React/ });
     expect(active).toHaveAttribute('aria-pressed', 'true');
@@ -437,16 +451,22 @@ describe('Sidebar', () => {
 
   it('shows the post count for each category', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     expect(screen.getByRole('button', { name: /React/ })).toHaveTextContent('12');
   });
 
   it('labels the category list as a group', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     expect(screen.getByRole('list', { name: '카테고리 필터' })).toBeInTheDocument();
   });
@@ -463,34 +483,35 @@ Expected: FAIL — no `aria-pressed`, no count text, no labelled list.
 In `apps/web/src/components/layout/sidebar.tsx`, replace the `<ul>...</ul>` block (lines 43-64) with:
 
 ```tsx
-      <ul
-        aria-label="카테고리 필터"
-        className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-450px)] no-scrollbar pb-4 lg:pb-0"
-      >
-        {categories.map(([name, count]) => {
-          const isActive = name === currentActiveCategory;
+<ul
+  aria-label="카테고리 필터"
+  className="flex flex-row lg:flex-col gap-1 lg:gap-0 m-0 p-0 list-none overflow-x-auto lg:overflow-y-auto lg:max-h-[calc(100vh-450px)] no-scrollbar pb-4 lg:pb-0"
+>
+  {categories.map(([name, count]) => {
+    const isActive = name === currentActiveCategory;
 
-          return (
-            <li key={name} className="flex-shrink-0">
-              <button
-                type="button"
-                onClick={() => handleCurrentActiveCategory(name)}
-                aria-pressed={isActive}
-                className={`
+    return (
+      <li key={name} className="flex-shrink-0">
+        <button
+          type="button"
+          onClick={() => handleCurrentActiveCategory(name)}
+          aria-pressed={isActive}
+          className={`
                   w-full text-left py-1.5 px-3 rounded-[4px] text-[15px] transition-colors appearance-none bg-transparent outline-none cursor-pointer flex items-center justify-between gap-2 border-l-2
-                  ${isActive
-                    ? 'font-medium text-notion-text bg-notion-hover border-notion-text'
-                    : 'text-notion-secondary font-regular border-transparent hover:bg-notion-hover hover:text-notion-text'
+                  ${
+                    isActive
+                      ? 'font-medium text-notion-text bg-notion-hover border-notion-text'
+                      : 'text-notion-secondary font-regular border-transparent hover:bg-notion-hover hover:text-notion-text'
                   }
                 `}
-              >
-                <span>{name}</span>
-                <span className="text-[12px] font-mono text-notion-secondary tabular-nums">{count}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+        >
+          <span>{name}</span>
+          <span className="text-[12px] font-mono text-notion-secondary tabular-nums">{count}</span>
+        </button>
+      </li>
+    );
+  })}
+</ul>
 ```
 
 (The active state now adds a left border in addition to background, so the cue is not color-alone.)
@@ -521,6 +542,7 @@ git commit -m "fix(a11y/ux): sidebar aria-pressed state, group label, and per-ca
 **Skill:** `accessibility` (contrast).
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/markdown-renderer.tsx:66`
 
 **Interfaces:** none (style-only).
@@ -562,6 +584,7 @@ git commit -m "fix(a11y): raise inline code contrast to AA (#B91C1C on gray-100,
 **Skill:** `accessibility` (bypass blocks).
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/app-layout.tsx`
 - Modify: `apps/web/src/app/globals.css` (scroll-margin for anchors)
 - Create: `apps/web/src/components/layout/app-layout.test.tsx`
@@ -618,7 +641,11 @@ export function AppLayout({ children }: LayoutProps) {
         본문으로 건너뛰기
       </a>
       <Header />
-      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-[1392px] mx-auto px-4 sm:px-6 md:px-12">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 w-full max-w-[1392px] mx-auto px-4 sm:px-6 md:px-12"
+      >
         {children}
       </main>
       <Footer />
@@ -663,6 +690,7 @@ git commit -m "feat(a11y): add skip link, main landmark id, and anchor scroll-ma
 **Skill:** `accessibility` (decorative content).
 
 **Files:**
+
 - Modify: `apps/web/src/components/elements/category-fallback-image.tsx:35-45`
 
 **Interfaces:** none.
@@ -704,10 +732,12 @@ git commit -m "fix(a11y): mark decorative category fallback image aria-hidden"
 **Skill:** `ux-designer` (forms-and-inputs, search-ux), `accessibility` (labels).
 
 **Files:**
+
 - Modify: `apps/web/src/components/features/search.tsx`
 - Create: `apps/web/src/components/features/search.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `{ searchValue: string; handleSearchValue: (text: string) => void }` (unchanged).
 
 - [ ] **Step 1: Write the failing test**
@@ -762,7 +792,9 @@ export function Search({ searchValue, handleSearchValue }: SearchProps) {
     <section className="w-full relative mb-6 group">
       <div className="flex items-center w-full bg-white border border-notion-border rounded-[4px] px-3 py-2 transition-all focus-within:border-[#A1A1AA] focus-within:shadow-[0_0_0_2px_rgba(46,170,220,0.2)]">
         <BiSearch className="w-5 h-5 text-notion-secondary flex-shrink-0" aria-hidden="true" />
-        <label htmlFor="post-search" className="sr-only">포스트 검색</label>
+        <label htmlFor="post-search" className="sr-only">
+          포스트 검색
+        </label>
         <input
           id="post-search"
           type="search"
@@ -813,6 +845,7 @@ git commit -m "feat(ux/a11y): labelled searchbox with clear button and concrete 
 **Skill:** `ux-designer` (feedback/visibility of system status).
 
 **Files:**
+
 - Modify: `apps/web/src/app/home-page-client.tsx` (render count above the list)
 
 **Interfaces:** uses existing `filteredPosts` and `searchValue` from `useFilterPost`.
@@ -822,21 +855,20 @@ git commit -m "feat(ux/a11y): labelled searchbox with clear button and concrete 
 In `home-page-client.tsx`, replace the main content block (lines 62-70) with:
 
 ```tsx
-        {/* Main Content Area */}
-        <div className="flex-1 w-full min-w-0">
-          <Search
-            searchValue={searchValue}
-            handleSearchValue={setSearchValue}
-          />
-          {searchValue && (
-            <p className="mt-2 text-[13px] text-notion-secondary" role="status" aria-live="polite">
-              검색 결과 {filteredPosts.length}개
-            </p>
-          )}
-          <div className="mt-8">
-            <PostItemList posts={filteredPosts} viewsMap={viewsMap} />
-          </div>
-        </div>
+{
+  /* Main Content Area */
+}
+<div className="flex-1 w-full min-w-0">
+  <Search searchValue={searchValue} handleSearchValue={setSearchValue} />
+  {searchValue && (
+    <p className="mt-2 text-[13px] text-notion-secondary" role="status" aria-live="polite">
+      검색 결과 {filteredPosts.length}개
+    </p>
+  )}
+  <div className="mt-8">
+    <PostItemList posts={filteredPosts} viewsMap={viewsMap} />
+  </div>
+</div>;
 ```
 
 - [ ] **Step 2: Verify build/lint/typecheck**
@@ -864,11 +896,13 @@ git commit -m "feat(ux): show live search result count with aria-live"
 **Skill:** `ux-designer` (empty states / error recovery).
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-item-list.tsx` (accept optional `query` + `onReset`)
 - Modify: `apps/web/src/app/home-page-client.tsx` (pass `query`/`onReset`)
 - Create: `apps/web/src/components/blocks/post-item-list.test.tsx`
 
 **Interfaces:**
+
 - Produces: `PostItemList({ posts, viewsMap?, query?, onReset? })` where `query?: string`, `onReset?: () => void`.
 
 - [ ] **Step 1: Write the failing test**
@@ -939,7 +973,12 @@ export function PostItemList({ posts, viewsMap = {}, query, onReset }: PostItemL
 In `home-page-client.tsx`, update the `PostItemList` usage:
 
 ```tsx
-            <PostItemList posts={filteredPosts} viewsMap={viewsMap} query={searchValue} onReset={() => setSearchValue('')} />
+<PostItemList
+  posts={filteredPosts}
+  viewsMap={viewsMap}
+  query={searchValue}
+  onReset={() => setSearchValue('')}
+/>
 ```
 
 - [ ] **Step 5: Run test to verify it passes**
@@ -968,6 +1007,7 @@ git commit -m "feat(ux): empty search state echoes query and offers reset"
 **Skill:** `ux-designer` (skeletons), `core-web-vitals` (CLS from skeleton→content swap).
 
 **Files:**
+
 - Modify: `apps/web/src/app/loading.tsx` (card skeleton block, lines 25-39)
 
 **Interfaces:** none.
@@ -977,20 +1017,22 @@ git commit -m "feat(ux): empty search state echoes query and offers reset"
 In `loading.tsx`, replace the card skeleton map (lines 25-39) with:
 
 ```tsx
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex flex-col">
-                <div className="w-full aspect-[4/3] sm:aspect-video bg-notion-gray-bg rounded-[6px] mb-4"></div>
-                <div className="w-24 h-3 bg-notion-gray-bg rounded mb-2"></div>
-                <div className="w-full h-5 bg-notion-gray-bg rounded mb-2"></div>
-                <div className="w-3/4 h-5 bg-notion-gray-bg rounded mb-3"></div>
-                <div className="w-full h-4 bg-notion-gray-bg rounded mb-1"></div>
-                <div className="w-2/3 h-4 bg-notion-gray-bg rounded mb-4"></div>
-                <div className="flex items-center justify-between mt-auto pt-4">
-                  <div className="w-12 h-3 bg-notion-gray-bg rounded"></div>
-                  <div className="w-16 h-3 bg-notion-gray-bg rounded"></div>
-                </div>
-              </div>
-            ))}
+{
+  [1, 2, 3, 4, 5, 6].map((i) => (
+    <div key={i} className="flex flex-col">
+      <div className="w-full aspect-[4/3] sm:aspect-video bg-notion-gray-bg rounded-[6px] mb-4"></div>
+      <div className="w-24 h-3 bg-notion-gray-bg rounded mb-2"></div>
+      <div className="w-full h-5 bg-notion-gray-bg rounded mb-2"></div>
+      <div className="w-3/4 h-5 bg-notion-gray-bg rounded mb-3"></div>
+      <div className="w-full h-4 bg-notion-gray-bg rounded mb-1"></div>
+      <div className="w-2/3 h-4 bg-notion-gray-bg rounded mb-4"></div>
+      <div className="flex items-center justify-between mt-auto pt-4">
+        <div className="w-12 h-3 bg-notion-gray-bg rounded"></div>
+        <div className="w-16 h-3 bg-notion-gray-bg rounded"></div>
+      </div>
+    </div>
+  ));
+}
 ```
 
 (Matches the real card: 4/3→video image, eyebrow, 2-line title, 2-line description, footer split of views/date — no avatar, which the card doesn't have.)
@@ -1020,6 +1062,7 @@ git commit -m "fix(ux/cwv): align home skeleton to real card layout and aspect r
 **Skill:** `frontend-design` (token consistency), `ux-designer` (navigation).
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/move-to-another-post.tsx`
 - Create: `apps/web/src/components/blocks/post-detail/move-to-another-post.test.tsx`
 
@@ -1034,7 +1077,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { MoveToAnotherPost } from './move-to-another-post';
 
-const post = (id: string, title: string) => ({ id, title } as any);
+const post = (id: string, title: string) => ({ id, title }) as any;
 
 describe('MoveToAnotherPost', () => {
   it('renders only the next link when there is no previous post', () => {
@@ -1134,6 +1177,7 @@ git commit -m "fix(ux): adjacent-post nav uses design tokens and handles single 
 **Skill:** `ux-designer` (error recovery), `accessibility` (alt text).
 
 **Files:**
+
 - Modify: `apps/web/src/app/not-found.tsx`
 - Create: `apps/web/src/app/not-found.test.tsx`
 
@@ -1183,12 +1227,7 @@ export default function NotFound() {
     <div className="w-full flex items-center justify-center py-40">
       <section className="flex flex-col items-center justify-center gap-8">
         <div className="relative w-[300px] h-[120px] sm:w-[500px] sm:h-[200px]">
-          <Image
-            src="/images/404.png"
-            fill
-            className="object-contain"
-            alt=""
-          />
+          <Image src="/images/404.png" fill className="object-contain" alt="" />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-notion-text text-center">
           페이지를 찾을 수 없습니다.
@@ -1236,6 +1275,7 @@ git commit -m "fix(a11y/ux): 404 decorative alt, defined tokens, and recovery co
 **Skill:** `accessibility` (WCAG 2.3.3 animation), `ux-designer`.
 
 **Files:**
+
 - Modify: `apps/web/src/app/globals.css` (global reduced-motion rule)
 
 **Interfaces:** none.
@@ -1284,6 +1324,7 @@ git commit -m "feat(a11y): honor prefers-reduced-motion globally"
 **Skill:** `core-web-vitals` (CLS), `frontend-design`.
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-detail/markdown-renderer.tsx:152-165` (img component)
 - Modify: `apps/web/src/components/elements/post-block/post-block.tsx:81-96` (image case)
 
@@ -1320,21 +1361,23 @@ In `markdown-renderer.tsx`, replace the `img` component (lines 152-165) with:
 In `post-block.tsx`, replace the `image` case `figure` (lines 85-95) with:
 
 ```tsx
-      return (
-        <figure className="my-3 flex flex-col items-start w-full">
-          <div className="w-full max-h-[70vh] aspect-[16/10] overflow-hidden rounded-[4px] border border-notion-border bg-notion-gray-bg">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={caption || ''}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          {caption && <figcaption className="mt-2 text-[14px] text-notion-secondary">{caption}</figcaption>}
-        </figure>
-      );
+return (
+  <figure className="my-3 flex flex-col items-start w-full">
+    <div className="w-full max-h-[70vh] aspect-[16/10] overflow-hidden rounded-[4px] border border-notion-border bg-notion-gray-bg">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={caption || ''}
+        loading="lazy"
+        decoding="async"
+        className="w-full h-full object-contain"
+      />
+    </div>
+    {caption && (
+      <figcaption className="mt-2 text-[14px] text-notion-secondary">{caption}</figcaption>
+    )}
+  </figure>
+);
 ```
 
 - [ ] **Step 3: Verify build/lint/typecheck**
@@ -1362,6 +1405,7 @@ git commit -m "perf(cwv): reserve aspect-ratio space for content images to remov
 **Skill:** `core-web-vitals` (LCP).
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-item-list.tsx` (use map index, set `priority` on first card)
 
 **Interfaces:** none.
@@ -1377,14 +1421,14 @@ In `post-item-list.tsx`, change the map signature to include the index and pass 
 and on the `<Image>` (the non-fallback branch, ~line 43) add:
 
 ```tsx
-                  <Image
-                    src={imageSrc}
-                    alt={post.category || 'Cover image'}
-                    fill
-                    priority={index === 0}
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
+<Image
+  src={imageSrc}
+  alt={post.category || 'Cover image'}
+  fill
+  priority={index === 0}
+  className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+/>
 ```
 
 - [ ] **Step 2: Verify build/lint/typecheck**
@@ -1408,6 +1452,7 @@ git commit -m "perf(cwv): mark first cover image priority for faster LCP"
 **Skill:** `core-web-vitals` (font loading), `frontend-design` (type system).
 
 **Files:**
+
 - Modify: `apps/web/src/app/layout.tsx` (drop `next/font` Inter or keep deliberately; here: drop the wasted latin-only load)
 - Modify: `apps/web/src/app/globals.css` (make `--font-sans` a Korean-first system stack; drop unused serif/mono custom faces that are never loaded)
 
@@ -1418,25 +1463,25 @@ git commit -m "perf(cwv): mark first cover image priority for faster LCP"
 In `apps/web/src/app/layout.tsx`, delete the `Inter` import (line 2) and the `inter` const (lines 8-11), and remove `className={inter.className}` from `<html>` (line 34):
 
 ```tsx
-import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import "./globals.css";
-import { AppLayout } from "@/components/layout/app-layout";
+import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import './globals.css';
+import { AppLayout } from '@/components/layout/app-layout';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hooneylog.com'),
   title: {
-    default: "HooneyLog",
-    template: "%s | HooneyLog"
+    default: 'HooneyLog',
+    template: '%s | HooneyLog',
   },
-  description: "HooneyLog Blog based on Notion API",
+  description: 'HooneyLog Blog based on Notion API',
   verification: {
-    google: "uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE",
+    google: 'uTxOPNaU5TsgLGH-7rdPqKlIJNF-fNwBpt7wqNh4dzE',
   },
   alternates: {
-    canonical: "/",
-  }
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({
@@ -1461,9 +1506,11 @@ export default function RootLayout({
 In `apps/web/src/app/globals.css`, replace the three `--font-*` lines (16-18) with a system stack that renders Korean well and matches what is actually available (no faux references to faces that are never loaded):
 
 ```css
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
-  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+--font-sans:
+  -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto,
+  'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+--font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
+--font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 ```
 
 (If you later want a real webfont, load **Pretendard** via `next/font/local` and apply it to `--font-sans` — but do not declare faces in tokens that are never loaded.)
@@ -1497,6 +1544,7 @@ git commit -m "perf/design: Korean-first system font stack; drop wasted Inter la
 **Skill:** `frontend-design` (distinctive identity).
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/header.tsx`
 - Create: `apps/web/src/components/layout/header.test.tsx`
 
@@ -1585,6 +1633,7 @@ git commit -m "design: replace Notion glyph with Hooneylog monogram; remove dead
 **Skill:** `frontend-design` (deliberate palette).
 
 **Files:**
+
 - Modify: `apps/web/src/app/globals.css` (add `--color-accent`)
 - Modify: `apps/web/src/components/blocks/post-item-list.tsx` (title hover → accent)
 - Modify: `apps/web/src/components/layout/sidebar.tsx` (today stat → accent)
@@ -1596,8 +1645,8 @@ git commit -m "design: replace Notion glyph with Hooneylog monogram; remove dead
 In `apps/web/src/app/globals.css`, inside `@theme inline`, add (a deliberate teal-leaning accent distinct from the default Notion blue; adjust to taste):
 
 ```css
-  --color-accent: #0F7B6C;
-  --color-accent-bg: #E3F2EF;
+--color-accent: #0f7b6c;
+--color-accent-bg: #e3f2ef;
 ```
 
 - [ ] **Step 2: Apply the accent at a few deliberate spots**
@@ -1611,7 +1660,9 @@ In `post-item-list.tsx`, change the title hover from `group-hover:text-notion-bl
 In `sidebar.tsx`, change the "Today" value color from `text-notion-blue-text` to `text-accent`:
 
 ```tsx
-              <span className="font-mono text-notion-text font-medium text-accent">+{stats.today.toLocaleString()}</span>
+<span className="font-mono text-notion-text font-medium text-accent">
+  +{stats.today.toLocaleString()}
+</span>
 ```
 
 - [ ] **Step 3: Verify build/lint/typecheck**
@@ -1639,6 +1690,7 @@ git commit -m "design: introduce owned accent color and apply at key brand momen
 **Skill:** `frontend-design` (line length / measure), `ux-designer` (readability).
 
 **Files:**
+
 - Modify: `apps/web/src/app/globals.css` (give `--container-max` the prose-measure value, or delete it)
 - Modify: `apps/web/src/app/post/[slug]/page.tsx:115` (tighten 800px → 720px)
 
@@ -1649,7 +1701,7 @@ git commit -m "design: introduce owned accent color and apply at key brand momen
 In `globals.css`, change line 13 so the token reflects the prose measure actually used:
 
 ```css
-  --container-max: 720px;
+--container-max: 720px;
 ```
 
 - [ ] **Step 2: Tighten the existing body cap**
@@ -1685,12 +1737,14 @@ git commit -m "design: tighten prose reading measure to 720px and make container
 **Skill:** `frontend-design` (spacing rhythm).
 
 **Files:**
+
 - Modify: `apps/web/src/components/elements/post-block/post-block.tsx` (paragraph/headings/quote/code/divider/bookmark margins)
 - Modify: `apps/web/src/components/blocks/post-detail/markdown-renderer.tsx` (matching p/h1/h2/h3/blockquote/hr margins)
 
 **Interfaces:** none. Apply one scale consistently across both renderers.
 
 Spacing scale to apply (replace the existing ad-hoc literals):
+
 - paragraph: `mb-[0.8em]`
 - h1: `mt-[2em] mb-[0.5em]`
 - h2: `mt-[1.6em] mb-[0.4em]`
@@ -1704,6 +1758,7 @@ Apply the scale to each case (paragraph line 24, h1 line 31, h2 line 38, h3 line
 ```tsx
         <p className="text-[16px] leading-[1.6] mb-[0.8em] break-keep min-h-[24px] text-notion-text">
 ```
+
 ```tsx
         <h2 className="text-[24px] font-semibold mt-[1.6em] mb-[0.4em] leading-[1.3] text-notion-text">
 ```
@@ -1739,6 +1794,7 @@ git commit -m "design: apply one consistent vertical rhythm across both article 
 **Skill:** `frontend-design` (consistency / DRY), `ux-designer`.
 
 **Files:**
+
 - Create: `apps/web/src/components/elements/author-badge.tsx`
 - Create: `apps/web/src/lib/author.ts`
 - Modify: `apps/web/src/components/blocks/post-detail/post-header.tsx` (use the badge)
@@ -1746,6 +1802,7 @@ git commit -m "design: apply one consistent vertical rhythm across both article 
 - Modify: `apps/web/src/components/layout/footer.tsx` (use shared name)
 
 **Interfaces:**
+
 - Produces: `AUTHOR = { name: 'Seunghoon Shin', tagline: '기록과 함께 성장하는 풀스택 개발자', avatar: '/images/profile.png' }` in `lib/author.ts`, and `<AuthorBadge size?: 'sm' | 'md' />`.
 
 - [ ] **Step 1: Create the shared author constants**
@@ -1792,8 +1849,10 @@ export function AuthorBadge({ size = 'md' }: { size?: 'sm' | 'md' }) {
 Replace the "Author Info" block (lines 51-65) with:
 
 ```tsx
-        {/* Author Info */}
-        <AuthorBadge />
+{
+  /* Author Info */
+}
+<AuthorBadge />;
 ```
 
 and add the import at the top:
@@ -1807,8 +1866,9 @@ import { AuthorBadge } from '@/components/elements/author-badge';
 In the profile section (lines 16-23), replace the hard-coded name/tagline with `AUTHOR` values and the image alt with `AUTHOR.name`:
 
 ```tsx
-        <Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
+<Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
 ```
+
 ```tsx
         <h3 className="font-semibold text-notion-text text-[15px] mb-1">{AUTHOR.name}</h3>
         <p className="text-[13px] text-notion-secondary leading-snug mb-4">
@@ -1867,30 +1927,30 @@ Expected: all PASS.
 
 ## Finding → Task Coverage Map
 
-| # | Finding | Task |
-|---|---------|------|
-| 1, 6 | Numbered list renders as bullets / no list wrapper | Task 1 |
-| 2 | No consistent vertical rhythm | Task 20 |
-| 3 | Mermaid icon buttons no accessible name | Task 2 |
-| 4 | Category buttons no selected state for AT | Task 3 |
-| 5 | Inline code contrast | Task 4 |
-| 7, 27 | Content images no dimensions → CLS | Task 14 |
-| 8, 20 | Notion logo as brand / dead header space | Task 17 |
-| 9, 25 | Contradictory fonts / wasted Inter latin-only | Task 16 |
-| 10 | Default palette, no accent | Task 18 |
-| 11 | Dead container token / no reading measure | Task 19 |
-| 12 | Author identity duplicated/inconsistent | Task 21 |
-| 13, 22 | Search: no clear/count/label/placeholder | Tasks 7, 8 |
-| 14 | Empty search state ignores query | Task 9 |
-| 15, 29 | Skeleton doesn't match cards | Task 10 |
-| 16 | Adjacent-post nav off-palette / single neighbor | Task 11 |
-| 17 | Sidebar discards counts / weak active signal | Task 3 |
-| 18 | No prefers-reduced-motion | Task 13 |
-| 19 | 404 alt / recovery | Task 12 |
-| 21 | Mermaid modal dialog semantics/focus | Task 2 |
-| 23 | No skip link / main landmark | Task 5 |
-| 24 | Fallback initials low contrast / not hidden | Task 6 |
-| 26 | LCP cover image not priority | Task 15 |
-| 28 | Mermaid unsized container CLS | Task 2 |
+| #      | Finding                                            | Task       |
+| ------ | -------------------------------------------------- | ---------- |
+| 1, 6   | Numbered list renders as bullets / no list wrapper | Task 1     |
+| 2      | No consistent vertical rhythm                      | Task 20    |
+| 3      | Mermaid icon buttons no accessible name            | Task 2     |
+| 4      | Category buttons no selected state for AT          | Task 3     |
+| 5      | Inline code contrast                               | Task 4     |
+| 7, 27  | Content images no dimensions → CLS                 | Task 14    |
+| 8, 20  | Notion logo as brand / dead header space           | Task 17    |
+| 9, 25  | Contradictory fonts / wasted Inter latin-only      | Task 16    |
+| 10     | Default palette, no accent                         | Task 18    |
+| 11     | Dead container token / no reading measure          | Task 19    |
+| 12     | Author identity duplicated/inconsistent            | Task 21    |
+| 13, 22 | Search: no clear/count/label/placeholder           | Tasks 7, 8 |
+| 14     | Empty search state ignores query                   | Task 9     |
+| 15, 29 | Skeleton doesn't match cards                       | Task 10    |
+| 16     | Adjacent-post nav off-palette / single neighbor    | Task 11    |
+| 17     | Sidebar discards counts / weak active signal       | Task 3     |
+| 18     | No prefers-reduced-motion                          | Task 13    |
+| 19     | 404 alt / recovery                                 | Task 12    |
+| 21     | Mermaid modal dialog semantics/focus               | Task 2     |
+| 23     | No skip link / main landmark                       | Task 5     |
+| 24     | Fallback initials low contrast / not hidden        | Task 6     |
+| 26     | LCP cover image not priority                       | Task 15    |
+| 28     | Mermaid unsized container CLS                      | Task 2     |
 
 All 29 confirmed findings are covered.

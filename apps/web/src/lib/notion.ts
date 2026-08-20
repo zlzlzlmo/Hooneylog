@@ -23,7 +23,7 @@ n2m.setCustomTransformer('callout', async (block) => {
   const { callout } = block;
   const icon = callout.icon?.type === 'emoji' ? callout.icon.emoji : '💡';
   const text = callout.rich_text.map((t) => t.plain_text).join('');
-  
+
   return `<div class="notion-callout">
     <div class="notion-callout-icon">${icon}</div>
     <div class="notion-callout-content">${text}</div>
@@ -42,18 +42,25 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 5, delay = 2000): Pr
       return await fn();
     } catch (error: unknown) {
       if (currentRetries > 0) {
-        const isRateLimited = typeof error === 'object' && error !== null && 
-          (('status' in error && error.status === 429) || ('code' in error && error.code === 'rate_limited'));
-          
+        const isRateLimited =
+          typeof error === 'object' &&
+          error !== null &&
+          (('status' in error && error.status === 429) ||
+            ('code' in error && error.code === 'rate_limited'));
+
         if (isRateLimited) {
-          console.warn(`Notion API rate limited (429). Retrying in ${currentDelay}ms... (${currentRetries} retries left)`);
+          console.warn(
+            `Notion API rate limited (429). Retrying in ${currentDelay}ms... (${currentRetries} retries left)`,
+          );
         } else {
-          console.warn(`Notion API call failed, retrying in ${currentDelay}ms... (${currentRetries} retries left)`);
+          console.warn(
+            `Notion API call failed, retrying in ${currentDelay}ms... (${currentRetries} retries left)`,
+          );
         }
-        
+
         const jitter = Math.floor(Math.random() * 1000);
-        await new Promise(resolve => setTimeout(resolve, currentDelay + jitter));
-        
+        await new Promise((resolve) => setTimeout(resolve, currentDelay + jitter));
+
         return execute(currentRetries - 1, currentDelay * 2);
       }
       throw error;
@@ -64,7 +71,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 5, delay = 2000): Pr
   const result = new Promise<T>((resolve, reject) => {
     queue = queue.then(async () => {
       // Small pause between all requests to keep average rate low
-      await new Promise(r => setTimeout(r, 400)); 
+      await new Promise((r) => setTimeout(r, 400));
       try {
         const res = await execute(retries, delay);
         resolve(res);
@@ -95,7 +102,8 @@ export function fixMarkdown(md: string): string {
   let previous;
   do {
     previous = result;
-    result = result.replace(/\\([*|_~`[\]()#+!.-])/g, '$1');  } while (result !== previous);
+    result = result.replace(/\\([*|_~`[\]()#+!.-])/g, '$1');
+  } while (result !== previous);
 
   // 3. Force bold markers into HTML strong tags
   // This bypasses markdown parser limitations when bold is adjacent to other text
@@ -122,7 +130,7 @@ export const getNotionPageMarkdown = unstable_cache(
     return mdString;
   },
   ['notion-page-markdown'],
-  { tags: [POST_BLOCKS_TAG], revalidate: CACHE_REVALIDATE_SECONDS }
+  { tags: [POST_BLOCKS_TAG], revalidate: CACHE_REVALIDATE_SECONDS },
 );
 
 class NotionBlockMapper {
@@ -155,50 +163,52 @@ class NotionBlockMapper {
 
 export const getAllPosts = unstable_cache(
   async (): Promise<NotionPost[]> => {
-  if (!databaseId) return [];
+    if (!databaseId) return [];
 
-  // Notion returns at most 100 rows per query, so loop over start_cursor until
-  // has_more is false — otherwise the blog silently caps at 100 published posts.
-  const rawPosts: IRawNotionPost[] = [];
-  let cursor: string | undefined = undefined;
+    // Notion returns at most 100 rows per query, so loop over start_cursor until
+    // has_more is false — otherwise the blog silently caps at 100 published posts.
+    const rawPosts: IRawNotionPost[] = [];
+    let cursor: string | undefined = undefined;
 
-  do {
-    const response = await withRetry(() => notion.databases.query({
-      database_id: databaseId,
-      start_cursor: cursor,
-      filter: {
-        property: 'status',
-        select: {
-          equals: 'published',
-        },
-      },
-      sorts: [
-        {
-          timestamp: 'created_time',
-          direction: 'descending',
-        },
-      ],
-    }));
+    do {
+      const response = await withRetry(() =>
+        notion.databases.query({
+          database_id: databaseId,
+          start_cursor: cursor,
+          filter: {
+            property: 'status',
+            select: {
+              equals: 'published',
+            },
+          },
+          sorts: [
+            {
+              timestamp: 'created_time',
+              direction: 'descending',
+            },
+          ],
+        }),
+      );
 
-    rawPosts.push(...(response.results as unknown as IRawNotionPost[]));
-    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
-  } while (cursor);
+      rawPosts.push(...(response.results as unknown as IRawNotionPost[]));
+      cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
+    } while (cursor);
 
-  return rawPosts.map(({ id, properties, last_edited_time }) => {
-    const block = new NotionBlockMapper(properties);
-    return {
-      id,
-      title: block.title,
-      tags: block.tags,
-      createdAt: block.createdAt,
-      updatedAt: last_edited_time ?? block.createdAt,
-      category: block.category,
-      description: block.description,
-    };
-  });
+    return rawPosts.map(({ id, properties, last_edited_time }) => {
+      const block = new NotionBlockMapper(properties);
+      return {
+        id,
+        title: block.title,
+        tags: block.tags,
+        createdAt: block.createdAt,
+        updatedAt: last_edited_time ?? block.createdAt,
+        category: block.category,
+        description: block.description,
+      };
+    });
   },
   ['notion-all-posts'],
-  { tags: [POSTS_TAG], revalidate: CACHE_REVALIDATE_SECONDS }
+  { tags: [POSTS_TAG], revalidate: CACHE_REVALIDATE_SECONDS },
 );
 
 export const getPostById = async (postId: string): Promise<NotionPost | undefined> => {

@@ -22,9 +22,11 @@
 ### Task 1: `references/korean-seo.md` 신설
 
 **Files:**
+
 - Create: `.claude/skills/tech-blog-writer/references/korean-seo.md`
 
 **Interfaces:**
+
 - Produces: `references/korean-seo.md` — `SKILL.md`(Task 2)와 `korean-writing.md`(Task 3)가 이 경로를 참조한다. 최상위 H1은 `# 한국 검색·배포 레퍼런스 (2026)`.
 
 - [ ] **Step 1: 파일 생성 — 아래 내용을 그대로 작성**
@@ -41,6 +43,7 @@
 ## 전제: 이 블로그는 자체 Next.js 사이트다
 
 Hooneylog는 네이버 블로그가 아니라 **자체 도메인 Next.js 사이트**다. 따라서:
+
 - 네이버는 자사 플랫폼(네이버 블로그/카페/지식iN)을 우선 노출하고 외부 사이트 색인·노출에 보수적이다.
 - 기술 SEO 토대(robots.ts·sitemap.ts·feed.xml·opengraph-image·generateMetadata·JSON-LD BlogPosting)는 **이미 구현돼 있다.** 글쓰기 단계에서 새로 코드를 만들 필요는 없다.
 - 그러므로 전략은 "네이버 상위노출 집착"이 아니라 **구글/AI검색 최적화 + 등록·배포로 유입 경로 다변화**다.
@@ -116,9 +119,11 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 2: `SKILL.md` — 윤문 패스·발행 후 배포 단계 추가 & korean-seo 로드 명시
 
 **Files:**
+
 - Modify: `.claude/skills/tech-blog-writer/SKILL.md`
 
 **Interfaces:**
+
 - Consumes: `references/korean-seo.md`(Task 1).
 - Produces: 갱신된 워크플로 번호 체계 — `5. 경량 웹 검증 → 6. 윤문 패스 → 7. 대화 내 검토 → 8. 발행 → 9. 발행 후 배포`.
 
@@ -128,6 +133,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ```markdown
 ### 2. 레퍼런스 로드
+
 - 항상 `references/korean-writing.md`를 읽는다.
 - 카테고리에 맞는 파일을 읽는다: Frontend→`references/frontend.md`, Backend→`references/backend.md`, Artificial Intelligence→`references/ai-rag.md`.
 ```
@@ -136,6 +142,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ```markdown
 ### 2. 레퍼런스 로드
+
 - 항상 `references/korean-writing.md`를 읽는다(톤·구조).
 - 카테고리에 맞는 파일을 읽는다: Frontend→`references/frontend.md`, Backend→`references/backend.md`, Artificial Intelligence→`references/ai-rag.md`.
 - 검토·발행 단계에서 `references/korean-seo.md`를 읽는다(제목 길이·네이버/구글/GEO·발행 후 배포).
@@ -147,9 +154,12 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ```markdown
 ### 6. 윤문 패스 (AI 티 제거)
+
 초안이 사실 검증까지 끝나면, 발행 전에 한국어 윤문 게이트를 거친다:
+
 1. `ai-slop-reviewer` 스킬로 일반 기계패턴(AI 슬롭)을 1차 점검한다.
 2. `humanize-korean` 스킬로 한국어 번역투·피동·병렬 남용 등을 2차 정밀 윤문한다.
+
 - **강제 재작성이 아니라 리뷰**: 감지된 AI 티만 표시하고 저자 확인 후 반영한다. 이미 톤을 맞춰 썼다면 대부분 통과한다.
 - **보존**: 두 스킬은 고유명사·수치·날짜·인용을 보존하고 변경률이 크면 경고·중단한다. **코드 블록·버전 수치·인용은 윤문 대상에서 제외**한다(5단계에서 검증한 값 보호).
 - 판단 기준은 `references/korean-writing.md`의 톤 규칙이다.
@@ -166,7 +176,9 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ```markdown
 ### 9. 발행 후 배포
+
 발행 URL을 받은 뒤, `references/korean-seo.md`의 "발행 후 배포 체크리스트"를 사용자에게 제시한다:
+
 - GeekNews(긱뉴스) 제출, 커뮤니티(커리어리/OKKY 등) 공유, `/feed.xml`·OG 카드 렌더 확인.
 - (선택) 네이버 서치어드바이저 수집 요청, 구글 서치콘솔 색인 요청.
 - 채널당 1회·맥락 있게. 도배 금지.
@@ -194,9 +206,11 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 3: `korean-writing.md` — GEO/AEO 조각 이관 & 윤문 링크
 
 **Files:**
+
 - Modify: `.claude/skills/tech-blog-writer/references/korean-writing.md`
 
 **Interfaces:**
+
 - Consumes: `references/korean-seo.md`(Task 1)로 GEO/AEO·SEO 내용을 이관.
 
 - [ ] **Step 1: 제목 섹션의 GEO/AEO 보강 조각을 korean-seo로 위임**
@@ -266,4 +280,7 @@ category 제약과 발행 스크립트 경로(`node .claude/skills/tech-blog-wri
 
 Run: `git status --short .claude/skills/tech-blog-writer/`
 Expected: 출력 없음(working tree clean).
+
+```
+
 ```

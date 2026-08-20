@@ -4,7 +4,8 @@ import type { Gemini } from './types';
 
 describe('parseScanResult', () => {
   it('JSON 배열을 TopicCandidate[]로 파싱하고 잘못된 항목을 거른다', () => {
-    const text = '```json\n[{"title":"A","whyNow":"w","sources":["https://a"],"area":"frontend"},{"title":""}]\n```';
+    const text =
+      '```json\n[{"title":"A","whyNow":"w","sources":["https://a"],"area":"frontend"},{"title":""}]\n```';
     const out = parseScanResult(text);
     expect(out).toHaveLength(1);
     expect(out[0].title).toBe('A');
@@ -17,7 +18,9 @@ describe('parseScanResult', () => {
   });
 
   it('null·비객체 항목을 크래시 없이 걸러낸다', () => {
-    const out = parseScanResult('[{"title":"A","whyNow":"w","sources":[],"area":"frontend"}, null, 42]');
+    const out = parseScanResult(
+      '[{"title":"A","whyNow":"w","sources":[],"area":"frontend"}, null, 42]',
+    );
     expect(out).toHaveLength(1);
     expect(out[0].title).toBe('A');
   });

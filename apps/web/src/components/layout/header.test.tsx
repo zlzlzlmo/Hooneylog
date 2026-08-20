@@ -15,8 +15,17 @@ describe('Header', () => {
     expect(nav).toBeInTheDocument();
     // Categories are a home-page filter, not tags. Nav must point at the home
     // filter via ?category=<real category name>, or it lands on an empty page.
-    expect(screen.getByRole('link', { name: 'frontend' })).toHaveAttribute('href', '/?category=Frontend');
-    expect(screen.getByRole('link', { name: 'backend' })).toHaveAttribute('href', '/?category=Backend');
-    expect(screen.getByRole('link', { name: 'ai' })).toHaveAttribute('href', '/?category=Artificial%20Intelligence');
+    expect(screen.getByRole('link', { name: 'frontend' })).toHaveAttribute(
+      'href',
+      '/?category=Frontend',
+    );
+    expect(screen.getByRole('link', { name: 'backend' })).toHaveAttribute(
+      'href',
+      '/?category=Backend',
+    );
+    expect(screen.getByRole('link', { name: 'ai' })).toHaveAttribute(
+      'href',
+      '/?category=Artificial%20Intelligence',
+    );
   });
 });

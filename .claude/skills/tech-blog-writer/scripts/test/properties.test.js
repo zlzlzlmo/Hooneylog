@@ -12,8 +12,12 @@ test('builds Notion properties with Korean field names', () => {
   });
   assert.deepEqual(props['이름'], { title: [{ text: { content: 'Next.js 16 캐싱 회고' } }] });
   assert.deepEqual(props.category, { multi_select: [{ name: 'Frontend' }] });
-  assert.deepEqual(props.tag, { multi_select: [{ name: 'Next.js' }, { name: 'Cache Components' }] });
-  assert.deepEqual(props.description, { rich_text: [{ text: { content: '암묵적 캐싱 폐기 적용기' } }] });
+  assert.deepEqual(props.tag, {
+    multi_select: [{ name: 'Next.js' }, { name: 'Cache Components' }],
+  });
+  assert.deepEqual(props.description, {
+    rich_text: [{ text: { content: '암묵적 캐싱 폐기 적용기' } }],
+  });
   assert.deepEqual(props.status, { select: { name: 'published' } });
 });
 
@@ -27,7 +31,10 @@ test('defaults status to published and tags/description to empty', () => {
 test('rejects empty title, invalid category, invalid status', () => {
   assert.throws(() => buildPageProperties({ title: '', category: 'Frontend' }), /title/);
   assert.throws(() => buildPageProperties({ title: 'T', category: 'frontend' }), /category/);
-  assert.throws(() => buildPageProperties({ title: 'T', category: 'Backend', status: 'live' }), /status/);
+  assert.throws(
+    () => buildPageProperties({ title: 'T', category: 'Backend', status: 'live' }),
+    /status/,
+  );
 });
 
 test('exports the allowed category and status lists', () => {

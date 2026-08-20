@@ -21,10 +21,12 @@
 ### Task 1: RSS feed
 
 **Files:**
+
 - Create: `apps/web/src/app/feed.xml/route.ts`
 - Modify: `apps/web/src/app/layout.tsx` (advertise the feed)
 
 **Interfaces:**
+
 - Produces: `GET /feed.xml` returning RSS 2.0 XML.
 
 - [ ] **Step 1: Create the route handler**
@@ -115,11 +117,13 @@ git commit -m "feat(distribution): RSS 2.0 feed at /feed.xml"
 ### Task 2: Dynamic Open Graph images
 
 **Files:**
+
 - Create: `apps/web/src/app/opengraph-image.tsx` (site default)
 - Create: `apps/web/src/app/post/[slug]/opengraph-image.tsx` (per-post)
 - Modify: `apps/web/src/app/post/[slug]/page.tsx` (remove the static OG image override so the file-based one is used)
 
 **Interfaces:**
+
 - Produces: 1200×630 PNG OG images. Per-post image shows the post title (when the Korean font loads), category, and brand.
 
 - [ ] **Step 1: Site-default OG image**
@@ -135,44 +139,42 @@ export const alt = 'HooneyLog';
 
 export default function OgImage() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          background: '#191919',
-          padding: '80px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div
-            style={{
-              width: '72px',
-              height: '72px',
-              borderRadius: '16px',
-              background: '#0F7B6C',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '44px',
-              fontWeight: 700,
-            }}
-          >
-            H
-          </div>
-          <div style={{ color: '#fff', fontSize: '56px', fontWeight: 700 }}>HooneyLog</div>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        background: '#191919',
+        padding: '80px',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div
+          style={{
+            width: '72px',
+            height: '72px',
+            borderRadius: '16px',
+            background: '#0F7B6C',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '44px',
+            fontWeight: 700,
+          }}
+        >
+          H
         </div>
-        <div style={{ color: '#9b9b9b', fontSize: '28px', marginTop: '24px' }}>
-          기록과 함께 성장하는 풀스택 개발자
-        </div>
+        <div style={{ color: '#fff', fontSize: '56px', fontWeight: 700 }}>HooneyLog</div>
       </div>
-    ),
-    { ...size }
+      <div style={{ color: '#9b9b9b', fontSize: '28px', marginTop: '24px' }}>
+        기록과 함께 성장하는 풀스택 개발자
+      </div>
+    </div>,
+    { ...size },
   );
 }
 ```
@@ -194,7 +196,9 @@ export const alt = 'HooneyLog post';
 async function loadKoreanFont(text: string): Promise<ArrayBuffer | null> {
   try {
     const api = `https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&text=${encodeURIComponent(text)}`;
-    const css = await fetch(api, { headers: { 'User-Agent': 'Mozilla/5.0' } }).then((r) => r.text());
+    const css = await fetch(api, { headers: { 'User-Agent': 'Mozilla/5.0' } }).then((r) =>
+      r.text(),
+    );
     const match = css.match(/src:\s*url\((https:[^)]+)\)/);
     if (!match || !match[1]) return null;
     return await fetch(match[1]).then((r) => r.arrayBuffer());
@@ -212,51 +216,61 @@ export default async function PostOgImage({ params }: { params: Promise<{ slug: 
   const fontData = await loadKoreanFont(title + category + '기록과 함께 성장하는 풀스택 개발자');
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          background: '#191919',
-          padding: '72px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              background: '#0F7B6C',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '28px',
-              fontWeight: 700,
-            }}
-          >
-            H
-          </div>
-          <div style={{ color: '#9b9b9b', fontSize: '28px' }}>{category}</div>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        background: '#191919',
+        padding: '72px',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div
+          style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '12px',
+            background: '#0F7B6C',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '28px',
+            fontWeight: 700,
+          }}
+        >
+          H
         </div>
-        {fontData ? (
-          <div style={{ color: '#fff', fontSize: '60px', fontWeight: 700, lineHeight: 1.2, display: 'flex' }}>
-            {title}
-          </div>
-        ) : (
-          <div style={{ color: '#fff', fontSize: '56px', fontWeight: 700, display: 'flex' }}>HooneyLog</div>
-        )}
-        <div style={{ color: '#9b9b9b', fontSize: '26px' }}>hooneylog.com</div>
+        <div style={{ color: '#9b9b9b', fontSize: '28px' }}>{category}</div>
       </div>
-    ),
+      {fontData ? (
+        <div
+          style={{
+            color: '#fff',
+            fontSize: '60px',
+            fontWeight: 700,
+            lineHeight: 1.2,
+            display: 'flex',
+          }}
+        >
+          {title}
+        </div>
+      ) : (
+        <div style={{ color: '#fff', fontSize: '56px', fontWeight: 700, display: 'flex' }}>
+          HooneyLog
+        </div>
+      )}
+      <div style={{ color: '#9b9b9b', fontSize: '26px' }}>hooneylog.com</div>
+    </div>,
     {
       ...size,
-      fonts: fontData ? [{ name: 'Noto Sans KR', data: fontData, weight: 700 as const, style: 'normal' as const }] : [],
-    }
+      fonts: fontData
+        ? [{ name: 'Noto Sans KR', data: fontData, weight: 700 as const, style: 'normal' as const }]
+        : [],
+    },
   );
 }
 ```
@@ -300,9 +314,11 @@ git commit -m "feat(distribution): dynamic Open Graph images (site + per-post)"
 ### Task 3: Share buttons
 
 **Files:**
+
 - Create: `apps/web/src/components/blocks/post-detail/share-buttons.tsx`
 
 **Interfaces:**
+
 - Produces: `ShareButtons({ title, slug }: { title: string; slug: string })` — X, LinkedIn, and copy-link buttons.
 
 - [ ] **Step 1: Create the component**
@@ -340,9 +356,24 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
   return (
     <div className="flex flex-wrap items-center gap-2 my-10">
       <span className="text-[13px] text-notion-secondary mr-1">공유하기</span>
-      <a href={x} target="_blank" rel="noopener noreferrer" className={cls} aria-label="X에 공유">X</a>
-      <a href={linkedin} target="_blank" rel="noopener noreferrer" className={cls} aria-label="LinkedIn에 공유">LinkedIn</a>
-      <button type="button" onClick={copy} className={cls} aria-label={copied ? '링크 복사됨' : '링크 복사'}>
+      <a href={x} target="_blank" rel="noopener noreferrer" className={cls} aria-label="X에 공유">
+        X
+      </a>
+      <a
+        href={linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cls}
+        aria-label="LinkedIn에 공유"
+      >
+        LinkedIn
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        className={cls}
+        aria-label={copied ? '링크 복사됨' : '링크 복사'}
+      >
         {copied ? <Check size={14} aria-hidden="true" /> : <Link2 size={14} aria-hidden="true" />}
         {copied ? '복사됨' : '링크 복사'}
       </button>
@@ -368,10 +399,12 @@ git commit -m "feat(distribution): post share buttons"
 ### Task 4: Reading progress bar + back-to-top
 
 **Files:**
+
 - Create: `apps/web/src/components/elements/reading-progress.tsx`
 - Create: `apps/web/src/components/elements/back-to-top.tsx`
 
 **Interfaces:**
+
 - Produces: `ReadingProgress()` — fixed top bar reflecting scroll fraction; `BackToTop()` — FAB appearing after scroll, scrolls to top.
 
 - [ ] **Step 1: ReadingProgress**
@@ -399,7 +432,10 @@ export function ReadingProgress() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[60] h-[3px] bg-transparent" aria-hidden="true">
-      <div className="h-full bg-accent transition-[width] duration-75" style={{ width: `${progress}%` }} />
+      <div
+        className="h-full bg-accent transition-[width] duration-75"
+        style={{ width: `${progress}%` }}
+      />
     </div>
   );
 }
@@ -459,9 +495,11 @@ git commit -m "feat(distribution): reading progress bar and back-to-top"
 ### Task 5: Mount share / progress / back-to-top on the post page
 
 **Files:**
+
 - Modify: `apps/web/src/app/post/[slug]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `ShareButtons`, `ReadingProgress`, `BackToTop` (Tasks 3, 4).
 
 - [ ] **Step 1: Import and mount**
@@ -513,10 +551,10 @@ Expected: all PASS.
 
 ## Spec Coverage Map (#4)
 
-| Spec item | Task |
-|---|---|
-| RSS feed `/feed.xml` + advertise | Task 1 |
-| Dynamic OG images (site + per-post) | Task 2 |
-| Share buttons (X, LinkedIn, copy) | Tasks 3, 5 |
-| Reading progress bar | Tasks 4, 5 |
-| Back-to-top | Tasks 4, 5 |
+| Spec item                           | Task       |
+| ----------------------------------- | ---------- |
+| RSS feed `/feed.xml` + advertise    | Task 1     |
+| Dynamic OG images (site + per-post) | Task 2     |
+| Share buttons (X, LinkedIn, copy)   | Tasks 3, 5 |
+| Reading progress bar                | Tasks 4, 5 |
+| Back-to-top                         | Tasks 4, 5 |

@@ -20,7 +20,7 @@ function useActiveSlug(items: TocItem[]): string {
           setActiveSlug(first.target.id);
         }
       },
-      { rootMargin: '-80px 0px -70% 0px', threshold: 0 }
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0 },
     );
 
     headings.forEach((h) => observer.observe(h));
@@ -80,11 +80,7 @@ function TocRail({ items, activeSlug }: { items: TocItem[]; activeSlug: string }
               aria-current={active ? 'true' : undefined}
               className={`block no-underline font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg rounded-[3px] ${
                 item.depth === 3 ? 'py-[3px] pl-3 text-[11px]' : 'py-[5px] text-[12px]'
-              } ${
-                active
-                  ? 'text-notion-text'
-                  : 'text-notion-secondary hover:text-notion-text'
-              }`}
+              } ${active ? 'text-notion-text' : 'text-notion-secondary hover:text-notion-text'}`}
             >
               {item.text}
             </a>
@@ -95,7 +91,13 @@ function TocRail({ items, activeSlug }: { items: TocItem[]; activeSlug: string }
   );
 }
 
-export function TableOfContents({ items, variant }: { items: TocItem[]; variant: 'inline' | 'rail' }) {
+export function TableOfContents({
+  items,
+  variant,
+}: {
+  items: TocItem[];
+  variant: 'inline' | 'rail';
+}) {
   const activeSlug = useActiveSlug(items);
 
   if (items.length === 0) return null;

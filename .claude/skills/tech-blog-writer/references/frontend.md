@@ -6,6 +6,7 @@
 ## 1. 프론트엔드 — 프레임워크 / 렌더링
 
 ### 핵심 트렌드
+
 - **Next.js 16 Cache Components — 명시적 캐싱 + PPR 완성** `mainstream` ✅
   2025-10-21 출시. App Router의 암묵적 캐싱을 폐기, 기본은 동적 렌더링이고 `'use cache'` 디렉티브로만 명시적 캐싱. 무효화 API: `revalidateTag(tag, profile)`(SWR), `updateTag()`(read-your-writes, Server Actions 전용), `refresh()`(비캐시). ⚠️ `experimental.dynamicIO`는 "제거"가 아니라 `cacheComponents`로 rename.
 - **Turbopack가 Next.js 기본 번들러로 표준화** `mainstream` ✅
@@ -29,6 +30,7 @@
 - ➕ **프레임워크의 AI/LLM 통합** — Next.js 16 DevTools MCP 기반 AI 디버깅 1급 탑재.
 
 ### 업계 표준·베스트프랙티스
+
 - Next.js 16: `cacheComponents: true` + `'use cache'` 명시적 옵트인. 무효화는 SWR=`revalidateTag(tag,'max')`, 즉시 반영=`updateTag()`, 비캐시=`refresh()`.
 - `middleware.ts` 대신 `proxy.ts`(Node 런타임). `params`/`searchParams`/`cookies()`/`headers()`는 모두 `async await`.
 - 메타프레임워크는 용도로 선택: 콘텐츠/마케팅=Astro, 풀스택 타입안전·클라이언트 우선=TanStack Start, React 표준 SSR=React Router 7 또는 Next.js App Router.
@@ -36,9 +38,11 @@
 - Turbopack/Vite 8(Rolldown) 기본, webpack 커스텀은 마이그레이션 대상.
 
 ### 핵심 용어 (영 / 한)
+
 RSC=리액트 서버 컴포넌트 · Cache Components=캐시 컴포넌트 · `use cache` 디렉티브 · PPR=부분 프리렌더링 · Streaming SSR=스트리밍 SSR · Server Islands=서버 아일랜드 · Server Actions=서버 액션 · Server/Remote Functions=서버/리모트 함수 · Fine-grained reactivity=파인그레인드 반응성 · Signals=시그널 · Runes=룬즈 · React Compiler=리액트 컴파일러 · read-your-writes(자기 쓰기 즉시 반영) · isomorphic server functions=동형 서버 함수 · zoneless=존리스 · Model-First Development=모델 우선 개발
 
 ### 추천 출처
+
 - Next.js 16 — https://nextjs.org/blog/next-16
 - Cache Components — https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents
 - React 19.2 — https://react.dev/blog/2025/10/01/react-19-2
@@ -52,6 +56,7 @@ RSC=리액트 서버 컴포넌트 · Cache Components=캐시 컴포넌트 · `us
 ## 2. 프론트엔드 — 툴링 / 성능 / 품질
 
 ### 핵심 트렌드
+
 - **Rust/Go 기반 네이티브 툴체인 대전환** `growing` ✅
   TypeScript 7.0(Project Corsa): 컴파일러를 Go로 재작성, tsc 대비 ~10배(2026-04 베타). Vite+Rolldown+Oxc 통합 툴체인. ⚠️ "Turborepo Go→Rust"는 2024-02 건으로 신규 트렌드로 묶기엔 stale.
 - **Vite 사실상 표준화 + Rolldown 통합** `mainstream` ⚠️
@@ -66,6 +71,7 @@ RSC=리액트 서버 컴포넌트 · Cache Components=캐시 컴포넌트 · `us
   2025-10-22 Browser Mode stable. 내장 비주얼 리그레션, Playwright 트레이스 연동. 단위·컴포넌트·비주얼을 단일 러너 통합. (E2E는 여전히 Playwright 영역)
 
 ### 업계 표준·베스트프랙티스
+
 - 모노레포는 Turborepo, 빌드는 Vite 8(Rolldown)/Turbopack. TS는 7.0(Corsa) 마이그레이션 주시.
 - 성능 KPI는 INP 200ms 이하를 1차 목표로, 롱태스크 분할·코드 스플리팅·서드파티 통제.
 - 디자인 시스템은 Tailwind v4 + shadcn/ui(소유형) 기본.
@@ -73,9 +79,11 @@ RSC=리액트 서버 컴포넌트 · Cache Components=캐시 컴포넌트 · `us
 - 테스트는 Vitest(단위·컴포넌트) + Playwright(E2E) 조합.
 
 ### 핵심 용어
+
 Project Corsa(TS 7 Go 컴파일러) · Rolldown · Oxc · INP(Interaction to Next Paint) · Core Web Vitals · Tailwind v4 · shadcn/ui · `data-slot` · TanStack Query · Zustand · Vitest Browser Mode · Visual regression=비주얼 리그레션
 
 ### 추천 출처
+
 - TypeScript Go(Corsa) — https://devblogs.microsoft.com/typescript/typescript-native-port/
 - Vite 8 / Rolldown — https://vite.dev/blog/
 - web.dev INP — https://web.dev/articles/inp

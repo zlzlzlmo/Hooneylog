@@ -1,10 +1,11 @@
-import { globalIgnores } from "eslint/config";
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import pluginReact from "eslint-plugin-react";
-import globals from "globals";
-import pluginNext from "@next/eslint-plugin-next";
-import checkFilePlugin from "eslint-plugin-check-file";
-import { config as baseConfig } from "./base.js";
+import { globalIgnores } from 'eslint/config';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import pluginReact from 'eslint-plugin-react';
+import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
+import globals from 'globals';
+import pluginNext from '@next/eslint-plugin-next';
+import checkFilePlugin from 'eslint-plugin-check-file';
+import { config as baseConfig } from './base.js';
 
 /**
  * A custom ESLint configuration for libraries that use Next.js.
@@ -14,12 +15,7 @@ import { config as baseConfig } from "./base.js";
 export const nextJsConfig = [
   // baseConfig already brings js.recommended, tseslint.recommended and prettier.
   ...baseConfig,
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
   {
     ...pluginReact.configs.flat.recommended,
     languageOptions: {
@@ -29,97 +25,95 @@ export const nextJsConfig = [
       },
     },
   },
+  // React Compiler-powered rules ship in the plugin's own flat preset; spreading
+  // `configs.recommended.rules` by hand silently drops the plugin wiring it expects.
+  pluginReactHooks.configs.flat.recommended,
+  pluginJsxA11y.flatConfigs.recommended,
   {
     plugins: {
-      "@next/next": pluginNext,
-      "check-file": checkFilePlugin,
+      '@next/next': pluginNext,
+      'check-file': checkFilePlugin,
     },
     rules: {
       ...pluginNext.configs.recommended.rules,
-      ...pluginNext.configs["core-web-vitals"].rules,
-      "check-file/filename-naming-convention": [
-        "error",
+      ...pluginNext.configs['core-web-vitals'].rules,
+      'check-file/filename-naming-convention': [
+        'error',
         {
-          "**/*.{ts,tsx}": "KEBAB_CASE"
+          '**/*.{ts,tsx}': 'KEBAB_CASE',
         },
         {
-          "ignoreMiddleExtensions": true
-        }
+          ignoreMiddleExtensions: true,
+        },
       ],
-      "check-file/folder-naming-convention": [
-        "error",
+      'check-file/folder-naming-convention': [
+        'error',
         {
-          "**/components/**": "KEBAB_CASE",
-          "**/lib/**": "KEBAB_CASE"
-        }
-      ]
+          '**/components/**': 'KEBAB_CASE',
+          '**/lib/**': 'KEBAB_CASE',
+        },
+      ],
     },
   },
   {
-    plugins: {
-      "react-hooks": pluginReactHooks,
+    settings: { react: { version: 'detect' } },
+    rules: {
+      // React scope no longer necessary with new JSX transform.
+      'react/react-in-jsx-scope': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'react-hooks/exhaustive-deps': 'error',
     },
-    settings: { react: { version: "detect" } },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off",
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
-      "react-hooks/exhaustive-deps": "error"
-    },
   },
   {
-    // Global Import Rules
+    // Global import rules.
     rules: {
-      "no-restricted-imports": [
-        "error",
+      'no-restricted-imports': [
+        'error',
         {
-          "patterns": [
+          patterns: [
             {
-              "group": ["../*", "../../*", "../../../*", "../../../../*"],
-              "message": "상대 경로 깊이가 너무 깊습니다. '@/...' 형태의 절대 경로를 사용하세요."
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    // Domain Layer Constraints
-    files: ["**/lib/domain/**"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          "patterns": [
-            {
-              "group": ["@/lib/infrastructure/*", "@/lib/actions/*", "@/app/*", "@supabase/*"],
-              "message": "아키텍처 위반: 도메인 계층(domain)은 순수해야 하며 다른 레이어에 의존할 수 없습니다."
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    // UI Layer Constraints (app, components)
-    files: ["**/app/**", "**/components/**", "**/test/**"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          "patterns": [
-            {
-              "group": ["@/lib/infrastructure/!(supabase)/**"],
-              "message": "아키텍처 위반: UI 계층(app, components)에서 구체적 인프라 구현체에 직접 의존할 수 없습니다. lib/actions를 사용하세요."
+              group: ['../*', '../../*', '../../../*', '../../../../*'],
+              message: "상대 경로 깊이가 너무 깊습니다. '@/...' 형태의 절대 경로를 사용하세요.",
             },
             {
-              "group": ["@/app/*"],
-              "message": "아키텍처 위반: 계층 간 역참조가 발생했습니다. 상위 레이어를 임포트할 수 없습니다."
-            }
-          ]
-        }
-      ]
-    }
-  }
+              // Routes are the top layer: nothing may reach back into them.
+              group: ['@/app/*'],
+              message: '아키텍처 위반: 하위 레이어에서 라우트(app)를 임포트할 수 없습니다.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Server-only data access (lib/notion, lib/views, …) must not be pulled into
+    // client components; go through a route handler in `services/` instead.
+    files: ['**/components/**', '**/hooks/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/notion', '@/lib/views', '@/lib/view-guard'],
+              message:
+                '아키텍처 위반: 서버 전용 데이터 접근은 서버 컴포넌트나 route handler에서만 사용하세요 (services/ 경유).',
+            },
+            {
+              group: ['../*', '../../*', '../../../*', '../../../../*'],
+              message: "상대 경로 깊이가 너무 깊습니다. '@/...' 형태의 절대 경로를 사용하세요.",
+            },
+            {
+              group: ['@/app/*'],
+              message: '아키텍처 위반: 하위 레이어에서 라우트(app)를 임포트할 수 없습니다.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];

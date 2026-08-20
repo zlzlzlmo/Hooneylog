@@ -40,7 +40,10 @@ function extractTitleFromPage(page: unknown): string {
   const title = (page as { properties?: { 이름?: { title?: Array<{ plain_text?: string }> } } })
     ?.properties?.이름?.title;
   if (!Array.isArray(title)) return '';
-  return title.map((t) => t.plain_text ?? '').join('').trim();
+  return title
+    .map((t) => t.plain_text ?? '')
+    .join('')
+    .trim();
 }
 
 export function createNotionPort(client: NotionClientLike, databaseId: string): NotionPort {

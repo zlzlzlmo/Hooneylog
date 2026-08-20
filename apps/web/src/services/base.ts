@@ -36,5 +36,4 @@ export class BaseApiService {
       body: body ? JSON.stringify(body) : undefined,
     });
   }
-
 }

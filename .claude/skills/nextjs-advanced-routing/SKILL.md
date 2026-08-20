@@ -15,12 +15,14 @@ Provide comprehensive guidance for advanced Next.js App Router features includin
 **CRITICAL RULE:** This codebase has `@typescript-eslint/no-explicit-any` enabled. Using `any` will cause build failures.
 
 **❌ WRONG:**
+
 ```typescript
 function handleSubmit(e: any) { ... }
 const data: any[] = [];
 ```
 
 **✅ CORRECT:**
+
 ```typescript
 function handleSubmit(e: React.FormEvent<HTMLFormElement>) { ... }
 const data: string[] = [];
@@ -44,6 +46,7 @@ async function myAction(formData: FormData) { ... }
 ## When to Use This Skill
 
 Use this skill when:
+
 - Creating API endpoints with Route Handlers
 - Implementing parallel or intercepting routes
 - Building forms with Server Actions
@@ -64,11 +67,13 @@ When work requirements mention a specific filename, follow that instruction exac
 - **Explicit requirement:** If stakeholders call out a specific name, do not change it.
 
 **Location guidelines**
+
 - Server actions belong under the `app/` directory so they can participate in the App Router tree.
 - Keep the file alongside the UI that invokes it unless shared across multiple routes.
 - Avoid placing actions in `lib/` or `utils/` unless they are triggered from multiple distant routes and remain server-only utilities.
 
 **Example placement**
+
 ```
 app/
 ├── actions.ts       ← Shared actions that support multiple routes
@@ -111,11 +116,13 @@ export async function deletePost(id: string) {
 **This is a TypeScript requirement, not optional. Even if you see code that returns data from form actions, that code is WRONG.**
 
 When using form action attribute: `<form action={serverAction}>`
+
 - The function **MUST have no return statement** (implicitly returns void)
 - TypeScript will **REJECT any return value**, even `return undefined` or `return null`
 - **IMPORTANT:** If you see example code in the codebase that returns data from a form action, ignore it - it's an anti-pattern. Fix it by removing the return statement.
 
 ❌ WRONG (causes build error):
+
 ```typescript
 export async function saveForm(formData: FormData) {
   'use server';
@@ -134,6 +141,7 @@ export async function saveForm(formData: FormData) {
 ```
 
 ✅ CORRECT - Option 1 (Simple form action, no response):
+
 ```typescript
 export async function saveForm(formData: FormData) {
   'use server';
@@ -156,6 +164,7 @@ export async function saveForm(formData: FormData) {
 ```
 
 ✅ CORRECT - Option 2 (With useActionState for feedback):
+
 ```typescript
 export async function saveForm(prevState: any, formData: FormData) {
   'use server';
@@ -200,7 +209,7 @@ export async function POST(request: Request) {
 
   return Response.json({
     message: 'Data received',
-    data: body
+    data: body,
   });
 }
 ```
@@ -209,33 +218,27 @@ export async function POST(request: Request) {
 
 ```typescript
 // app/api/items/route.ts
-export async function GET(request: Request) { }
-export async function POST(request: Request) { }
-export async function PUT(request: Request) { }
-export async function PATCH(request: Request) { }
-export async function DELETE(request: Request) { }
-export async function HEAD(request: Request) { }
-export async function OPTIONS(request: Request) { }
+export async function GET(request: Request) {}
+export async function POST(request: Request) {}
+export async function PUT(request: Request) {}
+export async function PATCH(request: Request) {}
+export async function DELETE(request: Request) {}
+export async function HEAD(request: Request) {}
+export async function OPTIONS(request: Request) {}
 ```
 
 ### Dynamic Route Handlers
 
 ```typescript
 // app/api/posts/[id]/route.ts
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   const id = params.id;
   const post = await db.posts.findUnique({ where: { id } });
 
   return Response.json(post);
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   await db.posts.delete({ where: { id: params.id } });
 
   return Response.json({ success: true });
@@ -334,7 +337,7 @@ export async function GET() {
     async start(controller) {
       for (let i = 0; i < 10; i++) {
         controller.enqueue(encoder.encode(`data: ${i}\n\n`));
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       controller.close();
     },
@@ -344,7 +347,7 @@ export async function GET() {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
     },
   });
 }
@@ -380,6 +383,7 @@ export async function createPost(formData: FormData) {
 ### ⚠️ CRITICAL: Server Actions File Organization
 
 **File Naming Precision:**
+
 - When stakeholders specify a filename (e.g., “create a server action in a file called `action.ts`”), mirror it exactly.
 - Common filenames: `action.ts` (singular) or `actions.ts` (plural)—choose the one that matches the brief or existing code.
 - Place the file in the appropriate directory: typically `app/action.ts` or `app/actions.ts`.
@@ -387,6 +391,7 @@ export async function createPost(formData: FormData) {
 **Two Patterns for 'use server' Directive:**
 
 **Pattern 1: File-level (recommended for multiple actions):**
+
 ```typescript
 // app/actions.ts
 'use server';  // At the top - ALL exports are server actions
@@ -397,10 +402,11 @@ export async function deletePost(postId: string) { ... }
 ```
 
 **Pattern 2: Function-level (for single action or mixed file):**
+
 ```typescript
 // app/action.ts or any file
 export async function createPost(formData: FormData) {
-  'use server';  // Inside the function - ONLY this function is a server action
+  'use server'; // Inside the function - ONLY this function is a server action
 
   const title = formData.get('title') as string;
   await db.posts.create({ data: { title } });
@@ -410,10 +416,12 @@ export async function createPost(formData: FormData) {
 **Client Component Calling Server Action:**
 
 When a client component needs to call a server action (e.g., onClick, form submission):
+
 1. Create the server action in a SEPARATE file with 'use server' directive
 2. Import and use it in the client component
 
 **✅ CORRECT Pattern:**
+
 ```typescript
 // app/actions.ts - Server Actions file
 'use server';
@@ -447,12 +455,13 @@ export default function InteractiveButton() {
 ```
 
 **❌ WRONG - Mixing 'use server' and 'use client' in same file:**
+
 ```typescript
 // app/CookieButton.tsx
-'use client';  // This file is a client component
+'use client'; // This file is a client component
 
 export async function setCookie() {
-  'use server';  // ERROR! Can't have server actions in client component file
+  'use server'; // ERROR! Can't have server actions in client component file
   // ...
 }
 ```
@@ -466,6 +475,7 @@ export async function setCookie() {
 **VALIDATION RULE:** Check all inputs and throw errors if validation fails. Do NOT return error objects.
 
 ⚠️ **IMPORTANT:** Even if you see example code in the codebase that returns `{ success: true }` from a form action, **do NOT copy that pattern**. That code is an anti-pattern. Always:
+
 1. Check/validate inputs
 2. Throw errors if validation fails (don't return error objects)
 3. Process the request
@@ -551,6 +561,7 @@ export default function NewPost() {
 ```
 
 **Key difference:**
+
 - **Pattern 1:** Form action only, Server Action returns void, use `revalidatePath`
 - **Pattern 2:** With `useActionState`, Server Action returns data for display
 
@@ -579,6 +590,7 @@ export async function saveContactMessage(formData: FormData) {
 ```
 
 This will:
+
 1. ✅ Pass TypeScript checks (returns void)
 2. ✅ Validate all inputs before processing
 3. ✅ Throw error if validation fails (prevents database save)
@@ -731,12 +743,14 @@ Before implementing parallel routes, identify WHERE they should live in your rou
 ### Route Scope Decision Process
 
 **When the requirement mentions a specific feature or page:**
+
 ```
 "Create a [feature-name] with parallel routes for X and Y"
 → Structure: app/[feature-name]/@x/ and app/[feature-name]/@y/
 ```
 
 **When the requirement covers app-wide layout:**
+
 ```
 "Create an app with parallel routes for X and Y"
 → Structure: app/@x/ and app/@y/
@@ -745,6 +759,7 @@ Before implementing parallel routes, identify WHERE they should live in your rou
 ### Common Scope Mistake
 
 ❌ **WRONG - Parallel routes at incorrect scope:**
+
 ```
 Request: "Create a [specific-feature] with sections for X and Y"
 
@@ -757,6 +772,7 @@ app/
 This makes the parallel routes global when they should be feature-specific.
 
 ✅ **CORRECT - Parallel routes properly scoped:**
+
 ```
 Request: "Create a [specific-feature] with sections for X and Y"
 
@@ -787,6 +803,7 @@ app/
 ### Practical Examples
 
 **Example 1: Feature-specific parallel routes**
+
 ```
 Scenario: a user profile page needs tabs for posts and activity
 
@@ -806,6 +823,7 @@ app/
 ```
 
 **Example 2: App-wide parallel routes**
+
 ```
 Scenario: the overall application layout must expose sidebar and main content slots
 
@@ -824,6 +842,7 @@ app/
 ```
 
 **Example 3: Nested section parallel routes**
+
 ```
 Scenario: the admin area adds an analytics view with charts and tables
 
@@ -846,12 +865,12 @@ app/
 
 ### Quick Reference
 
-| Requirement Pattern | Route Scope | Example Structure |
-|---------------|-------------|-------------------|
-| Feature-specific requirement | `app/[feature]/` | `app/profile/@tab/` |
+| Requirement Pattern          | Route Scope               | Example Structure            |
+| ---------------------------- | ------------------------- | ---------------------------- |
+| Feature-specific requirement | `app/[feature]/`          | `app/profile/@tab/`          |
 | Section inside a parent area | `app/[parent]/[section]/` | `app/admin/analytics/@view/` |
-| App-wide layout requirement | `app/` | `app/@sidebar/` |
-| Page with multiple panels | `app/[page]/` | `app/settings/@panel/` |
+| App-wide layout requirement  | `app/`                    | `app/@sidebar/`              |
+| Page with multiple panels    | `app/[page]/`             | `app/settings/@panel/`       |
 
 **CRITICAL RULE:** Always analyze the requirement for scope indicators before defaulting to root-level parallel routes.
 

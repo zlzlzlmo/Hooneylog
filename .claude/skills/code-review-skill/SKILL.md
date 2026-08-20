@@ -10,8 +10,8 @@ allowed-tools:
   - Read
   - Grep
   - Glob
-  - Bash      # 运行 lint/test/build 命令验证代码质量
-  - WebFetch  # 查阅最新文档和最佳实践
+  - Bash # 运行 lint/test/build 命令验证代码质量
+  - WebFetch # 查阅最新文档和最佳实践
 ---
 
 # Code Review Skill
@@ -34,6 +34,7 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 ### 1. The Review Mindset
 
 **Goals of Code Review:**
+
 - Catch bugs and edge cases
 - Ensure code maintainability
 - Share knowledge across team
@@ -42,6 +43,7 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 - Build team culture
 
 **Not the Goals:**
+
 - Show off knowledge
 - Nitpick formatting (use linters)
 - Block progress unnecessarily
@@ -50,6 +52,7 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 ### 2. Effective Feedback
 
 **Good Feedback is:**
+
 - Specific and actionable
 - Educational, not judgmental
 - Focused on the code, not the person
@@ -59,20 +62,21 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 ```markdown
 ❌ Bad: "This is wrong."
 ✅ Good: "This could cause a race condition when multiple users
-         access simultaneously. Consider using a mutex here."
+access simultaneously. Consider using a mutex here."
 
 ❌ Bad: "Why didn't you use X pattern?"
 ✅ Good: "Have you considered the Repository pattern? It would
-         make this easier to test. Here's an example: [link]"
+make this easier to test. Here's an example: [link]"
 
 ❌ Bad: "Rename this variable."
 ✅ Good: "[nit] Consider `userCount` instead of `uc` for
-         clarity. Not blocking if you prefer to keep it."
+clarity. Not blocking if you prefer to keep it."
 ```
 
 ### 3. Review Scope
 
 **What to Review:**
+
 - Logic correctness and edge cases
 - Security vulnerabilities
 - Performance implications
@@ -83,6 +87,7 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 - Architectural fit
 
 **What Not to Review Manually:**
+
 - Code formatting (use Prettier, Black, etc.)
 - Import organization
 - Linting violations
@@ -93,6 +98,7 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 ### Phase 1: Context Gathering (2-3 minutes)
 
 Before diving into code, understand:
+
 1. Read PR description and linked issue
 2. Check PR size (>400 lines? Ask to split)
 3. Review CI/CD status (tests passing?)
@@ -115,6 +121,7 @@ Before diving into code, understand:
 ### Phase 3: Line-by-Line Review (10-20 minutes)
 
 For each file, check:
+
 - **Logic & Correctness** - Edge cases, off-by-one, null checks, race conditions
 - **Security** - Input validation, injection risks, XSS, sensitive data
 - **Performance** - N+1 queries, unnecessary loops, memory leaks
@@ -178,11 +185,11 @@ Use labels to indicate priority:
 
 根据审查的代码语言，查阅对应的详细指南：
 
-| Language/Framework | Reference File | Key Topics |
-|-------------------|----------------|------------|
-| **React** | [React Guide](reference/react.md) | Hooks, useEffect, React 19 Actions, RSC, Suspense, TanStack Query v5 |
-| **TypeScript** | [TypeScript Guide](reference/typescript.md) | 类型安全, async/await, 不可变性 |
-| **CSS/Less/Sass** | [CSS Guide](reference/css-less-sass.md) | 变量规范, !important, 性能优化, 响应式, 兼容性 |
+| Language/Framework | Reference File                              | Key Topics                                                           |
+| ------------------ | ------------------------------------------- | -------------------------------------------------------------------- |
+| **React**          | [React Guide](reference/react.md)           | Hooks, useEffect, React 19 Actions, RSC, Suspense, TanStack Query v5 |
+| **TypeScript**     | [TypeScript Guide](reference/typescript.md) | 类型安全, async/await, 不可变性                                      |
+| **CSS/Less/Sass**  | [CSS Guide](reference/css-less-sass.md)     | 变量规范, !important, 性能优化, 响应式, 兼容性                       |
 
 > Note: language references in this install are trimmed to the project stack
 > (React / TypeScript / CSS). Other languages from upstream were removed.
@@ -191,8 +198,8 @@ Use labels to indicate priority:
 
 Language-agnostic patterns applicable to all code reviews:
 
-| Topic | Reference File | Key Topics |
-|-------|----------------|------------|
+| Topic                 | Reference File                                                 | Key Topics                                                                                                                          |
+| --------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Universal Quality** | [Universal Quality Guide](reference/code-quality-universal.md) | Reuse audit, parameter sprawl, leaky abstractions, nested conditionals, stringly-typed code, TOCTOU, no-op updates, redundant state |
 
 ## Additional Resources

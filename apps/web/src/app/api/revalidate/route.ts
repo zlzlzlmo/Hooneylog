@@ -29,18 +29,17 @@ export async function POST(request: Request) {
   if (!secret) {
     return NextResponse.json(
       { revalidated: false, message: 'Revalidation secret is not configured.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   const provided =
-    request.headers.get('x-revalidate-secret') ??
-    new URL(request.url).searchParams.get('secret');
+    request.headers.get('x-revalidate-secret') ?? new URL(request.url).searchParams.get('secret');
 
   if (!provided || !secretsMatch(provided, secret)) {
     return NextResponse.json(
       { revalidated: false, message: 'Invalid revalidation secret.' },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

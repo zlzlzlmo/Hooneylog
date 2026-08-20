@@ -19,12 +19,14 @@ describe('ViewsService (inherited from BaseApiService)', () => {
 
       const result = await viewsService.getStats();
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/views/stats', expect.objectContaining({
-        method: 'GET'
-      }));
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/views/stats',
+        expect.objectContaining({
+          method: 'GET',
+        }),
+      );
       expect(result).toEqual(mockStats);
     });
-
   });
 
   describe('getMultipleCounts', () => {
@@ -37,9 +39,12 @@ describe('ViewsService (inherited from BaseApiService)', () => {
 
       const result = await viewsService.getMultipleCounts(['post-1', 'post-2']);
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/views?slugs=post-1,post-2', expect.objectContaining({
-        method: 'GET'
-      }));
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/views?slugs=post-1,post-2',
+        expect.objectContaining({
+          method: 'GET',
+        }),
+      );
       expect(result).toEqual(mockViews);
     });
   });
@@ -53,9 +58,12 @@ describe('ViewsService (inherited from BaseApiService)', () => {
 
       const result = await viewsService.incrementPostView('test-post');
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/views/test-post', expect.objectContaining({
-        method: 'POST'
-      }));
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/views/test-post',
+        expect.objectContaining({
+          method: 'POST',
+        }),
+      );
       expect(result).toBe(42);
     });
   });
@@ -70,12 +78,12 @@ describe('ViewsService (inherited from BaseApiService)', () => {
       });
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+
       const result = await viewsService.getPostView('error-slug');
 
       expect(result).toBe(0); // Error caught in ViewsService and returns fallback
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       consoleSpy.mockRestore();
     });
   });

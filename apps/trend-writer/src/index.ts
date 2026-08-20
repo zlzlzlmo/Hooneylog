@@ -49,7 +49,8 @@ export async function runPipeline(deps: PipelineDeps): Promise<PipelineResult> {
     status,
   });
 
-  const reasons = verdict.pass && research.sources.length === 0 ? ['근거 출처 없음'] : verdict.reasons;
+  const reasons =
+    verdict.pass && research.sources.length === 0 ? ['근거 출처 없음'] : verdict.reasons;
   const reasonLine = status === 'draft' ? `\n사유: ${reasons.join('; ')}` : '';
   await notify(`[${status}] ${withFooter.title}\n${result.url}${reasonLine}`);
 

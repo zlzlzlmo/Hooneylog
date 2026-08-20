@@ -12,7 +12,9 @@ export function Search({ searchValue, handleSearchValue }: SearchProps) {
     <section className="w-full relative mb-6 group">
       <div className="flex items-center w-full bg-notion-bg border border-notion-border rounded-[4px] px-3 py-2 transition-all focus-within:border-accent focus-within:shadow-[0_0_0_2px_var(--color-accent-bg)]">
         <BiSearch className="w-5 h-5 text-notion-secondary flex-shrink-0" aria-hidden="true" />
-        <label htmlFor="post-search" className="sr-only">포스트 검색</label>
+        <label htmlFor="post-search" className="sr-only">
+          포스트 검색
+        </label>
         <input
           id="post-search"
           type="search"

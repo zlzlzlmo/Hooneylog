@@ -46,10 +46,12 @@ Expected: before 스크린샷 확보(회귀 비교용).
 ### Task 1: 디자인 토큰 교체 + JetBrains Mono 주입
 
 **Files:**
+
 - Modify: `apps/web/src/app/globals.css` (`@theme`, `:root`, `.dark` 블록)
 - Modify: `apps/web/src/app/layout.tsx`
 
 **Interfaces:**
+
 - Produces: 신규 토큰 `--color-cat-fe/-be/-ai`(→ 유틸 `text-cat-fe`, `bg-cat-fe` 등), `--font-mono`가 JetBrains Mono로. 후속 태스크가 이 토큰을 사용.
 
 - [ ] **Step 1: `globals.css`의 `@theme` 블록을 TRACE 값으로 교체(이름 유지 + 카테고리 토큰 추가)**
@@ -58,29 +60,32 @@ Expected: before 스크린샷 확보(회귀 비교용).
 
 ```css
 @theme {
-  --color-notion-bg: #FAF9F5;
-  --color-notion-text: #12141A;
-  --color-notion-text-light: #6B6E76;
+  --color-notion-bg: #faf9f5;
+  --color-notion-text: #12141a;
+  --color-notion-text-light: #6b6e76;
   --color-notion-border: rgba(18, 20, 26, 0.12);
   --color-notion-hover: rgba(18, 20, 26, 0.06);
-  --color-notion-gray-bg: #F1EFEA;
-  --color-notion-blue-bg: #E7F0FB;
-  --color-notion-blue-text: #2D6AE3;
+  --color-notion-gray-bg: #f1efea;
+  --color-notion-blue-bg: #e7f0fb;
+  --color-notion-blue-text: #2d6ae3;
 
   --container-max: 720px;
   --breakpoint-mobile: 768px;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto,
+    'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --color-accent: #C97E12;
-  --color-accent-bg: #F6ECD9;
-  --color-on-accent: #FFFFFF;
+  --color-accent: #c97e12;
+  --color-accent-bg: #f6ecd9;
+  --color-on-accent: #ffffff;
 
-  --color-cat-fe: #2D6AE3;
-  --color-cat-be: #0B8F6C;
-  --color-cat-ai: #7C5CFC;
+  --color-cat-fe: #2d6ae3;
+  --color-cat-be: #0b8f6c;
+  --color-cat-ai: #7c5cfc;
 }
 ```
 
@@ -90,20 +95,20 @@ Expected: before 스크린샷 확보(회귀 비교용).
 
 ```css
 .dark {
-  --color-notion-bg: #0D0E12;
-  --color-notion-text: #E7E7E3;
-  --color-notion-text-light: #8A8D95;
+  --color-notion-bg: #0d0e12;
+  --color-notion-text: #e7e7e3;
+  --color-notion-text-light: #8a8d95;
   --color-notion-border: rgba(255, 255, 255, 0.11);
   --color-notion-hover: rgba(255, 255, 255, 0.06);
-  --color-notion-gray-bg: #14161C;
-  --color-notion-blue-bg: #17293D;
-  --color-notion-blue-text: #6AA0FF;
-  --color-accent: #F0B33D;
-  --color-accent-bg: #2A2413;
-  --color-on-accent: #0D0E12;
-  --color-cat-fe: #6AA0FF;
-  --color-cat-be: #3FD6A6;
-  --color-cat-ai: #A98CFF;
+  --color-notion-gray-bg: #14161c;
+  --color-notion-blue-bg: #17293d;
+  --color-notion-blue-text: #6aa0ff;
+  --color-accent: #f0b33d;
+  --color-accent-bg: #2a2413;
+  --color-on-accent: #0d0e12;
+  --color-cat-fe: #6aa0ff;
+  --color-cat-be: #3fd6a6;
+  --color-cat-ai: #a98cff;
 }
 ```
 
@@ -148,9 +153,11 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 2: 헤더 → 상태바(statusbar)
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/header.tsx`
 
 **Interfaces:**
+
 - Consumes: `--font-mono`, 카테고리 토큰(Task 1). `ThemeToggle`(기존 컴포넌트) 재사용.
 
 - [ ] **Step 1: `header.tsx`를 상태바 형태로 교체**
@@ -175,7 +182,10 @@ export function Header() {
         className="flex items-center gap-[3px] font-semibold tracking-tight text-notion-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg rounded-[3px]"
       >
         hooneylog
-        <span aria-hidden="true" className="inline-block w-[7px] h-[14px] bg-accent translate-y-[2px] motion-safe:animate-[blink_1.15s_steps(1)_infinite]" />
+        <span
+          aria-hidden="true"
+          className="inline-block w-[7px] h-[14px] bg-accent translate-y-[2px] motion-safe:animate-[blink_1.15s_steps(1)_infinite]"
+        />
       </Link>
       <nav aria-label="카테고리" className="ml-auto flex items-center gap-5 text-notion-secondary">
         {NAV.map((n) => (
@@ -195,7 +205,11 @@ export function Header() {
 `globals.css`의 `@layer utilities` 근처(또는 파일 하단)에 추가:
 
 ```css
-@keyframes blink { 50% { opacity: 0; } }
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
 ```
 
 - [ ] **Step 3: 시각 검증**
@@ -217,11 +231,13 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 3: 셸(app-layout · footer · theme-toggle) 정렬
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/app-layout.tsx`
 - Modify: `apps/web/src/components/layout/footer.tsx`
 - Modify: `apps/web/src/components/layout/theme-toggle.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1 토큰. AUTHOR(기존).
 
 - [ ] **Step 1: `footer.tsx`를 모노 스타일로**
@@ -234,8 +250,15 @@ import { AUTHOR } from '@/lib/author';
 export function Footer() {
   return (
     <footer className="w-full border-t border-notion-border mt-20 py-10 px-4 sm:px-6 font-mono text-[12px] text-notion-secondary flex flex-wrap items-center justify-between gap-3">
-      <span><span className="text-accent">$</span> hooneylog — frontend · backend · ai</span>
-      <span>© {new Date().getFullYear()} {AUTHOR.name} · <a href="/feed.xml" className="hover:text-notion-text transition-colors">RSS</a></span>
+      <span>
+        <span className="text-accent">$</span> hooneylog — frontend · backend · ai
+      </span>
+      <span>
+        © {new Date().getFullYear()} {AUTHOR.name} ·{' '}
+        <a href="/feed.xml" className="hover:text-notion-text transition-colors">
+          RSS
+        </a>
+      </span>
     </footer>
   );
 }
@@ -271,11 +294,13 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 4: 홈 인트로 + 사이드바 + 검색 리스킨
 
 **Files:**
+
 - Modify: `apps/web/src/app/home-page-client.tsx` (인트로 밴드 + 컨테이너 클래스만)
 - Modify: `apps/web/src/components/layout/sidebar.tsx`
 - Modify: `apps/web/src/components/features/search.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1 토큰. **로직(useFilterPost·상태·조회수 동기화·로드모어)·props 무변경.**
 
 - [ ] **Step 1: `home-page-client.tsx` 인트로 밴드를 TRACE 리드로**
@@ -283,17 +308,20 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 `return (...)` 내부의 인트로 `header`(줄 102~109 상당)만 아래로 교체한다. 리스트/사이드바/검색/로드모어 JSX와 모든 훅·핸들러는 **그대로 둔다**:
 
 ```tsx
-      <header className="mb-8 lg:mb-10">
-        <span className="font-mono text-[12.5px] text-notion-secondary tracking-[0.02em]">~/hooneylog — {AUTHOR.tagline}의 개발 로그</span>
-        <h1 className="mt-2 text-2xl sm:text-[2rem] font-extrabold tracking-[-0.03em] leading-[1.1] text-notion-text text-balance">
-          막힌 지점부터 <span className="text-accent">되짚는</span> 기술 기록.
-        </h1>
-      </header>
+<header className="mb-8 lg:mb-10">
+  <span className="font-mono text-[12.5px] text-notion-secondary tracking-[0.02em]">
+    ~/hooneylog — {AUTHOR.tagline}의 개발 로그
+  </span>
+  <h1 className="mt-2 text-2xl sm:text-[2rem] font-extrabold tracking-[-0.03em] leading-[1.1] text-notion-text text-balance">
+    막힌 지점부터 <span className="text-accent">되짚는</span> 기술 기록.
+  </h1>
+</header>
 ```
 
 - [ ] **Step 2: `sidebar.tsx` 리스킨 (카테고리 목록·통계)**
 
 먼저 현재 코드를 읽는다(`sidebar.tsx`). 카테고리 필터 버튼과 통계 표시의 **로직·props·핸들러는 유지**하고, 클래스만 TRACE로:
+
 - 카테고리 라벨은 `font-mono text-[12px]`, 선택 항목은 `text-notion-text`·비선택은 `text-notion-secondary`.
 - 활성 카테고리 표식은 좌측 2px 카테고리색 바(예: `border-l-2` + 해당 색) 또는 `text-accent`.
 - 통계 숫자는 `font-mono tabular-nums`.
@@ -324,19 +352,23 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 5: post-item-list → 트레이스 스트림 (시그니처)
 
 **Files:**
+
 - Modify: `apps/web/src/components/blocks/post-item-list.tsx`
 - Modify: `apps/web/src/components/elements/category-fallback-image.tsx` (썸네일 크기 대응 시)
 
 **Interfaces:**
+
 - Consumes: `NotionPost[]`, `viewsMap`, `query`, `onReset`(**props 그대로**). 카테고리 토큰.
 - Produces: 홈 목록의 트레이스 레일 스트림. 빈 상태/onReset 동작 유지.
 
 카테고리→색 매핑 헬퍼(파일 내부, 데이터 무변경):
+
 - `Frontend`→`cat-fe`, `Backend`→`cat-be`, `Artificial Intelligence`/`AI`→`cat-ai`, 그 외→`accent`.
 
 - [ ] **Step 1: 빈 상태 블록은 유지, 목록 컨테이너를 레일 스트림으로 교체**
 
 `posts.length === 0` 분기(빈 상태 + onReset 버튼)는 **그대로 둔다**. 그 아래 `return (<div className="grid ...">...)` 를 좌측 레일 + 세로 스택 엔트리로 바꾼다. 각 엔트리는:
+
 - 좌측 레일(컨테이너 `relative pl-8`, `::before`로 세로선) + 엔트리별 카테고리색 다이아몬드 노드(`absolute -left-8`, `rotate-45`, `border-2` 카테고리색, hover 시 채움+box-shadow).
 - 모노 메타라인: `카테고리 · {readTime}min · {views} · {date}` (readTime이 데이터에 없으면 조회수/날짜만 — 기존 footer가 쓰던 `viewsMap[post.id]`·`formatDate(post.createdAt)` 사용).
 - 한글 헤드라인 `h3`(hover 시 카테고리색), 한 줄 dek(`line-clamp-2`), 우측 작은 정사각 썸네일(72~88px, `getCategoryImageSrc` + `CategoryFallbackImage` 재사용, isDefault 분기 유지).
@@ -367,15 +399,18 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ### Task 6: tag-list · author-badge 토큰 정렬
 
 **Files:**
+
 - Modify: `apps/web/src/components/elements/tag-list.tsx`
 - Modify: `apps/web/src/components/elements/author-badge.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1 토큰. props 무변경.
 
 - [ ] **Step 1: 각 파일을 읽고 클래스만 TRACE로**
 
 먼저 두 파일을 읽는다. 로직·props 유지:
+
 - `tag-list`: 태그 칩을 `font-mono text-[11px]`, 각진 hairline 보더(`border border-notion-border`), `#` 접두. hover 시 `bg-notion-hover`.
 - `author-badge`: 아바타/이름 배치 유지, 텍스트 토큰 정합(`text-notion-secondary`), 필요 시 라벨 모노.
 
@@ -434,5 +469,9 @@ TRACE(터미널 에디토리얼) 리스킨 1단계: 디자인 토큰·JetBrains 
 EOF
 )"
 ```
+
 Expected: 브랜치별 Vercel 프리뷰 URL 생성 → 실데이터로 최종 확인 후 머지.
+
+```
+
 ```

@@ -27,10 +27,27 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 my-10">
-      <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-notion-secondary mr-1">공유하기</span>
-      <a href={x} target="_blank" rel="noopener noreferrer" className={cls} aria-label="X에 공유">X</a>
-      <a href={linkedin} target="_blank" rel="noopener noreferrer" className={cls} aria-label="LinkedIn에 공유">LinkedIn</a>
-      <button type="button" onClick={copy} className={cls} aria-label={copied ? '링크 복사됨' : '링크 복사'}>
+      <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-notion-secondary mr-1">
+        공유하기
+      </span>
+      <a href={x} target="_blank" rel="noopener noreferrer" className={cls} aria-label="X에 공유">
+        X
+      </a>
+      <a
+        href={linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cls}
+        aria-label="LinkedIn에 공유"
+      >
+        LinkedIn
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        className={cls}
+        aria-label={copied ? '링크 복사됨' : '링크 복사'}
+      >
         {copied ? <Check size={14} aria-hidden="true" /> : <Link2 size={14} aria-hidden="true" />}
         {copied ? '복사됨' : '링크 복사'}
       </button>

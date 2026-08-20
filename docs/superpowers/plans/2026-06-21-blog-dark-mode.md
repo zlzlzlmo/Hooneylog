@@ -21,9 +21,11 @@
 ### Task 1: Dark tokens + variant in globals.css
 
 **Files:**
+
 - Modify: `apps/web/src/app/globals.css`
 
 **Interfaces:**
+
 - Produces: `dark:` variant available; `.dark` overrides all `--color-*` tokens so token-based utilities theme automatically.
 
 - [ ] **Step 1: Switch to non-inline theme + add the dark variant and overrides**
@@ -31,29 +33,31 @@
 Replace the top of `globals.css` (the `@import`, the `@theme inline { ... }` block, and the `:root` block) with the following. Keep the rest of the file (the `body`, `@layer utilities`, `:target`, and `prefers-reduced-motion` blocks) unchanged:
 
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-notion-bg: #FFFFFF;
-  --color-notion-text: #37352F;
+  --color-notion-bg: #ffffff;
+  --color-notion-text: #37352f;
   --color-notion-text-light: rgba(55, 53, 47, 0.65);
   --color-notion-border: rgba(55, 53, 47, 0.16);
   --color-notion-hover: rgba(55, 53, 47, 0.08);
-  --color-notion-gray-bg: #F1F1EF;
-  --color-notion-blue-bg: #E7F3F8;
-  --color-notion-blue-text: #0B6E99;
+  --color-notion-gray-bg: #f1f1ef;
+  --color-notion-blue-bg: #e7f3f8;
+  --color-notion-blue-text: #0b6e99;
 
   --container-max: 720px;
   --breakpoint-mobile: 768px;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto,
+    'Malgun Gothic', 'Noto Sans KR', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: Georgia, 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
-  --color-accent: #0F7B6C;
-  --color-accent-bg: #E3F2EF;
+  --color-accent: #0f7b6c;
+  --color-accent-bg: #e3f2ef;
 }
 
 :root {
@@ -63,15 +67,15 @@ Replace the top of `globals.css` (the `@import`, the `@theme inline { ... }` blo
 
 .dark {
   --color-notion-bg: #191919;
-  --color-notion-text: #E6E6E5;
+  --color-notion-text: #e6e6e5;
   --color-notion-text-light: rgba(235, 235, 235, 0.55);
   --color-notion-border: rgba(255, 255, 255, 0.13);
   --color-notion-hover: rgba(255, 255, 255, 0.055);
-  --color-notion-gray-bg: #2C2C2C;
-  --color-notion-blue-bg: #1D3A4D;
-  --color-notion-blue-text: #5BA8C9;
-  --color-accent: #4FD1C5;
-  --color-accent-bg: #1D3330;
+  --color-notion-gray-bg: #2c2c2c;
+  --color-notion-blue-bg: #1d3a4d;
+  --color-notion-blue-text: #5ba8c9;
+  --color-accent: #4fd1c5;
+  --color-accent-bg: #1d3330;
 }
 ```
 
@@ -92,9 +96,11 @@ git commit -m "feat(theme): dark variant + .dark token overrides (non-inline @th
 ### Task 2: No-flash theme script in the root layout
 
 **Files:**
+
 - Modify: `apps/web/src/app/layout.tsx`
 
 **Interfaces:**
+
 - Produces: `<html>` gets `.dark` before paint when appropriate; `suppressHydrationWarning` avoids the class-mismatch warning.
 
 - [ ] **Step 1: Add suppressHydrationWarning and the pre-paint script**
@@ -102,20 +108,20 @@ git commit -m "feat(theme): dark variant + .dark token overrides (non-inline @th
 In `layout.tsx`, add `suppressHydrationWarning` to the `<html>` tag, and add an inline script as the first child of `<body>` (before `<AppLayout>`):
 
 ```tsx
-  return (
-    <html lang="ko" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col m-0 p-0 text-notion-text bg-notion-bg">
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
-          }}
-        />
-        <AppLayout>{children}</AppLayout>
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
-  );
+return (
+  <html lang="ko" suppressHydrationWarning>
+    <body className="min-h-full flex flex-col m-0 p-0 text-notion-text bg-notion-bg">
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
+        }}
+      />
+      <AppLayout>{children}</AppLayout>
+      <Analytics />
+      <SpeedInsights />
+    </body>
+  </html>
+);
 ```
 
 - [ ] **Step 2: Verify lint/typecheck**
@@ -135,10 +141,12 @@ git commit -m "feat(theme): pre-paint no-flash theme script"
 ### Task 3: ThemeToggle component + header slot
 
 **Files:**
+
 - Create: `apps/web/src/components/layout/theme-toggle.tsx`
 - Modify: `apps/web/src/components/layout/header.tsx`
 
 **Interfaces:**
+
 - Produces: `ThemeToggle` (client) — reads current theme on mount, toggles `.dark`, persists to `localStorage.theme`.
 
 - [ ] **Step 1: Create the ThemeToggle**
@@ -180,7 +188,11 @@ export function ThemeToggle() {
       className="flex items-center justify-center w-9 h-9 rounded-[6px] text-notion-secondary hover:bg-notion-hover hover:text-notion-text transition-colors cursor-pointer"
     >
       {/* Render a stable icon until mounted to avoid hydration mismatch */}
-      {mounted && isDark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+      {mounted && isDark ? (
+        <Sun size={18} aria-hidden="true" />
+      ) : (
+        <Moon size={18} aria-hidden="true" />
+      )}
     </button>
   );
 }
@@ -232,6 +244,7 @@ git commit -m "feat(theme): header dark-mode toggle"
 ### Task 4: Hardcoded-color sweep
 
 **Files:**
+
 - Modify: `apps/web/src/components/layout/app-layout.tsx`
 - Modify: `apps/web/src/components/features/search.tsx`
 - Modify: `apps/web/src/components/layout/sidebar.tsx`
@@ -276,7 +289,11 @@ Inline code (`bg-gray-100 text-[#B91C1C]`) — add dark variants:
 Table head (`bg-[#F7F6F3]`) — add a dark variant:
 
 ```tsx
-            return <thead className="bg-[#F7F6F3] dark:bg-[#2C2C2C]" {...props}>{children as React.ReactNode}</thead>;
+return (
+  <thead className="bg-[#F7F6F3] dark:bg-[#2C2C2C]" {...props}>
+    {children as React.ReactNode}
+  </thead>
+);
 ```
 
 - [ ] **Step 5: Verify lint/typecheck/build**
@@ -304,10 +321,10 @@ Expected: all PASS.
 
 ## Spec Coverage Map (#3)
 
-| Spec item | Task |
-|---|---|
-| Class strategy + `.dark` token overrides | Task 1 |
-| No-flash pre-paint script | Task 2 |
-| Toggle (system default, persisted) | Tasks 2, 3 |
-| Hardcoded-color sweep | Task 4 |
-| Known out-of-scope: giscus/mermaid theme sync | noted |
+| Spec item                                     | Task       |
+| --------------------------------------------- | ---------- |
+| Class strategy + `.dark` token overrides      | Task 1     |
+| No-flash pre-paint script                     | Task 2     |
+| Toggle (system default, persisted)            | Tasks 2, 3 |
+| Hardcoded-color sweep                         | Task 4     |
+| Known out-of-scope: giscus/mermaid theme sync | noted      |

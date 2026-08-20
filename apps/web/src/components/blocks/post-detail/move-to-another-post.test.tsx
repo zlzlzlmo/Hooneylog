@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { MoveToAnotherPost } from './move-to-another-post';
 import { NotionPost } from '@hooneylog/shared-types';
 
-const post = (id: string, title: string) => ({ id, title } as unknown as NotionPost);
+const post = (id: string, title: string) => ({ id, title }) as unknown as NotionPost;
 
 describe('MoveToAnotherPost', () => {
   it('renders only the next link when there is no previous post', () => {

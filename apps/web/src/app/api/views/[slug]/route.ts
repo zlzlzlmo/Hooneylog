@@ -5,10 +5,7 @@ import { getClientIp, hashIp } from '@/lib/view-guard';
 /**
  * 💡 업계 표준: 조회수 조회 API
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
   const { slug } = await context.params;
 
   if (!slug) {
@@ -28,10 +25,7 @@ export async function GET(
  * 💡 업계 표준: 조회수 증가 API
  * 클라이언트에서 호출하여 ISR 캐시와 상관없이 실시간 조회를 기록합니다.
  */
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ slug: string }> }
-) {
+export async function POST(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
   const { slug } = await context.params;
 
   if (!slug) {

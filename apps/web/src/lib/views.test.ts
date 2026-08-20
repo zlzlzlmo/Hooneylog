@@ -2,7 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
-import { incrementView, getGlobalStats, getViewCount, getViewCounts, markViewedOnce } from './views';
+import {
+  incrementView,
+  getGlobalStats,
+  getViewCount,
+  getViewCounts,
+  markViewedOnce,
+} from './views';
 
 // Mock the @upstash/redis client used by views.ts
 const kv = vi.hoisted(() => ({
@@ -23,7 +29,7 @@ describe('views utility', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     console.error = vi.fn(); // Suppress expected errors in console
-    
+
     // Mock standard pipeline behavior
     const mockPipeline = {
       incr: vi.fn(),
@@ -40,18 +46,18 @@ describe('views utility', () => {
   describe('incrementView', () => {
     it('successfully increments views using pipeline', async () => {
       const result = await incrementView('test-post');
-      
+
       expect(kv.pipeline).toHaveBeenCalled();
-      
+
       const pipeline = kv.pipeline();
       expect(pipeline.incr).toHaveBeenCalledWith('views:post:test-post');
       expect(pipeline.incr).toHaveBeenCalledWith('views:total');
-      
+
       const today = new Date().toISOString().split('T')[0];
       expect(pipeline.incr).toHaveBeenCalledWith(`views:today:${today}`);
       expect(pipeline.expire).toHaveBeenCalledWith(`views:today:${today}`, 172800); // 60 * 60 * 48
       expect(pipeline.exec).toHaveBeenCalled();
-      
+
       // Should return the first result (post view count)
       expect(result).toBe(10);
     });
@@ -65,11 +71,11 @@ describe('views utility', () => {
       (kv.pipeline as Mock).mockReturnValue(mockPipeline);
 
       const result = await incrementView('test-post');
-      
+
       expect(result).toBe(0);
       expect(console.error).toHaveBeenCalledWith(
         expect.stringContaining('❌ [KV] Failed to increment views for test-post'),
-        expect.any(Error)
+        expect.any(Error),
       );
     });
   });
@@ -144,7 +150,11 @@ describe('views utility', () => {
 
       const result = await getViewCounts(slugs);
 
-      expect(kv.mget).toHaveBeenCalledWith('views:post:post-1', 'views:post:post-2', 'views:post:post-3');
+      expect(kv.mget).toHaveBeenCalledWith(
+        'views:post:post-1',
+        'views:post:post-2',
+        'views:post:post-3',
+      );
       expect(result).toEqual({
         'post-1': 100,
         'post-2': 0, // Fallback for null
@@ -184,11 +194,7 @@ describe('views utility', () => {
 
       await markViewedOnce('test-post', 'abc123', 3600);
 
-      expect(kv.set).toHaveBeenCalledWith(
-        'views:seen:test-post:abc123',
-        1,
-        { nx: true, ex: 3600 }
-      );
+      expect(kv.set).toHaveBeenCalledWith('views:seen:test-post:abc123', 1, { nx: true, ex: 3600 });
     });
 
     it('defaults to a 24h TTL', async () => {
@@ -196,11 +202,10 @@ describe('views utility', () => {
 
       await markViewedOnce('test-post', 'abc123');
 
-      expect(kv.set).toHaveBeenCalledWith(
-        'views:seen:test-post:abc123',
-        1,
-        { nx: true, ex: 86400 }
-      );
+      expect(kv.set).toHaveBeenCalledWith('views:seen:test-post:abc123', 1, {
+        nx: true,
+        ex: 86400,
+      });
     });
 
     it('fails open (returns true) and logs on KV error', async () => {

@@ -16,17 +16,23 @@ async function fetchPost(pageId) {
     const page = await notion.pages.retrieve({ page_id: pageId });
     const mdblocks = await n2m.pageToMarkdown(pageId);
     const mdString = n2m.toMarkdownString(mdblocks);
-    
+
     const title = page.properties['이름']?.title[0]?.plain_text || 'Untitled';
     const category = page.properties['category']?.multi_select[0]?.name || 'Uncategorized';
-    const tags = page.properties['tag']?.multi_select.map(t => t.name) || [];
+    const tags = page.properties['tag']?.multi_select.map((t) => t.name) || [];
 
-    console.log(JSON.stringify({
-      title,
-      category,
-      tags,
-      content: mdString.parent
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          title,
+          category,
+          tags,
+          content: mdString.parent,
+        },
+        null,
+        2,
+      ),
+    );
   } catch (error) {
     console.error('Error fetching post:', error.message);
     process.exit(1);

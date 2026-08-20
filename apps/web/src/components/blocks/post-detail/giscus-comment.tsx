@@ -27,7 +27,9 @@ export function GiscusComment({
     return (
       <div className="py-10 text-center text-notion-secondary text-[14px] bg-notion-gray-bg/40 rounded-[4px] border border-dashed border-notion-border">
         <p>Giscus 설정이 필요합니다.</p>
-        <p className="mt-2 text-[12px] font-mono text-notion-secondary/80">.env 파일에 NEXT_PUBLIC_GISCUS_REPO_ID와 NEXT_PUBLIC_GISCUS_CATEGORY_ID를 설정해주세요.</p>
+        <p className="mt-2 text-[12px] font-mono text-notion-secondary/80">
+          .env 파일에 NEXT_PUBLIC_GISCUS_REPO_ID와 NEXT_PUBLIC_GISCUS_CATEGORY_ID를 설정해주세요.
+        </p>
       </div>
     );
   }

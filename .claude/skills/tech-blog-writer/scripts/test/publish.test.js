@@ -25,8 +25,12 @@ test('createPost creates page with properties and initial blocks, returns id/url
   const calls = { create: [], append: [] };
   const notion = mockNotion(calls);
   const result = await createPost(notion, 'db-1', {
-    title: '제목', category: 'Frontend', tags: ['React'], description: '요약',
-    markdown: '# 제목\n\n본문입니다.', status: 'published',
+    title: '제목',
+    category: 'Frontend',
+    tags: ['React'],
+    description: '요약',
+    markdown: '# 제목\n\n본문입니다.',
+    status: 'published',
   });
   assert.deepEqual(result, { id: 'page-123', url: 'https://notion.so/page-123' });
   assert.equal(calls.create.length, 1);
@@ -41,7 +45,9 @@ test('createPost appends overflow chunks beyond 100 blocks', async () => {
   const notion = mockNotion(calls);
   const markdown = Array.from({ length: 150 }, (_, i) => `- 항목 ${i}`).join('\n');
   await createPost(notion, 'db-1', {
-    title: '긴 글', category: 'Backend', markdown,
+    title: '긴 글',
+    category: 'Backend',
+    markdown,
   });
   assert.equal(calls.create.length, 1);
   assert.ok(calls.create[0].children.length <= 100);
@@ -74,10 +80,19 @@ test('429 on create is retried then succeeds', async () => {
       },
     },
   };
-  const result = await createPost(notion, 'db-1', {
-    title: '제목', category: 'Frontend', tags: [], description: '요약',
-    markdown: '# 제목\n\n본문입니다.', status: 'published',
-  }, { baseDelay: 0 });
+  const result = await createPost(
+    notion,
+    'db-1',
+    {
+      title: '제목',
+      category: 'Frontend',
+      tags: [],
+      description: '요약',
+      markdown: '# 제목\n\n본문입니다.',
+      status: 'published',
+    },
+    { baseDelay: 0 },
+  );
   assert.deepEqual(result, { id: 'page-123', url: 'https://notion.so/page-123' });
   assert.equal(createCallCount, 2);
 });
@@ -103,9 +118,16 @@ test('429 on append is retried then succeeds', async () => {
     },
   };
   const markdown = Array.from({ length: 150 }, (_, i) => `- 항목 ${i}`).join('\n');
-  const result = await createPost(notion, 'db-1', {
-    title: '긴 글', category: 'Backend', markdown,
-  }, { baseDelay: 0 });
+  const result = await createPost(
+    notion,
+    'db-1',
+    {
+      title: '긴 글',
+      category: 'Backend',
+      markdown,
+    },
+    { baseDelay: 0 },
+  );
   assert.deepEqual(result, { id: 'page-123', url: 'https://notion.so/page-123' });
   assert.ok(appendCallCount >= 2);
 });
@@ -128,9 +150,17 @@ test('non-429 create error propagates without retry', async () => {
     },
   };
   await assert.rejects(
-    () => createPost(notion, 'db-1', {
-      title: '제목', category: 'Frontend', markdown: '# 제목',
-    }, { baseDelay: 0 }),
+    () =>
+      createPost(
+        notion,
+        'db-1',
+        {
+          title: '제목',
+          category: 'Frontend',
+          markdown: '# 제목',
+        },
+        { baseDelay: 0 },
+      ),
     (err) => err.status === 500,
   );
   assert.equal(createCallCount, 1);
@@ -153,9 +183,17 @@ test('append failure after retries surfaces pageUrl + failedChunkIndex', async (
   };
   const markdown = Array.from({ length: 150 }, (_, i) => `- 항목 ${i}`).join('\n');
   await assert.rejects(
-    () => createPost(notion, 'db-1', {
-      title: '긴 글', category: 'Backend', markdown,
-    }, { retries: 1, baseDelay: 0 }),
+    () =>
+      createPost(
+        notion,
+        'db-1',
+        {
+          title: '긴 글',
+          category: 'Backend',
+          markdown,
+        },
+        { retries: 1, baseDelay: 0 },
+      ),
     (err) => err.pageUrl === 'u' && err.failedChunkIndex === 0,
   );
 });

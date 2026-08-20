@@ -6,7 +6,10 @@ test('chunkBlocks splits into groups no larger than size', () => {
   const arr = Array.from({ length: 250 }, (_, i) => i);
   const chunks = chunkBlocks(arr, 100);
   assert.equal(chunks.length, 3);
-  assert.deepEqual(chunks.map((c) => c.length), [100, 100, 50]);
+  assert.deepEqual(
+    chunks.map((c) => c.length),
+    [100, 100, 50],
+  );
 });
 
 test('chunkBlocks returns empty array for empty input', () => {

@@ -113,9 +113,9 @@ export function Mermaid({ content }: MermaidProps) {
           <Maximize2 size={18} aria-hidden="true" />
         </button>
 
-        <div 
-          ref={containerRef} 
-          dangerouslySetInnerHTML={{ __html: svg }} 
+        <div
+          ref={containerRef}
+          dangerouslySetInnerHTML={{ __html: svg }}
           className="w-full max-w-[95%] overflow-visible flex justify-center"
         />
       </div>
@@ -126,13 +126,16 @@ export function Mermaid({ content }: MermaidProps) {
           role="dialog"
           aria-modal="true"
           aria-label="다이어그램 확대 보기"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
-          onClick={() => setIsModalOpen(false)}
+          className="fixed inset-0 z-[100] flex items-center justify-center"
         >
-          <div
-            className="relative w-[95vw] h-[90vh] bg-notion-bg border border-notion-border rounded-[4px] p-10 flex items-center justify-center overflow-auto shadow-2xl"
-            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
-          >
+          {/* 배경 클릭으로 닫기. div + onClick 대신 실제 버튼이라 키보드로도 닿는다. */}
+          <button
+            type="button"
+            aria-label="확대 보기 닫기"
+            onClick={() => setIsModalOpen(false)}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+          />
+          <div className="relative w-[95vw] h-[90vh] bg-notion-bg border border-notion-border rounded-[4px] p-10 flex items-center justify-center overflow-auto shadow-2xl">
             {/* 닫기 버튼 */}
             <button
               ref={closeBtnRef}
@@ -144,9 +147,9 @@ export function Mermaid({ content }: MermaidProps) {
             </button>
 
             {/* 상세 보기 다이어그램 */}
-            <div 
+            <div
               className="w-full h-full flex items-center justify-center max-w-5xl mx-auto"
-              dangerouslySetInnerHTML={{ __html: svg }} 
+              dangerouslySetInnerHTML={{ __html: svg }}
             />
           </div>
         </div>

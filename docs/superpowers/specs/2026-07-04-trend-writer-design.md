@@ -17,28 +17,28 @@
 
 ## 2. 핵심 결정 (브레인스토밍 확정)
 
-| 항목 | 결정 |
-|---|---|
-| 생성 엔진 | **Gemini 단독** — Google Search 그라운딩으로 조사+집필 |
-| 주제 선정 | **자율 트렌드 스캔** — 매 회차 검색 후 Notion 기존 글과 중복 제거 |
-| 발행 주기 | **주 2–3회** (Cloud Scheduler cron, 예: 월·수·금 09:00 KST) |
-| AI 표기 | **전용 카테고리("AI 트렌드") + 출처 링크** — 마치며에 AI 생성 안내 + 인용 URL |
-| 안전장치 | **자가검증 게이트** — 통과 시 published, 실패 시 draft + 알림 |
-| 문체 품질 | `blog-writer` 6단 양식 + `humanize-korean`/`ai-slop-reviewer` 룰북 이식 |
+| 항목      | 결정                                                                          |
+| --------- | ----------------------------------------------------------------------------- |
+| 생성 엔진 | **Gemini 단독** — Google Search 그라운딩으로 조사+집필                        |
+| 주제 선정 | **자율 트렌드 스캔** — 매 회차 검색 후 Notion 기존 글과 중복 제거             |
+| 발행 주기 | **주 2–3회** (Cloud Scheduler cron, 예: 월·수·금 09:00 KST)                   |
+| AI 표기   | **전용 카테고리("AI 트렌드") + 출처 링크** — 마치며에 AI 생성 안내 + 인용 URL |
+| 안전장치  | **자가검증 게이트** — 통과 시 published, 실패 시 draft + 알림                 |
+| 문체 품질 | `blog-writer` 6단 양식 + `humanize-korean`/`ai-slop-reviewer` 룰북 이식       |
 
 ## 3. 아키텍처 (GCP)
 
 프로비저닝·배포는 **GCP MCP (`mcp__gcloud__run_gcloud_command`)**로 수행한다.
 
-| 구성 요소 | 선택 | 역할 |
-|---|---|---|
-| 실행 | **Cloud Run Job** | 배치 작업(끝나면 종료). 회당 수 초~수십 초 |
-| 스케줄 | **Cloud Scheduler** | cron 트리거 → Cloud Run Job 실행 |
-| 비밀 | **Secret Manager** | `GEMINI_API_KEY`, `NOTION_API_KEY`, `NOTION_DATABASE_ID`, `NOTIFY_WEBHOOK_URL`(선택) |
-| 이미지 | **Artifact Registry** | 컨테이너 이미지 저장 |
-| 코드 위치 | 모노레포 신규 앱 **`apps/trend-writer`** | Notion 스키마·발행 로직 공유, 배포 타깃만 GCP |
-| 런타임 | **Node.js 20+** | 기존 `@notionhq/client` + `@tryfabric/martian` 재사용 |
-| 모델 | Gemini: 스캔/중복/검증 = **Flash**, 집필/윤문 = **Pro** | 정확한 모델 ID는 env로 핀 고정 |
+| 구성 요소 | 선택                                                    | 역할                                                                                 |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 실행      | **Cloud Run Job**                                       | 배치 작업(끝나면 종료). 회당 수 초~수십 초                                           |
+| 스케줄    | **Cloud Scheduler**                                     | cron 트리거 → Cloud Run Job 실행                                                     |
+| 비밀      | **Secret Manager**                                      | `GEMINI_API_KEY`, `NOTION_API_KEY`, `NOTION_DATABASE_ID`, `NOTIFY_WEBHOOK_URL`(선택) |
+| 이미지    | **Artifact Registry**                                   | 컨테이너 이미지 저장                                                                 |
+| 코드 위치 | 모노레포 신규 앱 **`apps/trend-writer`**                | Notion 스키마·발행 로직 공유, 배포 타깃만 GCP                                        |
+| 런타임    | **Node.js 20+**                                         | 기존 `@notionhq/client` + `@tryfabric/martian` 재사용                                |
+| 모델      | Gemini: 스캔/중복/검증 = **Flash**, 집필/윤문 = **Pro** | 정확한 모델 ID는 env로 핀 고정                                                       |
 
 ### 왜 Cloud Run Job인가
 
@@ -48,16 +48,16 @@
 
 각 단계는 독립 모듈로 분리하고 명확한 입출력을 갖는다.
 
-| # | 단계 | 입력 → 출력 | 구현 |
-|---|---|---|---|
-| ① | **스캔** | (없음) → 주제 후보 N개 `{제목, 왜지금, 출처URL[]}` | Gemini Flash + Google Search |
-| ② | **중복 제거** | 후보 N개 + Notion 기존 제목 전체 → 선택 주제 1개(또는 스킵) | Notion 쿼리 + 정규화 + Gemini 의미 대조 |
-| ③ | **리서치** | 선택 주제 → 근거 사실 + 인용 출처 URL[] | Gemini Flash + Google Search 심층 |
-| ④ | **집필** | 근거 → 6단 한국어 초안(Markdown) | Gemini Pro + `blog-writer` 양식 프롬프트 |
-| ⑤ | **윤문** | 초안 → 슬롭·번역투 제거본(의미 불변) | Gemini Pro + `humanize-korean` 룰북 프롬프트 |
-| ⑥ | **자가검증 게이트** | 윤문본 → `{pass: bool, reasons[]}` | Gemini Flash 셀프 체크 |
-| ⑦ | **발행** | 윤문본 + 게이트 결과 → Notion 페이지 | `@notionhq/client` + martian (기존 로직 재사용) |
-| ⑧ | **알림** | 발행 결과 → 통지 | Webhook(선택) 또는 Cloud Logging |
+| #   | 단계                | 입력 → 출력                                                 | 구현                                            |
+| --- | ------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+| ①   | **스캔**            | (없음) → 주제 후보 N개 `{제목, 왜지금, 출처URL[]}`          | Gemini Flash + Google Search                    |
+| ②   | **중복 제거**       | 후보 N개 + Notion 기존 제목 전체 → 선택 주제 1개(또는 스킵) | Notion 쿼리 + 정규화 + Gemini 의미 대조         |
+| ③   | **리서치**          | 선택 주제 → 근거 사실 + 인용 출처 URL[]                     | Gemini Flash + Google Search 심층               |
+| ④   | **집필**            | 근거 → 6단 한국어 초안(Markdown)                            | Gemini Pro + `blog-writer` 양식 프롬프트        |
+| ⑤   | **윤문**            | 초안 → 슬롭·번역투 제거본(의미 불변)                        | Gemini Pro + `humanize-korean` 룰북 프롬프트    |
+| ⑥   | **자가검증 게이트** | 윤문본 → `{pass: bool, reasons[]}`                          | Gemini Flash 셀프 체크                          |
+| ⑦   | **발행**            | 윤문본 + 게이트 결과 → Notion 페이지                        | `@notionhq/client` + martian (기존 로직 재사용) |
+| ⑧   | **알림**            | 발행 결과 → 통지                                            | Webhook(선택) 또는 Cloud Logging                |
 
 ### 모듈 경계 (`apps/trend-writer/src/`)
 
@@ -78,13 +78,13 @@
 
 `publish_to_notion.js`에서 확인된 프로퍼티를 그대로 사용:
 
-| 프로퍼티 | 타입 | 봇이 넣는 값 |
-|---|---|---|
-| `이름` | title | 글 제목 |
-| `status` | select | `published`(게이트 통과) 또는 `draft`(실패) |
-| `category` | multi_select | `AI 트렌드` (전용) |
-| `tag` | multi_select | 주제별 태그 (예: React, RSC, RAG) |
-| `description` | rich_text | 본문 앞 160자 요약 |
+| 프로퍼티      | 타입         | 봇이 넣는 값                                |
+| ------------- | ------------ | ------------------------------------------- |
+| `이름`        | title        | 글 제목                                     |
+| `status`      | select       | `published`(게이트 통과) 또는 `draft`(실패) |
+| `category`    | multi_select | `AI 트렌드` (전용)                          |
+| `tag`         | multi_select | 주제별 태그 (예: React, RSC, RAG)           |
+| `description` | rich_text    | 본문 앞 160자 요약                          |
 
 ### 글 구조 (기존 `blog-writer` 양식)
 

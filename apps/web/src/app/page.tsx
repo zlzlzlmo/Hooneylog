@@ -14,8 +14,7 @@ export const revalidate = 3600;
 // instead of splitting into near-duplicate entries. `types` is repeated here
 // because Next.js overwrites (not deep-merges) the layout's `alternates`.
 export const metadata: Metadata = {
-  description:
-    '막힌 지점부터 되짚는 기술 기록. 프론트엔드·백엔드·AI/RAG 개발 로그 — HooneyLog.',
+  description: '막힌 지점부터 되짚는 기술 기록. 프론트엔드·백엔드·AI/RAG 개발 로그 — HooneyLog.',
   alternates: {
     canonical: '/',
     types: {
@@ -39,14 +38,14 @@ export default async function Home({
 
   const [stats, viewsMap, { category, q }] = await Promise.all([
     getGlobalStats(),
-    getViewCounts(posts.map(p => p.id)),
+    getViewCounts(posts.map((p) => p.id)),
     searchParams,
   ]);
 
   // The header category nav links here with ?category=<name>. Only seed a real
   // category (one that actually exists on a post); anything else falls back to
   // 전체 so an unknown param never lands on an empty list.
-  const knownCategories = new Set(posts.map(p => p.category).filter(Boolean));
+  const knownCategories = new Set(posts.map((p) => p.category).filter(Boolean));
   const initialCategory = category && knownCategories.has(category) ? category : ALL;
 
   // `?q=` seeds the search box — the target of the WebSite SearchAction (root

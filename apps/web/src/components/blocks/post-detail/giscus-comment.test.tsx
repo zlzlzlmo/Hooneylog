@@ -13,7 +13,9 @@ interface GiscusMockProps {
 
 // @giscus/react 모킹
 vi.mock('@giscus/react', () => ({
-  default: (props: GiscusMockProps) => <div data-testid="giscus-mock" data-props={JSON.stringify(props)} />
+  default: (props: GiscusMockProps) => (
+    <div data-testid="giscus-mock" data-props={JSON.stringify(props)} />
+  ),
 }));
 
 describe('GiscusComment', () => {
@@ -24,7 +26,7 @@ describe('GiscusComment', () => {
       category: 'Comments',
       categoryId: 'CAT_ID_123',
       theme: 'light',
-      lang: 'ko'
+      lang: 'ko',
     };
 
     render(<GiscusComment {...config} />);

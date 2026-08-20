@@ -8,10 +8,15 @@ interface CategoryProps {
   categories: [string, number][];
   currentActiveCategory: string;
   handleCurrentActiveCategory: (cate: string) => void;
-  stats?: { total: number, today: number };
+  stats?: { total: number; today: number };
 }
 
-export function Sidebar({ categories, currentActiveCategory, handleCurrentActiveCategory, stats }: CategoryProps) {
+export function Sidebar({
+  categories,
+  currentActiveCategory,
+  handleCurrentActiveCategory,
+  stats,
+}: CategoryProps) {
   const activeButtonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   // Tracks which horizontal edges still have off-screen content, to show the
@@ -55,20 +60,22 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
           <Image src={AUTHOR.avatar} alt={AUTHOR.name} fill className="object-cover" />
         </div>
         <h3 className="font-semibold text-notion-text text-[15px] mb-1">{AUTHOR.name}</h3>
-        <p className="text-[13px] text-notion-secondary leading-snug mb-4">
-          {AUTHOR.tagline}
-        </p>
+        <p className="text-[13px] text-notion-secondary leading-snug mb-4">{AUTHOR.tagline}</p>
 
         {/* Blog Stats Section */}
         {stats && (
           <div className="flex flex-col gap-1.5 pt-4 border-t border-notion-border">
             <div className="flex justify-between items-center text-[12px]">
               <span className="text-notion-secondary font-medium">총 조회수</span>
-              <span className="font-mono text-notion-text font-medium">{stats.total.toLocaleString()}</span>
+              <span className="font-mono text-notion-text font-medium">
+                {stats.total.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between items-center text-[12px]">
               <span className="text-notion-secondary font-medium">오늘</span>
-              <span className="font-mono text-notion-text font-medium text-accent">+{stats.today.toLocaleString()}</span>
+              <span className="font-mono text-notion-text font-medium text-accent">
+                +{stats.today.toLocaleString()}
+              </span>
             </div>
           </div>
         )}
@@ -108,14 +115,17 @@ export function Sidebar({ categories, currentActiveCategory, handleCurrentActive
                     border-b-2 lg:border-b-0 lg:border-l-2
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent
                     active:bg-notion-hover active:scale-[0.99]
-                    ${isActive
-                      ? 'font-medium text-accent bg-notion-hover border-accent'
-                      : 'text-notion-secondary font-regular border-transparent hover:bg-notion-hover hover:text-notion-text'
+                    ${
+                      isActive
+                        ? 'font-medium text-accent bg-notion-hover border-accent'
+                        : 'text-notion-secondary font-regular border-transparent hover:bg-notion-hover hover:text-notion-text'
                     }
                   `}
                 >
                   <span>{name}</span>
-                  <span className="text-[12px] font-mono text-notion-secondary tabular-nums">{count}</span>
+                  <span className="text-[12px] font-mono text-notion-secondary tabular-nums">
+                    {count}
+                  </span>
                 </button>
               </li>
             );

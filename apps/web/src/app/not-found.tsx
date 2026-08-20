@@ -6,12 +6,7 @@ export default function NotFound() {
     <div className="w-full flex items-center justify-center py-40">
       <section className="flex flex-col items-center justify-center gap-8">
         <div className="relative w-[300px] h-[120px] sm:w-[500px] sm:h-[200px]">
-          <Image
-            src="/images/404.png"
-            fill
-            className="object-contain"
-            alt=""
-          />
+          <Image src="/images/404.png" fill className="object-contain" alt="" />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-notion-text text-center">
           페이지를 찾을 수 없습니다.

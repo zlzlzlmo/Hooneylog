@@ -7,6 +7,7 @@
 ## 전제: 이 블로그는 자체 Next.js 사이트다
 
 Hooneylog는 네이버 블로그가 아니라 **자체 도메인 Next.js 사이트**다. 따라서:
+
 - 네이버는 자사 플랫폼(네이버 블로그/카페/지식iN)을 우선 노출하고 외부 사이트 색인·노출에 보수적이다.
 - 기술 SEO 토대(robots.ts·sitemap.ts·feed.xml·opengraph-image·generateMetadata·JSON-LD BlogPosting)는 **이미 구현돼 있다.** 글쓰기 단계에서 새로 코드를 만들 필요는 없다.
 - 그러므로 전략은 "네이버 상위노출 집착"이 아니라 **구글/AI검색 최적화 + 등록·배포로 유입 경로 다변화**다.

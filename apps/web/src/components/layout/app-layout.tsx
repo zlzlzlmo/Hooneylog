@@ -15,7 +15,11 @@ export function AppLayout({ children }: LayoutProps) {
         본문으로 건너뛰기
       </a>
       <Header />
-      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-[1392px] mx-auto px-4 sm:px-6 md:px-12">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 w-full max-w-[1392px] mx-auto px-4 sm:px-6 md:px-12"
+      >
         {children}
       </main>
       <Footer />

@@ -17,6 +17,7 @@ Operates on the post detail page, main path = `markdown-renderer.tsx`.
 **Decisions (approved):** TOC = desktop right sticky rail + mobile top collapsible; implement on the markdown path; reading time = Korean char-based.
 
 **Components / changes**
+
 - **Heading anchors:** add `rehype-slug` to `MarkdownRenderer` rehypePlugins so h1/h2/h3 get `id`s. The custom `h2`/`h3` component overrides render a hover `#` anchor link to `#${id}`. Sticky-header offset already handled by existing `:target { scroll-margin-top: 72px }`.
 - **TOC extraction:** pure `extractToc(markdown: string): TocItem[]` where `TocItem = { depth: 2 | 3; text: string; slug: string }`. Slugs generated with `github-slugger` (same lib rehype-slug uses) so they match the rendered `id`s exactly. Only h2/h3 included.
 - **`TableOfContents` (client):** renders the list; IntersectionObserver scroll-spy highlights the active section; click → smooth scroll. Desktop (xl+): sticky right rail. Below xl: a `<details>` "목차" block at the top of the article.
@@ -35,6 +36,7 @@ Operates on the post detail page, main path = `markdown-renderer.tsx`.
 **Decisions (defaults):** Tags rendered as chips → dedicated tag pages; related posts by category+tag scoring; home list uses a "더 보기" (load-more) button.
 
 **Components / changes**
+
 - **Tag chips:** `PostHeader` renders `post.tags` as chips linking to `/tag/${encodeURIComponent(name)}`. A small `TagList` component reused on cards/header.
 - **Tag pages:** `app/tag/[tag]/page.tsx` — lists all posts whose tags include the param (decoded). Reuses `PostItemList`. `generateStaticParams` over unique tag names. Per-tag `generateMetadata` (title "태그: X | HooneyLog", canonical `/tag/x`). Empty state if none.
 - **Related posts:** pure `getRelatedPosts(all, current, limit=3)` — score `+2` same category, `+1` per shared tag; exclude current; sort desc; take top N. New `RelatedPosts` component on post detail, placed above comments (after adjacent nav). Hidden if none.
@@ -51,6 +53,7 @@ Operates on the post detail page, main path = `markdown-renderer.tsx`.
 **Decisions (defaults):** Tailwind v4 class strategy; system default; persisted; no-flash.
 
 **Approach**
+
 - Add `@custom-variant dark (&:where(.dark, .dark *));` to `globals.css` and a `.dark { ... }` block overriding every `--color-notion-*` and accent token with dark equivalents (background near `#191919`, text `#E6E6E5`, borders/hover adjusted, accent tuned for dark contrast). Because components already use `notion-*`/`accent` tokens, most adapt automatically.
 - **No-flash script:** inline `<script>` in `layout.tsx` `<head>` that, before paint, reads `localStorage.theme` (or `prefers-color-scheme`) and sets `document.documentElement.classList`.
 - **Toggle:** `ThemeToggle` (client) in the header action slot — cycles light/dark, writes `localStorage.theme`, toggles `.dark`. Sun/moon icon (lucide), `aria-label`, `aria-pressed`.
@@ -67,6 +70,7 @@ Operates on the post detail page, main path = `markdown-renderer.tsx`.
 **Decisions (defaults):** RSS 2.0 at `/feed.xml`; dynamic OG images via `next/og`; share buttons (X, LinkedIn, copy); scroll progress bar + back-to-top.
 
 **Components / changes**
+
 - **RSS:** `app/feed.xml/route.ts` — GET handler builds RSS 2.0 from `getAllPosts()` (title, link `https://hooneylog.com/post/${id}`, description, pubDate, category). `Content-Type: application/xml`, revalidated. Link `<link rel="alternate" type="application/rss+xml">` added in `layout.tsx` metadata.
 - **Dynamic OG images:** `app/post/[slug]/opengraph-image.tsx` using `ImageResponse` (`next/og`) rendering title + category + author on a branded background (1200×630). `app/opengraph-image.tsx` for the site default. Remove the static category-image OG override in `page.tsx` `generateMetadata` (the file-based opengraph-image takes over) — verify Next picks it up.
 - **Share buttons:** `ShareButtons` (client) on post detail — X intent URL, LinkedIn share URL, copy-link (clipboard + "복사됨"). Placed after the post body / near adjacent nav. `aria-label`s.

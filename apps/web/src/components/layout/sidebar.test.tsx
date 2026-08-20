@@ -10,13 +10,19 @@ vi.mock('next/image', () => ({
 
 import { Sidebar } from './sidebar';
 
-const categories: [string, number][] = [['React', 12], ['CSS', 3]];
+const categories: [string, number][] = [
+  ['React', 12],
+  ['CSS', 3],
+];
 
 describe('Sidebar', () => {
   it('marks the active category with aria-pressed=true', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     const active = screen.getByRole('button', { name: /React/ });
     expect(active).toHaveAttribute('aria-pressed', 'true');
@@ -26,24 +32,33 @@ describe('Sidebar', () => {
 
   it('shows the post count for each category', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     expect(screen.getByRole('button', { name: /React/ })).toHaveTextContent('12');
   });
 
   it('labels the category list as a group', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     expect(screen.getByRole('list', { name: '카테고리 필터' })).toBeInTheDocument();
   });
 
   it('shows the category section heading (mono eyebrow)', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     // The category filter list keeps its Korean aria-label ('카테고리 필터');
     // the visible eyebrow uses the TRACE mono style label.
@@ -52,8 +67,12 @@ describe('Sidebar', () => {
 
   it('uses Korean labels for the blog stats', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} stats={{ total: 1234, today: 56 }} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+        stats={{ total: 1234, today: 56 }}
+      />,
     );
     expect(screen.getByText('총 조회수')).toBeInTheDocument();
     expect(screen.getByText('오늘')).toBeInTheDocument();
@@ -63,8 +82,11 @@ describe('Sidebar', () => {
 
   it('gives the active category an accent indicator distinct from hover', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     const active = screen.getByRole('button', { name: /React/ });
     expect(active.className).toMatch(/border-accent/);
@@ -75,8 +97,11 @@ describe('Sidebar', () => {
 
   it('gives category buttons a visible focus ring (a11y)', () => {
     render(
-      <Sidebar categories={categories} currentActiveCategory="React"
-        handleCurrentActiveCategory={vi.fn()} />
+      <Sidebar
+        categories={categories}
+        currentActiveCategory="React"
+        handleCurrentActiveCategory={vi.fn()}
+      />,
     );
     const active = screen.getByRole('button', { name: /React/ });
     expect(active.className).toMatch(/focus-visible:ring-accent/);

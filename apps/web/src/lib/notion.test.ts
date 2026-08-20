@@ -45,9 +45,7 @@ describe('lib/notion caching', () => {
   it('registers getAllPosts in the Data Cache tagged for posts with hourly revalidation', async () => {
     await loadNotion();
 
-    const call = (unstable_cache as Mock).mock.calls.find((c) =>
-      c[2]?.tags?.includes(POSTS_TAG)
-    );
+    const call = (unstable_cache as Mock).mock.calls.find((c) => c[2]?.tags?.includes(POSTS_TAG));
 
     expect(call).toBeTruthy();
     expect(call![2].revalidate).toBe(3600);
@@ -57,7 +55,7 @@ describe('lib/notion caching', () => {
     await loadNotion();
 
     const calls = (unstable_cache as Mock).mock.calls.filter((c) =>
-      c[2]?.tags?.includes(POST_BLOCKS_TAG)
+      c[2]?.tags?.includes(POST_BLOCKS_TAG),
     );
 
     // getNotionPageMarkdown
@@ -118,5 +116,4 @@ describe('lib/notion caching', () => {
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock.mock.calls[1]?.[0]?.start_cursor).toBe('cur2');
   });
-
 });

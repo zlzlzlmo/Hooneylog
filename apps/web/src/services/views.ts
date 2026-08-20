@@ -27,7 +27,7 @@ class ViewsService extends BaseApiService {
    */
   async getMultipleCounts(slugs: string[]): Promise<Record<string, number>> {
     if (!slugs || slugs.length === 0) return {};
-    
+
     try {
       return await this.get<Record<string, number>>(`/api/views?slugs=${slugs.join(',')}`);
     } catch (error) {
@@ -41,7 +41,7 @@ class ViewsService extends BaseApiService {
    */
   async incrementPostView(slug: string): Promise<number | null> {
     if (!slug) return null;
-    
+
     try {
       const data = await this.post<{ views: number }>(`/api/views/${slug}`);
       return data.views;
@@ -56,7 +56,7 @@ class ViewsService extends BaseApiService {
    */
   async getPostView(slug: string): Promise<number> {
     if (!slug) return 0;
-    
+
     try {
       const data = await this.get<{ views: number }>(`/api/views/${slug}`);
       return data.views;

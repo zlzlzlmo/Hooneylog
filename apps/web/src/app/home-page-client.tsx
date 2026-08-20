@@ -19,13 +19,13 @@ export function HomePageClient({
   stats: initialStats,
   viewsMap: initialViewsMap,
   initialCategory,
-  initialSearch
+  initialSearch,
 }: {
-  initialPosts: NotionPost[],
-  stats: { total: number, today: number },
-  viewsMap: Record<string, number>,
-  initialCategory?: string,
-  initialSearch?: string
+  initialPosts: NotionPost[];
+  stats: { total: number; today: number };
+  viewsMap: Record<string, number>;
+  initialCategory?: string;
+  initialSearch?: string;
 }) {
   const router = useRouter();
   const [stats, setStats] = useState(initialStats);
@@ -36,7 +36,7 @@ export function HomePageClient({
     currentActiveCategory,
     setSearchValue,
     setCurrentActiveCategory,
-    filteredPosts
+    filteredPosts,
   } = useFilterPost(initialPosts, initialCategory, initialSearch);
 
   // The URL is the source of truth for the category. Header <Link>s and the
@@ -50,10 +50,15 @@ export function HomePageClient({
   // Sidebar clicks: filter instantly (optimistic) AND reflect the choice in the
   // URL so it's shareable, survives refresh/back, and stays in sync with the
   // header nav. 전체 clears the param back to a clean "/".
-  const handleCategoryChange = useCallback((name: string) => {
-    setCurrentActiveCategory(name);
-    router.replace(name === ALL ? '/' : `/?category=${encodeURIComponent(name)}`, { scroll: false });
-  }, [router, setCurrentActiveCategory]);
+  const handleCategoryChange = useCallback(
+    (name: string) => {
+      setCurrentActiveCategory(name);
+      router.replace(name === ALL ? '/' : `/?category=${encodeURIComponent(name)}`, {
+        scroll: false,
+      });
+    },
+    [router, setCurrentActiveCategory],
+  );
 
   // initialPosts is stable for the page, so build the category index once.
   const categoryCount = useMemo(() => new CategoryCount(initialPosts), [initialPosts]);
@@ -108,7 +113,7 @@ export function HomePageClient({
         const latestStats = await viewsService.getStats();
 
         // 2. 현재 페이지의 포스트들 조회수 가져오기 (서비스 레이어 사용)
-        const slugs = initialPosts.map(p => p.id);
+        const slugs = initialPosts.map((p) => p.id);
         const latestViews = await viewsService.getMultipleCounts(slugs);
 
         // 성공했을 때만 상태를 갱신해서, 숫자가 깜빡이거나 0으로 덮어쓰는 일을 막아요.
@@ -143,7 +148,10 @@ export function HomePageClient({
               </span>
               {AUTHOR.openToWork && (
                 <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent px-1.5 py-0.5 text-[11px] text-accent">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+                  <span
+                    className="inline-block h-1.5 w-1.5 rounded-full bg-accent"
+                    aria-hidden="true"
+                  />
                   구직 중 · Open to work
                 </span>
               )}
@@ -179,17 +187,19 @@ export function HomePageClient({
 
         {/* Main Content Area */}
         <div className="flex-1 w-full min-w-0">
-          <Search
-            searchValue={searchValue}
-            handleSearchValue={setSearchValue}
-          />
+          <Search searchValue={searchValue} handleSearchValue={setSearchValue} />
           {searchValue && (
             <p className="mt-2 text-[13px] text-notion-secondary" role="status" aria-live="polite">
               검색 결과 {announcedCount}개
             </p>
           )}
           <div className="mt-8">
-            <PostItemList posts={visiblePosts} viewsMap={viewsMap} query={searchValue} onReset={handleReset} />
+            <PostItemList
+              posts={visiblePosts}
+              viewsMap={viewsMap}
+              query={searchValue}
+              onReset={handleReset}
+            />
             {hasMore && (
               <div className="flex justify-center mt-10">
                 <button

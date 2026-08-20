@@ -5,8 +5,24 @@ import { ALL } from '@/utils/category';
 import { NotionPost } from '@hooneylog/shared-types';
 
 const posts = [
-  { id: '1', title: 'FE', description: '', category: 'Frontend', createdAt: '', updatedAt: '', tags: [] },
-  { id: '2', title: 'BE', description: '', category: 'Backend', createdAt: '', updatedAt: '', tags: [] },
+  {
+    id: '1',
+    title: 'FE',
+    description: '',
+    category: 'Frontend',
+    createdAt: '',
+    updatedAt: '',
+    tags: [],
+  },
+  {
+    id: '2',
+    title: 'BE',
+    description: '',
+    category: 'Backend',
+    createdAt: '',
+    updatedAt: '',
+    tags: [],
+  },
 ] as unknown as NotionPost[];
 
 describe('useFilterPost', () => {

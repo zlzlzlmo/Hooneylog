@@ -2,7 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { buildVerifyPrompt, parseVerdict, runVerify } from './verify';
 import type { DraftPost, Gemini } from './types';
 
-const draft: DraftPost = { title: 'T', markdown: '# T\n\n본문\n\n참고 출처\n- https://a', tags: ['AI'] };
+const draft: DraftPost = {
+  title: 'T',
+  markdown: '# T\n\n본문\n\n참고 출처\n- https://a',
+  tags: ['AI'],
+};
 
 describe('buildVerifyPrompt', () => {
   it('4개 검증 기준과 기존 제목을 담는다', () => {

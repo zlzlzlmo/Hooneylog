@@ -1,8 +1,8 @@
 import { NotionPost } from '@hooneylog/shared-types';
 
 export function getAdjacentPosts(posts: NotionPost[], currentPostId: string) {
-  const currentIndex = posts.findIndex(post => post.id === currentPostId);
-  
+  const currentIndex = posts.findIndex((post) => post.id === currentPostId);
+
   if (currentIndex === -1) {
     return { previousPost: null, nextPost: null };
   }

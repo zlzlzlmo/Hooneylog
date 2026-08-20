@@ -16,7 +16,12 @@ export async function GET(request: NextRequest) {
   }
 
   const requested = Array.from(
-    new Set(slugsStr.split(',').map((s) => s.trim()).filter(Boolean))
+    new Set(
+      slugsStr
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ),
   ).filter((s) => SLUG_PATTERN.test(s));
 
   if (requested.length === 0) {

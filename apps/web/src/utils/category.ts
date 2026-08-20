@@ -7,8 +7,8 @@ export class CategoryCount {
 
   constructor(posts: NotionPost[]) {
     this.categories[ALL] = posts.length;
-    
-    posts.forEach(post => {
+
+    posts.forEach((post) => {
       const category = post.category || '미분류';
       if (this.categories[category]) {
         this.categories[category] += 1;
