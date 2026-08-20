@@ -45,3 +45,29 @@ jobs:
       - name: Build
         if: env.NOTION_API_KEY != ''
         run: pnpm run build
+
+  # Separate job so the ~1-2 min Chromium download never delays the fast gates
+  # above; either job failing still fails CI.
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Enable corepack (pins pnpm from packageManager)
+        run: corepack enable
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # allowBuilds blocks playwright's install script, so fetch the browser here.
+      - name: Install Chromium
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
+      # Renders every screen against the real stylesheet at four viewports in
+      # light and dark, asserting no overflow, clipping, or theme regression.
+      - name: Layout audit
+        run: pnpm --filter web test:browser
