@@ -67,9 +67,9 @@ export function ViewCounter({ slug, initialViews }: ViewCounterProps) {
   }, [slug, initialViews]);
 
   return (
-    <div className="flex items-center gap-1 text-notion-secondary font-mono text-[13px]">
-      <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+    <span className="inline-flex items-center gap-1">
+      <Eye className="size-3.5" aria-hidden="true" />
       <span className="tabular-nums">{views.toLocaleString()}</span>
-    </div>
+    </span>
   );
 }

@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { getAllPosts } from '@/lib/notion';
-import { PostItemList } from '@/components/blocks/post-item-list';
+import { Blog29, type Blog29Post } from '@/components/blog29';
+import { formatDate } from '@/utils/date';
 
 type Params = Promise<{ tag: string }>;
 
@@ -31,32 +30,25 @@ export default async function TagPage({ params }: { params: Params }): Promise<R
   const posts = await getAllPosts();
   const tagged = posts.filter((post) => post.tags.some((t) => t.name === name));
 
+  const items: Blog29Post[] = tagged.map((post) => ({
+    href: `/post/${post.id}`,
+    date: formatDate(post.createdAt),
+    title: post.title,
+    content: post.description,
+    tags: post.tags.map((t) => ({
+      id: t.id,
+      name: t.name,
+      href: `/tag/${encodeURIComponent(t.name)}`,
+    })),
+  }));
+
   return (
-    <div className="w-full pt-10 pb-20">
-      <div className="mb-8">
-        <Link
-          href="/"
-          className="group inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] text-notion-secondary hover:text-notion-text px-2 py-1 -ml-2 rounded-[3px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
-          모든 게시글
-        </Link>
-      </div>
-      <header className="mb-10 border-b border-notion-border pb-8">
-        {/* Mono path eyebrow — the tag as a filesystem trail */}
-        <p className="font-mono text-[12px] tracking-[0.06em] text-notion-secondary mb-3">
-          <span className="text-accent">tag</span>
-          <span className="opacity-40">/</span>
-          <span className="text-notion-text">{name}</span>
-        </p>
-        <h1 className="text-[30px] sm:text-[38px] font-extrabold tracking-[-0.02em] text-notion-text break-keep leading-[1.15]">
-          #{name}
-        </h1>
-        <p className="mt-3 font-mono text-[12.5px] text-notion-secondary tabular-nums">
-          {tagged.length}개
-        </p>
-      </header>
-      <PostItemList posts={tagged} />
-    </div>
+    <Blog29
+      eyebrow={`tag / ${name}`}
+      heading={`#${name}`}
+      meta={`${tagged.length}개`}
+      posts={items}
+      emptyMessage={`'${name}' 태그가 달린 글이 아직 없어요.`}
+    />
   );
 }

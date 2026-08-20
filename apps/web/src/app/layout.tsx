@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono } from 'next/font/google';
+import { Geist, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { AppLayout } from '@/components/layout/app-layout';
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -70,15 +72,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning className={jetbrainsMono.variable}>
-      <body className="min-h-full flex flex-col m-0 p-0 text-notion-text bg-notion-bg">
+    <html
+      lang="ko"
+      suppressHydrationWarning
+      className={`font-sans ${geist.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="m-0 flex min-h-full flex-col p-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=(t==='dark'||t==='light')?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
           }}
         />
         <AppLayout>{children}</AppLayout>

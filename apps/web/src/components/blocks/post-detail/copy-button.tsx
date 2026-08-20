@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
+
 export function CopyButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -17,14 +19,20 @@ export function CopyButton({ code }: { code: string }) {
   };
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="sm"
       onClick={handleCopy}
       aria-label={copied ? '복사됨' : '코드 복사'}
-      className="flex items-center gap-1.5 px-2 py-1 rounded-[3px] font-mono text-[11px] tracking-[0.06em] text-notion-secondary hover:text-notion-text hover:bg-notion-hover transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-notion-bg"
+      className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
     >
-      {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
+      {copied ? (
+        <Check className="size-3.5" aria-hidden="true" />
+      ) : (
+        <Copy className="size-3.5" aria-hidden="true" />
+      )}
       {copied ? '복사됨' : '복사'}
-    </button>
+    </Button>
   );
 }

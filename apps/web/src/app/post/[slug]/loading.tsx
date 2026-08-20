@@ -1,35 +1,35 @@
+import { Skeleton } from '@/components/ui/skeleton';
+
 export default function PostLoading() {
   return (
-    <div className="w-full flex flex-col items-center pt-10 pb-20 animate-pulse">
-      <div className="w-full max-w-[800px] px-4 sm:px-6 mx-auto flex flex-col">
-        {/* Header Skeleton */}
-        <div className="w-24 h-6 bg-notion-gray-bg rounded mb-10"></div>
+    <section className="py-12 md:py-16">
+      <div className="container mx-auto">
+        <Skeleton className="h-4 w-48" />
+        <Skeleton className="mt-7 mb-6 h-12 w-full max-w-3xl" />
 
-        <div className="w-32 h-4 bg-notion-gray-bg rounded mb-4"></div>
-        <div className="w-full h-12 bg-notion-gray-bg rounded mb-4"></div>
-        <div className="w-3/4 h-12 bg-notion-gray-bg rounded mb-8"></div>
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-8 rounded-full" />
+          <Skeleton className="h-4 w-56" />
+        </div>
 
-        <div className="flex items-center gap-3 mb-12">
-          <div className="w-12 h-12 rounded-full bg-notion-gray-bg"></div>
-          <div className="flex flex-col gap-2">
-            <div className="w-32 h-4 bg-notion-gray-bg rounded"></div>
-            <div className="w-24 h-3 bg-notion-gray-bg rounded"></div>
+        <Skeleton className="mt-8 mb-10 h-px w-full md:mb-16" />
+
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 space-y-4 lg:col-span-8">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="my-8 h-64 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+          </div>
+          <div className="col-span-3 col-start-10 hidden space-y-2 lg:block">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-4 w-full" />
+            ))}
           </div>
         </div>
-
-        {/* Content Skeleton */}
-        <div className="space-y-4">
-          <div className="w-full h-4 bg-notion-gray-bg rounded"></div>
-          <div className="w-full h-4 bg-notion-gray-bg rounded"></div>
-          <div className="w-5/6 h-4 bg-notion-gray-bg rounded"></div>
-          <div className="w-full h-4 bg-notion-gray-bg rounded"></div>
-
-          <div className="w-full h-64 bg-notion-gray-bg rounded mt-8 mb-8"></div>
-
-          <div className="w-full h-4 bg-notion-gray-bg rounded"></div>
-          <div className="w-4/5 h-4 bg-notion-gray-bg rounded"></div>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }

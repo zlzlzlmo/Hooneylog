@@ -1,6 +1,8 @@
-import React from 'react';
 import Link from 'next/link';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { NotionPost } from '@hooneylog/shared-types';
+
+import { Card, CardContent } from '@/components/ui/card';
 
 interface MoveToAnotherPostProps {
   previousPost: NotionPost | null;
@@ -11,37 +13,36 @@ export function MoveToAnotherPost({ previousPost, nextPost }: MoveToAnotherPostP
   if (!previousPost && !nextPost) return null;
 
   return (
-    <nav
-      aria-label="이전/다음 글"
-      className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-10 my-10 border-t border-b border-notion-border"
-    >
+    <nav aria-label="이전/다음 글" className="my-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
       {previousPost ? (
-        <Link
-          href={`/post/${previousPost.id}`}
-          className="group flex flex-col items-start p-4 rounded-[4px] border border-notion-border hover:bg-notion-hover transition-colors w-full no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
-        >
-          <span className="flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.14em] text-notion-secondary mb-2">
-            <span aria-hidden="true">&larr;</span> PREV
-          </span>
-          <span className="font-bold text-[16px] tracking-[-0.01em] text-notion-text group-hover:text-accent line-clamp-1 w-full text-left text-balance transition-colors">
-            {previousPost.title}
-          </span>
+        <Link href={`/post/${previousPost.id}`} className="group">
+          <Card className="h-full transition-colors hover:bg-accent">
+            <CardContent className="flex flex-col items-start gap-2">
+              <span className="flex items-center gap-2 text-xs tracking-wider text-muted-foreground uppercase">
+                <ArrowLeft className="size-3.5" aria-hidden="true" /> 이전 글
+              </span>
+              <span className="line-clamp-2 font-semibold wrap-anywhere text-balance group-hover:underline">
+                {previousPost.title}
+              </span>
+            </CardContent>
+          </Card>
         </Link>
       ) : (
         <span className="hidden sm:block" aria-hidden="true" />
       )}
 
       {nextPost && (
-        <Link
-          href={`/post/${nextPost.id}`}
-          className="group flex flex-col items-end p-4 rounded-[4px] border border-notion-border hover:bg-notion-hover transition-colors w-full text-right sm:col-start-2 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
-        >
-          <span className="flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.14em] text-notion-secondary mb-2">
-            NEXT <span aria-hidden="true">&rarr;</span>
-          </span>
-          <span className="font-bold text-[16px] tracking-[-0.01em] text-notion-text group-hover:text-accent line-clamp-1 w-full text-right text-balance transition-colors">
-            {nextPost.title}
-          </span>
+        <Link href={`/post/${nextPost.id}`} className="group sm:col-start-2">
+          <Card className="h-full transition-colors hover:bg-accent">
+            <CardContent className="flex flex-col items-end gap-2 text-right">
+              <span className="flex items-center gap-2 text-xs tracking-wider text-muted-foreground uppercase">
+                다음 글 <ArrowRight className="size-3.5" aria-hidden="true" />
+              </span>
+              <span className="line-clamp-2 font-semibold wrap-anywhere text-balance group-hover:underline">
+                {nextPost.title}
+              </span>
+            </CardContent>
+          </Card>
         </Link>
       )}
     </nav>

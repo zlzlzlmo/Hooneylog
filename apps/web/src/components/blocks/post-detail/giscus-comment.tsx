@@ -1,13 +1,16 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import Giscus from '@giscus/react';
+
+import { Separator } from '@/components/ui/separator';
+import { subscribeToTheme } from '@/lib/theme';
 
 interface GiscusCommentProps {
   repo?: string;
   repoId?: string;
   category?: string;
   categoryId?: string;
-  theme?: string;
   lang?: string;
 }
 
@@ -19,15 +22,22 @@ export function GiscusComment({
   repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || 'R_kgDORy83hA',
   category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'General',
   categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDORy83hM4C5hoe',
-  theme = 'light',
   lang = 'ko',
 }: GiscusCommentProps = {}) {
+  // giscus renders in an iframe, so it can't inherit the page theme — feed it the
+  // resolved <html class="dark"> state and let it re-render when that flips.
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light'),
+    () => 'light',
+  );
+
   // repoId와 categoryId가 없으면 렌더링하지 않음 (설정 대기 상태)
   if (!repoId || !categoryId) {
     return (
-      <div className="py-10 text-center text-notion-secondary text-[14px] bg-notion-gray-bg/40 rounded-[4px] border border-dashed border-notion-border">
+      <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
         <p>Giscus 설정이 필요합니다.</p>
-        <p className="mt-2 text-[12px] font-mono text-notion-secondary/80">
+        <p className="mt-2 text-xs">
           .env 파일에 NEXT_PUBLIC_GISCUS_REPO_ID와 NEXT_PUBLIC_GISCUS_CATEGORY_ID를 설정해주세요.
         </p>
       </div>
@@ -35,10 +45,9 @@ export function GiscusComment({
   }
 
   return (
-    <div className="mt-12 pt-8 border-t border-notion-border">
-      <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.12em] text-notion-secondary">
-        <span className="text-accent">{'//'}</span> Comments
-      </p>
+    <div className="mt-12">
+      <Separator className="mb-8" />
+      <h2 className="mb-6 text-2xl font-semibold md:text-3xl">댓글</h2>
       <Giscus
         repo={`${repo as `${string}/${string}`}`}
         repoId={repoId}

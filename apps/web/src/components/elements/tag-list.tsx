@@ -1,18 +1,23 @@
 import Link from 'next/link';
 import { ITag } from '@hooneylog/shared-types';
 
-export function TagList({ tags, className = '' }: { tags: ITag[]; className?: string }) {
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
+export function TagList({ tags, className }: { tags: ITag[]; className?: string }) {
   if (!tags || tags.length === 0) return null;
 
   return (
-    <ul className={`flex flex-wrap gap-2 m-0 p-0 list-none ${className}`}>
+    <ul className={cn('flex flex-wrap gap-2', className)}>
       {tags.map((tag) => (
         <li key={tag.id}>
-          <Link
-            href={`/tag/${encodeURIComponent(tag.name)}`}
-            className="inline-block px-2 py-0.5 rounded-[3px] border border-notion-border font-mono text-[11px] text-notion-secondary hover:bg-notion-hover hover:text-notion-text transition-colors no-underline"
-          >
-            #{tag.name}
+          <Link href={`/tag/${encodeURIComponent(tag.name)}`}>
+            <Badge
+              variant="secondary"
+              className="max-w-full rounded-md font-medium wrap-anywhere whitespace-normal text-muted-foreground transition-colors hover:text-foreground"
+            >
+              #{tag.name}
+            </Badge>
           </Link>
         </li>
       ))}

@@ -1,20 +1,22 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllPosts, getPostById, getNotionPageMarkdown } from '@/lib/notion';
-import { PostHeader } from '@/components/blocks/post-detail/post-header';
+import { Blogpost4 } from '@/components/blogpost4';
+import { Blog19, type Blog19Item } from '@/components/blog19';
 import { MarkdownRenderer } from '@/components/blocks/post-detail/markdown-renderer';
 import { MoveToAnotherPost } from '@/components/blocks/post-detail/move-to-another-post';
 import { GiscusComment } from '@/components/blocks/post-detail/giscus-comment';
-import { TableOfContents } from '@/components/blocks/post-detail/table-of-contents';
+import { ShareButtons } from '@/components/blocks/post-detail/share-buttons';
+import { ViewCounter } from '@/components/elements/view-counter';
+import { TagList } from '@/components/elements/tag-list';
+import { ReadingProgress } from '@/components/elements/reading-progress';
+import { AUTHOR } from '@/lib/author';
 import { getAdjacentPosts } from '@/utils/adjacent-posts';
 import { getCategoryImageSrc } from '@/utils/category-image';
 import { getViewCount } from '@/lib/views';
 import { extractToc, readingTime } from '@/utils/toc';
-import { RelatedPosts } from '@/components/blocks/post-detail/related-posts';
 import { getRelatedPosts } from '@/utils/related-posts';
-import { ShareButtons } from '@/components/blocks/post-detail/share-buttons';
-import { ReadingProgress } from '@/components/elements/reading-progress';
-import { BackToTop } from '@/components/elements/back-to-top';
+import { formatDate } from '@/utils/date';
 
 type Params = Promise<{ slug: string }>;
 
@@ -143,11 +145,19 @@ export default async function PostDetailPage({
     ],
   };
 
+  const relatedItems: Blog19Item[] = relatedPosts.map((related) => ({
+    id: related.id,
+    title: related.title,
+    description: related.description,
+    date: formatDate(related.createdAt),
+    category: related.category || '미분류',
+    link: `/post/${related.id}`,
+  }));
+
   return (
-    <div className="w-full flex flex-col items-center pt-10 pb-20">
+    <>
       <ReadingProgress />
-      <BackToTop />
-      {/* 💡 SEO: Structured Data for Google Rich Results */}
+      {/* SEO: Structured Data for Google Rich Results */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -157,41 +167,41 @@ export default async function PostDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <div className="w-full max-w-[1040px] px-4 sm:px-6 mx-auto">
-        {/* Top: header spans the reading column width */}
-        <div className="max-w-[720px] mx-auto xl:mx-0">
-          <section className="w-full mb-12">
-            <PostHeader
-              title={post.title}
-              category={post.category}
-              createdAt={post.createdAt}
-              tags={post.tags}
-              slug={slug}
-              initialViews={views}
-              readingMinutes={readingMinutes}
-            />
-          </section>
-        </div>
-
-        <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-12">
-          {/* Reading column */}
-          <div className="max-w-[720px] w-full mx-auto xl:mx-0 min-w-0">
-            <TableOfContents items={toc} variant="inline" />
-            <section className="w-full">
-              <MarkdownRenderer content={md} />
-              <ShareButtons title={post.title} slug={slug} />
-              <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
-              <RelatedPosts posts={relatedPosts} />
-              <GiscusComment />
-            </section>
-          </div>
-
-          {/* TOC rail (desktop only) */}
-          <aside className="hidden xl:block">
-            <TableOfContents items={toc} variant="rail" />
-          </aside>
-        </div>
-      </div>
-    </div>
+      <Blogpost4
+        crumbs={[
+          ...(post.category
+            ? [{ label: post.category, href: `/?category=${encodeURIComponent(post.category)}` }]
+            : []),
+          { label: post.title },
+        ]}
+        title={post.title}
+        author={{
+          name: AUTHOR.name,
+          avatar: AUTHOR.avatar,
+          fallback: AUTHOR.koreanName.slice(-2),
+        }}
+        meta={
+          <>
+            <span className="tabular-nums">{formatDate(post.createdAt)}</span>
+            <span aria-hidden="true">·</span>
+            <ViewCounter slug={slug} initialViews={views} />
+            <span aria-hidden="true">·</span>
+            <span className="tabular-nums">약 {readingMinutes}분</span>
+          </>
+        }
+        tags={<TagList tags={post.tags} />}
+        toc={toc}
+        share={<ShareButtons title={post.title} slug={slug} />}
+        footer={
+          <>
+            <MoveToAnotherPost previousPost={previousPost ?? null} nextPost={nextPost ?? null} />
+            <Blog19 items={relatedItems} />
+            <GiscusComment />
+          </>
+        }
+      >
+        <MarkdownRenderer content={md} />
+      </Blogpost4>
+    </>
   );
 }

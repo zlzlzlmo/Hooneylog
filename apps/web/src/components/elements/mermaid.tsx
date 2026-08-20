@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useEffect, useId, useRef, useState } from 'react';
-import { Maximize2, X } from 'lucide-react';
+import React, { useEffect, useId, useState } from 'react';
+import { Maximize2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface MermaidProps {
   content: string;
@@ -50,9 +53,6 @@ function loadMermaid() {
 
 export function Mermaid({ content }: MermaidProps) {
   const [svg, setSvg] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   // 💡 인스턴스마다 고유한 ID로 렌더링 충돌 방지. useId 값에는 mermaid가
   // 셀렉터로 쓸 수 없는 문자가 섞여 있어 영숫자만 남긴다.
@@ -67,11 +67,15 @@ export function Mermaid({ content }: MermaidProps) {
         const mermaid = await loadMermaid();
         const { svg: generatedSvg } = await mermaid.render(chartId, content);
 
-        // 💡 업계 표준 팁: SVG 내부의 고정 width/height를 제거하여 CSS로 제어 가능하게 만듭니다.
-        const cleanSvg = generatedSvg
-          .replace(/width="[^"]*"/, 'width="100%"')
-          .replace(/height="[^"]*"/, 'height="auto"')
-          .replace(/style="max-width:[^"]*"/, 'style="max-width: 100%;"');
+        // 고정 width/height를 CSS로 제어 가능하게 바꾼다. 반드시 여는 <svg> 태그
+        // 안에서만 치환한다 — 문서 전체에 걸면 <rect>/<foreignObject> 의 height 까지
+        // "auto" 로 바꿔 버려서 브라우저가 다이어그램 렌더링을 포기한다.
+        const cleanSvg = generatedSvg.replace(/<svg\b[^>]*>/, (openTag) =>
+          openTag
+            .replace(/\swidth="[^"]*"/, ' width="100%"')
+            .replace(/\sheight="[^"]*"/, ' height="auto"')
+            .replace(/style="max-width:[^"]*"/, 'style="max-width: 100%;"'),
+        );
 
         if (!cancelled) setSvg(cleanSvg);
       } catch (error) {
@@ -84,76 +88,37 @@ export function Mermaid({ content }: MermaidProps) {
     };
   }, [chartId, content]);
 
-  // 💡 ESC 키로 모달 닫기 + 포커스 관리
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsModalOpen(false);
-    };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
-      closeBtnRef.current?.focus();
-    }
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
-
   return (
-    <>
-      <div className="group relative flex justify-center my-10 w-full min-h-[200px] bg-notion-gray-bg/40 rounded-[4px] p-6 border border-notion-border hover:bg-notion-gray-bg/70 transition-colors duration-200">
-        {/* 확대 버튼 */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          aria-label="다이어그램 확대"
-          className="absolute top-4 right-4 p-2 rounded-[3px] bg-notion-bg border border-notion-border text-notion-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-notion-text hover:bg-notion-hover cursor-pointer z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
-          title="자세히 보기"
-        >
-          <Maximize2 size={18} aria-hidden="true" />
-        </button>
+    <Dialog>
+      <div className="group not-prose relative my-8 flex min-h-[200px] w-full justify-center rounded-lg border bg-muted/40 p-6 transition-colors hover:bg-muted/70">
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="다이어그램 확대"
+            title="자세히 보기"
+            className="absolute top-4 right-4 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+          >
+            <Maximize2 className="size-4" aria-hidden="true" />
+          </Button>
+        </DialogTrigger>
 
         <div
-          ref={containerRef}
           dangerouslySetInnerHTML={{ __html: svg }}
-          className="w-full max-w-[95%] overflow-visible flex justify-center"
+          className="flex w-full max-w-[95%] justify-center overflow-x-auto"
         />
       </div>
 
-      {/* 라이트박스 모달 (업계 표준 상세 보기 구현) */}
-      {isModalOpen && (
+      <DialogContent
+        showCloseButton
+        className="flex h-[90vh] w-[95vw] max-w-none items-center justify-center overflow-auto sm:max-w-none"
+      >
+        <DialogTitle className="sr-only">다이어그램 확대 보기</DialogTitle>
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="다이어그램 확대 보기"
-          className="fixed inset-0 z-[100] flex items-center justify-center"
-        >
-          {/* 배경 클릭으로 닫기. div + onClick 대신 실제 버튼이라 키보드로도 닿는다. */}
-          <button
-            type="button"
-            aria-label="확대 보기 닫기"
-            onClick={() => setIsModalOpen(false)}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
-          />
-          <div className="relative w-[95vw] h-[90vh] bg-notion-bg border border-notion-border rounded-[4px] p-10 flex items-center justify-center overflow-auto shadow-2xl">
-            {/* 닫기 버튼 */}
-            <button
-              ref={closeBtnRef}
-              onClick={() => setIsModalOpen(false)}
-              aria-label="닫기"
-              className="absolute top-6 right-6 p-2 rounded-[3px] hover:bg-notion-hover text-notion-secondary hover:text-notion-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
-            >
-              <X size={24} aria-hidden="true" />
-            </button>
-
-            {/* 상세 보기 다이어그램 */}
-            <div
-              className="w-full h-full flex items-center justify-center max-w-5xl mx-auto"
-              dangerouslySetInnerHTML={{ __html: svg }}
-            />
-          </div>
-        </div>
-      )}
-    </>
+          className="mx-auto flex h-full w-full max-w-5xl items-center justify-center"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

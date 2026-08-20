@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { AppLayout } from './app-layout';
 
-// Footer is an async, cached server component — it can't render in jsdom, and this
-// suite only cares about the skip link and the main landmark.
-vi.mock('./footer', () => ({ Footer: () => <footer /> }));
+// SiteFooter is an async, cached server component — it can't render in jsdom, and
+// this suite only cares about the skip link and the main landmark.
+vi.mock('@/components/layout/site-footer', () => ({ SiteFooter: () => <footer /> }));
 
 describe('AppLayout', () => {
   it('renders a skip link targeting the main content', () => {
