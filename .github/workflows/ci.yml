@@ -20,7 +20,7 @@ jobs:
       - name: Enable corepack (pins pnpm from packageManager)
         run: corepack enable
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
