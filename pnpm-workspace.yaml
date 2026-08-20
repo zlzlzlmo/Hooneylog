@@ -1,3 +1,23 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+
+# pnpm 11 reads settings from here, not from package.json's "pnpm" field.
+
+# Dependency build scripts are blocked unless listed. esbuild's install script
+# links the platform binary — without it vitest/tsx break. The other two only ship
+# source-build scripts that a published tarball doesn't need.
+allowBuilds:
+  esbuild: true
+  '@google/genai': false
+  protobufjs: false
+
+# minimumReleaseAge (1 day by default) is a supply-chain guard: freshly published
+# versions can't be installed. These were pinned deliberately on release day;
+# the entries stop mattering once the versions age past the window.
+minimumReleaseAgeExclude:
+  - '@google/genai@2.18.0'
+  - '@mermaid-js/parser@1.2.1'
+  - '@vitejs/plugin-react@6.1.0'
+  - lucide-react@1.33.0
+  - mermaid@11.17.0
