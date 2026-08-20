@@ -12,6 +12,10 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # `secrets` can't be used in a step-level `if`, so surface it as env first.
+    env:
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -39,8 +43,5 @@ jobs:
       # The web build prerenders every post from Notion, so it can only run where
       # the credentials exist. Forks and secret-less setups still get the gate above.
       - name: Build
-        if: ${{ secrets.NOTION_API_KEY != '' }}
+        if: env.NOTION_API_KEY != ''
         run: pnpm run build
-        env:
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
