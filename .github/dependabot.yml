@@ -26,3 +26,7 @@ updates:
     directory: /apps/trend-writer
     schedule:
       interval: monthly
+    ignore:
+      # Cloud Run job image tracks Node LTS; odd/newer majors are opt-in, not automatic.
+      - dependency-name: node
+        update-types: [version-update:semver-major]
