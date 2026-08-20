@@ -157,6 +157,42 @@ describe('HomePageClient', () => {
     });
   });
 
+  describe('pagination reset', () => {
+    // 20개면 첫 페이지(12개) + '더 보기' 한 번이면 충분하다.
+    const manyPosts = Array.from({ length: 20 }, (_, i) => ({
+      id: `post-${i}`,
+      title: `Test Post ${i}`,
+      category: 'React',
+      createdAt: '2024-03-28T00:00:00Z',
+      updatedAt: '2024-03-28T00:00:00Z',
+      description: 'A test post',
+      tags: [],
+    }));
+
+    it('검색어가 바뀌면 더 보기로 늘린 목록이 첫 페이지로 돌아간다', () => {
+      render(
+        <HomePageClient initialPosts={manyPosts} stats={initialStats} viewsMap={{}} />
+      );
+
+      // 첫 페이지 12개 + 남은 8개 안내
+      expect(screen.getByRole('button', { name: /더 보기 \(8개 남음\)/ })).toBeInTheDocument();
+
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /더 보기/ }));
+      });
+
+      // 20개 전부 보이면 버튼이 사라진다.
+      expect(screen.queryByRole('button', { name: /더 보기/ })).not.toBeInTheDocument();
+
+      act(() => {
+        fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Test Post' } });
+      });
+
+      // 필터가 바뀌었으니 다시 12개부터.
+      expect(screen.getByRole('button', { name: /더 보기 \(8개 남음\)/ })).toBeInTheDocument();
+    });
+  });
+
   describe('reset behavior', () => {
     it('resets both search and category via onReset', async () => {
       // Use a post set where filtering to an empty result is possible,

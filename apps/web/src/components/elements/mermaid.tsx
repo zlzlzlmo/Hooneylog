@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Maximize2, X } from 'lucide-react';
 
 interface MermaidProps {
@@ -54,29 +54,35 @@ export function Mermaid({ content }: MermaidProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  // 💡 매번 고유한 ID를 생성하여 렌더링 충돌 방지
-  const idRef = useRef(`mermaid-${Math.random().toString(36).substring(2, 9)}`);
-
-  const renderChart = useCallback(async () => {
-    try {
-      const mermaid = await loadMermaid();
-      const { svg: generatedSvg } = await mermaid.render(idRef.current, content);
-      
-      // 💡 업계 표준 팁: SVG 내부의 고정 width/height를 제거하여 CSS로 제어 가능하게 만듭니다.
-      const cleanSvg = generatedSvg
-        .replace(/width="[^"]*"/, 'width="100%"')
-        .replace(/height="[^"]*"/, 'height="auto"')
-        .replace(/style="max-width:[^"]*"/, 'style="max-width: 100%;"');
-        
-      setSvg(cleanSvg);
-    } catch (error) {
-      console.error('❌ Mermaid 렌더링 에러:', error);
-    }
-  }, [content]);
+  // 💡 인스턴스마다 고유한 ID로 렌더링 충돌 방지. useId 값에는 mermaid가
+  // 셀렉터로 쓸 수 없는 문자가 섞여 있어 영숫자만 남긴다.
+  const chartId = `mermaid-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   useEffect(() => {
-    renderChart();
-  }, [renderChart]);
+    // content가 바뀌면 이전 렌더 결과는 버린다(늦게 도착한 응답이 덮어쓰지 않도록).
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const mermaid = await loadMermaid();
+        const { svg: generatedSvg } = await mermaid.render(chartId, content);
+
+        // 💡 업계 표준 팁: SVG 내부의 고정 width/height를 제거하여 CSS로 제어 가능하게 만듭니다.
+        const cleanSvg = generatedSvg
+          .replace(/width="[^"]*"/, 'width="100%"')
+          .replace(/height="[^"]*"/, 'height="auto"')
+          .replace(/style="max-width:[^"]*"/, 'style="max-width: 100%;"');
+
+        if (!cancelled) setSvg(cleanSvg);
+      } catch (error) {
+        console.error('❌ Mermaid 렌더링 에러:', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [chartId, content]);
 
   // 💡 ESC 키로 모달 닫기 + 포커스 관리
   useEffect(() => {

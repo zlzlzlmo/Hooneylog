@@ -8,7 +8,15 @@
     "NEXT_PUBLIC_GISCUS_CATEGORY",
     "NEXT_PUBLIC_GISCUS_CATEGORY_ID"
   ],
-  "globalPassThroughEnv": ["NODE_ENV", "REVALIDATE_SECRET", "VIEW_HASH_SALT"],
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "REVALIDATE_SECRET",
+    "VIEW_HASH_SALT",
+    "KV_REST_API_URL",
+    "KV_REST_API_TOKEN",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

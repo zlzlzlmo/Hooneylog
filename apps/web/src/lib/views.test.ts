@@ -2,17 +2,19 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
-import { kv } from '@vercel/kv';
 import { incrementView, getGlobalStats, getViewCount, getViewCounts, markViewedOnce } from './views';
 
-// Mock the @vercel/kv module
-vi.mock('@vercel/kv', () => ({
-  kv: {
-    pipeline: vi.fn(),
-    mget: vi.fn(),
-    get: vi.fn(),
-    set: vi.fn(),
-  },
+// Mock the @upstash/redis client used by views.ts
+const kv = vi.hoisted(() => ({
+  pipeline: vi.fn(),
+  mget: vi.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
+}));
+vi.mock('@upstash/redis', () => ({
+  Redis: vi.fn(function () {
+    return kv;
+  }),
 }));
 
 describe('views utility', () => {

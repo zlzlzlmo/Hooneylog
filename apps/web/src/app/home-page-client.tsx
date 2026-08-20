@@ -60,15 +60,20 @@ export function HomePageClient({
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  // 검색어/카테고리가 바뀌면 페이지네이션을 처음부터. effect 대신 렌더 중 조정하는
+  // React 권장 패턴이라 추가 렌더 한 번 없이 곧바로 새 값으로 그려져요.
+  const filterKey = `${searchValue}\u0000${currentActiveCategory}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(PAGE_SIZE);
+  }
+
   // 검색 결과 개수는 별도 상태로 디바운스해서, 스크린리더에 한 번만 알려줘요.
   const [announcedCount, setAnnouncedCount] = useState(filteredPosts.length);
 
   // 더 보기로 추가 로드했을 때 스크린리더에 알려줄 메시지예요.
   const [loadMoreAnnouncement, setLoadMoreAnnouncement] = useState('');
-
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [searchValue, currentActiveCategory]);
 
   // 입력값은 즉시 필터링하되, 안내 문구만 약 200ms 디바운스해요.
   useEffect(() => {

@@ -12,12 +12,16 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "husky": "^9.0.11",
-    "prettier": "^3.2.5",
-    "turbo": "latest"
+    "husky": "^9.1.7",
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.11"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.34.5",
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"],
+    "ignoredBuiltDependencies": ["@google/genai", "protobufjs"]
+  },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=24"
   }
 }

@@ -1,5 +1,18 @@
 import 'server-only';
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+// @vercel/kv 는 deprecated. 동일한 Upstash REST API 를 직접 사용한다.
+// 기존 KV_* 환경변수를 그대로 읽고, 새 UPSTASH_* 이름도 허용한다.
+let client: Redis | null = null;
+function kv(): Redis {
+  if (!client) {
+    client = new Redis({
+      url: process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL ?? '',
+      token: process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN ?? '',
+    });
+  }
+  return client;
+}
 
 /**
  * 💡 업계 표준 조회수 관리 유틸리티 (고성능 파이프라인 방식)
@@ -18,7 +31,7 @@ export async function markViewedOnce(
 ): Promise<boolean> {
   const seenKey = `views:seen:${slug}:${ipHash}`;
   try {
-    const result = await kv.set(seenKey, 1, { nx: true, ex: ttlSec });
+    const result = await kv().set(seenKey, 1, { nx: true, ex: ttlSec });
     return result !== null;
   } catch (error) {
     console.error(`❌ [KV] Failed to mark view for ${slug}:`, error);
@@ -36,7 +49,7 @@ export async function incrementView(slug: string): Promise<number> {
   
   try {
     // 💡 Redis Pipeline: 한 번의 네트워크 요청으로 3가지 작업을 동시에 처리
-    const pipeline = kv.pipeline();
+    const pipeline = kv().pipeline();
     pipeline.incr(postKey);  // 포스트 개별 조회수
     pipeline.incr(totalKey); // 블로그 전체 누적 조회수
     pipeline.incr(todayKey); // 오늘 하루 전체 조회수
@@ -63,7 +76,7 @@ export async function getGlobalStats(): Promise<{ total: number; today: number }
   const todayKey = `views:today:${today}`;
   
   try {
-    const [total, todayCount] = await kv.mget<number[]>(totalKey, todayKey);
+    const [total, todayCount] = await kv().mget<number[]>(totalKey, todayKey);
     return {
       total: total ?? 0,
       today: todayCount ?? 0
@@ -77,7 +90,7 @@ export async function getGlobalStats(): Promise<{ total: number; today: number }
 export async function getViewCount(slug: string): Promise<number> {
   const key = `views:post:${slug}`;
   try {
-    const count = await kv.get<number>(key);
+    const count = await kv().get<number>(key);
     return count ?? 0;
   } catch (error) {
     console.error(`❌ [KV] Failed to get view count for ${slug}:`, error);
@@ -90,7 +103,7 @@ export async function getViewCounts(slugs: string[]): Promise<Record<string, num
   
   const keys = slugs.map(slug => `views:post:${slug}`);
   try {
-    const counts = await kv.mget<number[]>(...keys);
+    const counts = await kv().mget<number[]>(...keys);
     
     return slugs.reduce((acc, slug, index) => {
       acc[slug] = counts[index] ?? 0;
