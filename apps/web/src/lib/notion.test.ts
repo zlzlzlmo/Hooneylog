@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { POSTS_TAG, POST_BLOCKS_TAG } from '@/lib/cache-tags';
 
-const { queryMock, pageToMarkdownMock, toMarkdownStringMock } = vi.hoisted(() => ({
+const { queryMock, retrieveMock, pageToMarkdownMock, toMarkdownStringMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
+  retrieveMock: vi.fn(),
   pageToMarkdownMock: vi.fn(),
   toMarkdownStringMock: vi.fn(),
 }));
@@ -11,7 +12,8 @@ vi.mock('server-only', () => ({}));
 
 vi.mock('@notionhq/client', () => ({
   Client: class {
-    databases = { query: queryMock };
+    databases = { retrieve: retrieveMock };
+    dataSources = { query: queryMock };
   },
 }));
 
@@ -41,6 +43,8 @@ describe('lib/notion caching', () => {
     vi.clearAllMocks();
     process.env.NOTION_API_KEY = 'test-key';
     process.env.NOTION_DATABASE_ID = 'db-123';
+    // 2025-09-03 API: rows hang off a data source, resolved from the database.
+    retrieveMock.mockResolvedValue({ data_sources: [{ id: 'ds-1' }] });
   });
 
   it('tags getAllPosts for posts with hourly revalidation', async () => {
@@ -116,5 +120,6 @@ describe('lib/notion caching', () => {
     expect(posts.map((p) => p.id)).toEqual(['p1', 'p2']);
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock.mock.calls[1]?.[0]?.start_cursor).toBe('cur2');
+    expect(queryMock.mock.calls[0]?.[0]?.data_source_id).toBe('ds-1');
   });
 });

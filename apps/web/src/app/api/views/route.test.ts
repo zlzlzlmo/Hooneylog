@@ -3,6 +3,13 @@ import type { NextRequest } from 'next/server';
 import { GET } from './route';
 import { getViewCounts } from '@/lib/views';
 
+// Route handlers declare their request-time boundary with `connection()`; vitest
+// runs them outside a Next request scope, so stub just that export.
+vi.mock('next/server', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/server')>()),
+  connection: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@/lib/views', () => ({
   getViewCounts: vi.fn(async (slugs: string[]) => Object.fromEntries(slugs.map((s) => [s, 1]))),
 }));

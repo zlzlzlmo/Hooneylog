@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 import { getViewCounts } from '@/lib/views';
 
 // Bound how many keys a single request can fan out into an MGET, and only accept
@@ -8,6 +8,8 @@ const MAX_SLUGS = 200;
 const SLUG_PATTERN = /^[a-zA-Z0-9-]{1,128}$/;
 
 export async function GET(request: NextRequest) {
+  await connection();
+
   const { searchParams } = new URL(request.url);
   const slugsStr = searchParams.get('slugs');
 

@@ -1,15 +1,25 @@
 import { markdownToBlocks } from '@tryfabric/martian';
 import type { NotionPort, PublishInput, PublishResult } from './types';
 
+/**
+ * Notion API 2025-09-03: rows live on a data source, not on the database itself.
+ * The database id stays the configured value; the data source id is resolved from it.
+ */
 interface NotionClientLike {
   databases: {
+    // The SDK's response is a wide union (full | partial); narrow it at the use site.
+    retrieve: (args: { database_id: string }) => Promise<unknown>;
+  };
+  dataSources: {
     query: (args: {
-      database_id: string;
+      data_source_id: string;
       start_cursor?: string;
       page_size?: number;
     }) => Promise<{ results: unknown[]; has_more: boolean; next_cursor: string | null }>;
   };
   pages: {
+    // The SDK's CreatePageParameters union can't be narrowed here without dragging
+    // its property types in; publish.test.ts asserts the parent shape instead.
     create: (args: unknown) => Promise<{ id: string; url: string }>;
   };
 }
@@ -47,13 +57,27 @@ function extractTitleFromPage(page: unknown): string {
 }
 
 export function createNotionPort(client: NotionClientLike, databaseId: string): NotionPort {
+  let dataSourceId: string | undefined;
+
+  async function resolveDataSourceId(): Promise<string> {
+    if (dataSourceId) return dataSourceId;
+    const database = (await client.databases.retrieve({ database_id: databaseId })) as {
+      data_sources?: { id: string }[];
+    };
+    const id = database.data_sources?.[0]?.id;
+    if (!id) throw new Error(`데이터베이스 ${databaseId} 에서 data source를 찾지 못했습니다.`);
+    dataSourceId = id;
+    return id;
+  }
+
   return {
     async fetchExistingTitles(): Promise<string[]> {
+      const data_source_id = await resolveDataSourceId();
       const titles: string[] = [];
       let cursor: string | undefined;
       do {
-        const res = await client.databases.query({
-          database_id: databaseId,
+        const res = await client.dataSources.query({
+          data_source_id,
           start_cursor: cursor,
           page_size: 100,
         });
@@ -66,9 +90,10 @@ export function createNotionPort(client: NotionClientLike, databaseId: string): 
       return titles;
     },
     async createPost(input: PublishInput): Promise<PublishResult> {
+      const data_source_id = await resolveDataSourceId();
       const blocks = markdownToBlocks(input.markdown);
       const res = await client.pages.create({
-        parent: { database_id: databaseId },
+        parent: { type: 'data_source_id', data_source_id },
         properties: buildNotionProperties(input),
         children: blocks,
       });

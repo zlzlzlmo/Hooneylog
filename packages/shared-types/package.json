@@ -7,10 +7,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@notionhq/client": "^2.3.0",
-    "typescript": "^5.0.0"
+    "@notionhq/client": "^5.25.2"
   },
   "devDependencies": {
-    "@hooneylog/typescript-config": "workspace:^"
+    "@hooneylog/typescript-config": "workspace:^",
+    "typescript": "^5.0.0"
   }
 }

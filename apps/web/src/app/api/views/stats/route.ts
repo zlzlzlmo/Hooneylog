@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server';
+import { connection, NextResponse } from 'next/server';
 import { getGlobalStats } from '@/lib/views';
 
 export async function GET() {
+  await connection();
+
   try {
     const stats = await getGlobalStats();
     return NextResponse.json(stats);

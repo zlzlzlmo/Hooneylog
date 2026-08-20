@@ -1,7 +1,4 @@
-import {
-  BlockObjectResponse,
-  RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+import type { BlockObjectResponse, RichTextItemResponse } from '@notionhq/client';
 
 // Re-export specific Notion types for use across the monorepo
 export type { BlockObjectResponse, RichTextItemResponse };

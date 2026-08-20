@@ -38,19 +38,35 @@ describe('buildNotionProperties', () => {
 
 describe('createNotionPort', () => {
   it('fetchExistingTitles가 title 프로퍼티에서 제목을 뽑는다', async () => {
+    const createArgs: unknown[] = [];
     const client = {
       databases: {
-        query: async () => ({
-          results: [{ properties: { 이름: { title: [{ plain_text: '기존글' }] } } }],
-          has_more: false,
-          next_cursor: null,
-        }),
+        retrieve: async () => ({ data_sources: [{ id: 'ds-1' }] }),
       },
-      pages: { create: async () => ({ id: 'pid', url: 'https://notion/pid' }) },
+      dataSources: {
+        query: async (args: { data_source_id: string }) => {
+          expect(args.data_source_id).toBe('ds-1');
+          return {
+            results: [{ properties: { 이름: { title: [{ plain_text: '기존글' }] } } }],
+            has_more: false,
+            next_cursor: null,
+          };
+        },
+      },
+      pages: {
+        create: async (args: unknown) => {
+          createArgs.push(args);
+          return { id: 'pid', url: 'https://notion/pid' };
+        },
+      },
     };
     const port = createNotionPort(client as any, 'db');
     expect(await port.fetchExistingTitles()).toEqual(['기존글']);
     const res = await port.createPost(input);
     expect(res).toEqual({ pageId: 'pid', url: 'https://notion/pid' });
+    expect((createArgs[0] as { parent: unknown }).parent).toEqual({
+      type: 'data_source_id',
+      data_source_id: 'ds-1',
+    });
   });
 });

@@ -165,12 +165,30 @@ class NotionBlockMapper {
   }
 }
 
+/**
+ * Notion API 2025-09-03: a database is only a container — rows and their schema
+ * live on a data source underneath it. Queries take a data_source_id, so resolve
+ * it from the configured database and cache it alongside the posts.
+ */
+async function getDataSourceId(database_id: string): Promise<string | null> {
+  'use cache';
+  cacheTag(POSTS_TAG);
+  cacheLife(CACHE_PROFILE);
+
+  const database = await withRetry(() => notion.databases.retrieve({ database_id }));
+  const sources = 'data_sources' in database ? database.data_sources : [];
+  return sources[0]?.id ?? null;
+}
+
 export async function getAllPosts(): Promise<NotionPost[]> {
   'use cache';
   cacheTag(POSTS_TAG);
   cacheLife(CACHE_PROFILE);
 
   if (!databaseId) return [];
+
+  const dataSourceId = await getDataSourceId(databaseId);
+  if (!dataSourceId) return [];
 
   // Notion returns at most 100 rows per query, so loop over start_cursor until
   // has_more is false — otherwise the blog silently caps at 100 published posts.
@@ -179,8 +197,8 @@ export async function getAllPosts(): Promise<NotionPost[]> {
 
   do {
     const response = await withRetry(() =>
-      notion.databases.query({
-        database_id: databaseId,
+      notion.dataSources.query({
+        data_source_id: dataSourceId,
         start_cursor: cursor,
         filter: {
           property: 'status',

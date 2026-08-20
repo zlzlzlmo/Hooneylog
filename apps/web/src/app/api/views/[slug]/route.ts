@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 import { incrementView, getViewCount, markViewedOnce } from '@/lib/views';
 import { getClientIp, hashIp } from '@/lib/view-guard';
 
@@ -6,6 +6,8 @@ import { getClientIp, hashIp } from '@/lib/view-guard';
  * 💡 업계 표준: 조회수 조회 API
  */
 export async function GET(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  await connection();
+
   const { slug } = await context.params;
 
   if (!slug) {
@@ -26,6 +28,8 @@ export async function GET(request: NextRequest, context: { params: Promise<{ slu
  * 클라이언트에서 호출하여 ISR 캐시와 상관없이 실시간 조회를 기록합니다.
  */
 export async function POST(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  await connection();
+
   const { slug } = await context.params;
 
   if (!slug) {

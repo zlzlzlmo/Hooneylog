@@ -4,6 +4,13 @@ import { POST } from './route';
 import { incrementView, getViewCount, markViewedOnce } from '@/lib/views';
 import { getClientIp, hashIp } from '@/lib/view-guard';
 
+// Route handlers declare their request-time boundary with `connection()`; vitest
+// runs them outside a Next request scope, so stub just that export.
+vi.mock('next/server', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/server')>()),
+  connection: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('@/lib/views', () => ({
   incrementView: vi.fn(),
   getViewCount: vi.fn(),

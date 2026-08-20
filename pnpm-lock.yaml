@@ -24,8 +24,8 @@ importers:
         specifier: ^2.18.0
         version: 2.18.0
       '@notionhq/client':
-        specifier: ^2.3.0
-        version: 2.3.0
+        specifier: ^5.25.2
+        version: 5.25.2
       '@tryfabric/martian':
         specifier: ^1.2.4
         version: 1.2.4
@@ -55,8 +55,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@notionhq/client':
-        specifier: ^2.3.0
-        version: 2.3.0
+        specifier: ^5.25.2
+        version: 5.25.2
       '@upstash/redis':
         specifier: ^1.38.2
         version: 1.38.2
@@ -218,15 +218,15 @@ importers:
   packages/shared-types:
     dependencies:
       '@notionhq/client':
-        specifier: ^2.3.0
-        version: 2.3.0
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
+        specifier: ^5.25.2
+        version: 5.25.2
     devDependencies:
       '@hooneylog/typescript-config':
         specifier: workspace:^
         version: link:../typescript-config
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
   packages/typescript-config: {}
 
@@ -888,9 +888,9 @@ packages:
     resolution: {integrity: sha512-m7zZ5l3RUktayf1lRBV1XMb8HSKsmWTv/LZPqP7UGC1NMzOlc+bbTOPNQ4CP/c1P4cP61VWLb/zBq7a3c0nMaw==}
     engines: {node: '>=12'}
 
-  '@notionhq/client@2.3.0':
-    resolution: {integrity: sha512-l7WqTCpQqC+HibkB9chghONQTYcxNQT0/rOJemBfmuKQRTu2vuV8B3yA395iKaUdDo7HI+0KvQaz9687Xskzkw==}
-    engines: {node: '>=12'}
+  '@notionhq/client@5.25.2':
+    resolution: {integrity: sha512-kbaCZxiTxuWS7nTP29s3q9qbfMGd4cyfjMMdpVr7vK7SuB+0C6zBAP1sw8Gx/HKa+giWGnReuFovamN696Qy8w==}
+    engines: {node: '>=18'}
 
   '@oxc-project/types@0.122.0':
     resolution: {integrity: sha512-oLAl5kBpV4w69UtFZ9xqcmTi+GENWOcPF7FCrczTiBbmC0ibXxCwyvZGbO39rCVEuLGAZM84DH0pUIyyv/YJzA==}
@@ -4551,12 +4551,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@notionhq/client@2.3.0':
-    dependencies:
-      '@types/node-fetch': 2.6.13
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
+  '@notionhq/client@5.25.2': {}
 
   '@oxc-project/types@0.122.0': {}
 

@@ -66,6 +66,8 @@ export async function main(): Promise<void> {
   const config = loadConfig();
   const gemini = createGemini(config.geminiApiKey);
   const client = new Client({ auth: config.notionApiKey });
+  // The SDK client is structurally wider than the port needs (its create/retrieve
+  // parameter unions can't be narrowed here); publish.test.ts pins the call shapes.
   const notion = createNotionPort(
     client as unknown as Parameters<typeof createNotionPort>[0],
     config.notionDatabaseId,
