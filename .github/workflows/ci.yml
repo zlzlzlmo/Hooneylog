@@ -30,6 +30,9 @@ jobs:
       - name: Format check
         run: pnpm run format:check
 
+      - name: Package boundaries
+        run: pnpm exec turbo boundaries
+
       - name: Lint, typecheck, test, build
         run: pnpm run check
         env:
