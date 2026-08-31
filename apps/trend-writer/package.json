@@ -10,8 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@google/genai": "^2.18.0",
-    "@notionhq/client": "^5.25.2",
+    "@google/genai": "^2.19.0",
+    "@notionhq/client": "^5.26.0",
     "@tryfabric/martian": "^1.2.4"
   },
   "devDependencies": {
