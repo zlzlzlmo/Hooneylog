@@ -10,14 +10,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@google/genai": "^2.18.0",
-    "@notionhq/client": "^5.25.2",
+    "@google/genai": "^2.21.0",
+    "@notionhq/client": "^5.26.0",
     "@tryfabric/martian": "^1.2.4"
   },
   "devDependencies": {
     "@hooneylog/typescript-config": "workspace:*",
     "@types/node": "^24",
-    "tsx": "^4.23.12",
+    "tsx": "^4.23.13",
     "typescript": "^5",
     "vitest": "^4.1.11"
   }
