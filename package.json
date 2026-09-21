@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "husky": "^9.1.7",
-    "prettier": "^3.9.6",
-    "turbo": "^2.10.11"
+    "prettier": "^3.9.8",
+    "turbo": "^2.10.13"
   },
   "packageManager": "pnpm@11.22.0",
   "engines": {
